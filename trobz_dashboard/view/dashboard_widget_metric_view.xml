@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        
+        <record id="dashboard_widget_metric_form" model="ir.ui.view">
+            <field name="name">dashboard.widget.metric.form</field>
+            <field name="model">dashboard.widget.metric</field>
+            <field name="type">form</field>
+                
+            <field name="arch" type="xml">
+                <form string="Metric">
+                    <notebook>
+                        <page string="General">
+                            <group colspan="2">
+                                <field name="name" />
+                                <field name="type" />
+                                <field name="query" />
+                            
+                                <field name="x_axis" />
+                                <field name="y_axis" />
+                                <field name="options" />
+                            </group>
+                        </page>
+                        <page string="Fields">
+                            <field name="fields" widget="one2many_list">
+                                <form string="Field">
+                                     <group>
+                                        <field name="name"/>
+                                        <field name="type" />
+                                    </group>
+                                    <group>
+                                        <field name="field_model" />
+                                        <field name="field_id"/>
+                                    </group>
+                               </form>
+                                <tree string="Fields">
+                                    <field name="name" />
+                                    <field name="type" />
+                                    <field name="field_model" />
+                                    <field name="field_id" />
+                                </tree>           
+                            </field>
+                        </page>
+                    </notebook>
+                </form>
+            </field>
+        </record>
+        
+        
+        <record id="dashboard_widget_metric_tree" model="ir.ui.view">
+            <field name="name">dashboard.widget.metric.tree</field>
+            <field name="model">dashboard.widget.metric</field>
+            <field name="type">tree</field>
+            <field name="field_parent">fields</field>
+                      
+            <field name="arch" type="xml">
+                <tree string="Metrics">
+                    <field name="name"/>
+                    <field name="type"/>
+                    <field name="query" />
+                    <field name="fields" />
+                </tree>            
+            </field>
+        </record>
+        
+    </data>
+</openerp>

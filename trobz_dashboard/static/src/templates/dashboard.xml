@@ -1,0 +1,6 @@
+<template>
+
+<t t-name="Dashboard">
+</t>
+
+</template>
