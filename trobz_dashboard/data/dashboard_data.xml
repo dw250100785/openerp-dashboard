@@ -3,48 +3,34 @@
     <data>
         <record id="demo_dashboard_board" model="dashboard.board">
             <field name="name">Simple Dashboard</field>
+            <field name="period_name">month</field>
+            <field name="period_type">calendar</field>
         </record>
         
         <record id="demo_dashboard_widget" model="dashboard.widget">
             <field name="name">Count Employee</field>
             <field name="type">numeric</field>
-            <field name="sequence">1</field>
-            <field name="width">10</field>
-            <field name="height">10</field>
             <field name="options"></field>
             <field name="board_id" ref="demo_dashboard_board" />
         </record>
         
-        <record id="demo_dashboard_widget_metric" model="dashboard.widget.metric">
-            <field name="name">Count Employee</field>
-            <field name="type">number</field>
-            <field name="query">
-SELECT SUM(id) 
-FROM hr_employee 
-WHERE 1 = 1 AND $(where)
-GROUP BY $(group_by)
-            </field>
-            <field name="x-axis"></field>
-            <field name="y-axis"></field>
-            <field name="options">{"size": "20px", "color": "#900"}</field>
+        <record id="demo_dashboard_board_to_widget" model="dashboard.board_to_widget_rel">
+            <field name="board_id" ref="demo_dashboard_board" />
             <field name="widget_id" ref="demo_dashboard_widget" />
+            <field name="sequence">1</field>
+            <field name="width">10</field>
+            <field name="height">10</field>
         </record>
         
-        <record id="demo_dashboard_widget_metric_field_1" model="dashboard.widget.metric.field">
-            <field name="name">Employee name</field>
-            <field name="field_id">hr_employee.name_related</field>
-            <field name="field_model">hr.employee</field>
-            <field name="type">filter</field>
-            <field name="metric_id" ref="demo_dashboard_widget_metric" />
+        <record id="action_view_dashboard_demo_my" model="ir.actions.act_window">
+            <field name="name">My Board</field>
+            <field name="view_mode">dashboard</field>
+            <field name="res_model">dashboard.board</field>
+            <field name="res_id" ref="demo_dashboard_board" />
+            <field name="target">inline</field>
         </record>
         
-        <record id="demo_dashboard_widget_metric_field_2" model="dashboard.widget.metric.field">
-            <field name="name">Gender</field>
-            <field name="field_id">hr_employee.gender</field>
-            <field name="field_model">hr.employee</field>
-            <field name="type">filter</field>
-            <field name="metric_id" ref="demo_dashboard_widget_metric" />
-        </record>
+        <menuitem action="action_view_dashboard_demo_my" id="menu_dashboard_my" sequence="1" parent="menu_dashboard_board" />
         
     </data>
 </openerp>

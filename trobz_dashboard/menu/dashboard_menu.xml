@@ -26,23 +26,23 @@
         
         <menuitem action="action_view_dashboard_widget" id="menu_view_dashboard_widget" sequence="2" parent="menu_dashboard_main"/>
 
-        <record id="action_view_dashboard_widget_metric" model="ir.actions.act_window">
+        <record id="action_view_dashboard_metric" model="ir.actions.act_window">
             <field name="name">Widget Metric</field>
-            <field name="res_model">dashboard.widget.metric</field>
+            <field name="res_model">dashboard.metric</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
         </record>
         
-        <menuitem action="action_view_dashboard_widget_metric" id="menu_view_dashboard_widget_metric" sequence="3" parent="menu_dashboard_main"/>
+        <menuitem action="action_view_dashboard_metric" id="menu_view_dashboard_metric" sequence="3" parent="menu_dashboard_main"/>
 
-        <record id="action_view_dashboard_widget_metric_field" model="ir.actions.act_window">
+        <record id="action_view_dashboard_field" model="ir.actions.act_window">
             <field name="name">Metric Field</field>
-            <field name="res_model">dashboard.widget.metric.field</field>
+            <field name="res_model">dashboard.field</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
         </record>
         
-        <menuitem action="action_view_dashboard_widget_metric_field" id="menu_view_dashboard_widget_metric_field" sequence="4" parent="menu_dashboard_main"/>
+        <menuitem action="action_view_dashboard_field" id="menu_view_dashboard_field" sequence="4" parent="menu_dashboard_main"/>
 
 
     </data>

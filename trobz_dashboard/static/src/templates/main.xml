@@ -1,0 +1,8 @@
+<template>
+
+<t t-name="TrobzDashboard">
+    <div class="trobz_board"></div>
+</t>
+
+
+</template>

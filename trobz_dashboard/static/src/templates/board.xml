@@ -1,0 +1,9 @@
+<template>
+
+<t t-name="TrobzDashboard.board">
+    <div class="board">
+        <h1>my dashboard</h1>
+    </div>
+</t>
+
+</template>

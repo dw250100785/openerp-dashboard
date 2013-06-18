@@ -6,21 +6,17 @@ from osv import osv, fields
 class dashboard_widget(osv.osv):
 
     _name = "dashboard.widget"
-    _description = "Dashboard Widget"
+    _description = "Widget"
 
     _columns = {
         'name': fields.char('Name'),
         'type': fields.selection((('numeric','Numeric'), ('list','List'), ('graph','Graph')), 'Widget type'),
-        'board_id': fields.many2one('dashboard.board','Board', ondelete='cascade', required=True),
-        'metrics': fields.one2many('dashboard.widget.metric', 'widget_id','Metrics', ondelete='cascade', required=True),
-        
-        #appearance / position
-        'sequence': fields.integer('Sequence', help='Position in the dashboard, higher numbers are placed at the top'),
-        'width':  fields.integer('Width', help='Width, max 24 units'),
-        'height':  fields.integer('Height', help='Height, max 24 units'),
-        'options': fields.text('Options')
-        
+        'board_ids': fields.many2many('dashboard.board', 'dashboard_board_to_widget_rel', id1='widget_id',id2='board_id', string='Boards', ondelete='cascade', required=True),
+        'metric_ids': fields.one2many('dashboard.metric', 'widget_id','Metrics', ondelete='cascade', required=True),
     }
+    
+
+
 
 dashboard_widget()
 
