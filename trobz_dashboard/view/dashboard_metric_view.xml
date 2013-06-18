@@ -13,6 +13,8 @@
                         <page string="General">
                             <group colspan="2">
                                 <field name="name" />
+                                <field name="type" />
+                                <field name="widget_id" />
                                 <field name="model" />
                                 <field name="method" />
                                 <field name="options" widget="serialized" />
