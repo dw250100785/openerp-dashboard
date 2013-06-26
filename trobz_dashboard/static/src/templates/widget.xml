@@ -1,3 +1,41 @@
 <template>
 
+
+    <t t-name="TrobzDashboard.widgets">
+        <div class="widgets"></div>
+    </t>
+    
+    <t t-name="TrobzDashboard.widget">
+        <div class="widget">
+            <div class="head">
+                <h2><t t-esc="name"/></h2>
+                
+                <span class="button toggle_search">
+                    <i class="icon-search"></i>
+                </span>
+            </div>    
+        
+            <div class="body loading">
+                <div class="search hidden" />
+                <div class="display" />
+            </div>
+            
+            <div class="foot status" />
+        </div>
+    </t>
+    
+    
+    <t t-name="TrobzDashboard.widget.display">
+        <span>display</span>
+    </t>
+    
+    <t t-name="TrobzDashboard.widget.status">
+        <span class="metrics">
+        <t t-foreach="metrics" t-as="metric">
+            <a t-attr-metric-id="metric.get('id')"><t t-esc="metric.get('name')" /></a>
+        </t>
+        </span>
+    </t>
+
 </template>
+

@@ -4,9 +4,6 @@
 from osv import osv, fields
 from textwrap import dedent
 
-import logging
-_logger = logging.getLogger('ZAZADEV')
-_logger.info('board')
 
 class dashboard_board(osv.osv):
 

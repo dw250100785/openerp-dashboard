@@ -9,7 +9,7 @@ class dashboard_field_type(osv.osv):
     _description = "Metric Field Type"
 
     _columns = {
-        'name':  fields.selection((('output','Output'), ('filter','Filter'), ('group_by','Group By'), ('order_by','Order By') ), 'Type of field'),
+        'name':  fields.selection((('output','Output'), ('period','Period'), ('domain','Domain'), ('group_by','Group By'), ('order_by','Order By') ), 'Type of field'),
         
     }
 

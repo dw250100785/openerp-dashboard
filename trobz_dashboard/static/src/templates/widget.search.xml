@@ -1,0 +1,161 @@
+<template>
+    
+    <t t-name="TrobzDashboard.widget.search">
+        <div class="search_part domain" />
+        <div class="search_part order" />
+        <div class="search_part group" />
+    </t>
+    
+    <t t-name="TrobzDashboard.search.domain.view">
+        <a class="search_action">domain:</a> 
+        
+        <div class="current_domain">
+            <t t-if="has_domain">
+                <t t-call="TrobzDashboard.search.domain.string">
+                    <t t-set="groups" t-value="groups" />
+                    <t t-set="operators" t-value="operators" />
+                    <t t-set="group_size" t-value="group_size" />
+                </t>
+            </t>
+            
+            <t t-if="!(has_domain)">
+                <span class="domain_string">no condition available</span>
+            </t>
+            
+            <t t-if="!(has_condition)">
+                <span class="domain_string">show all</span>
+            </t>
+        </div>
+    </t>
+    
+   
+    <t t-name="TrobzDashboard.search.domain.string">
+        <t t-foreach="groups" t-as="criteria">
+            
+           
+            <t t-if="criteria_value.length gt 1 and group_size gt 1">
+                <span class="domain_string">(</span>
+            </t>        
+           
+            <t t-foreach="criteria_value" t-as="criterion">
+        
+                <t t-set="operator" t-value="operators.byName(criterion.operator)" />
+                
+                <div class="domain_criterion">
+                    <span class="domain_field" t-att-field-id="criterion.field.get('id')"><t t-esc="criterion.field.get('name')" /></span>
+                    <span class="domain_operator" t-att-operator="criterion.operator"><t t-esc="operator.text" /></span>
+                    <span class="domain_value" t-att-value="criterion.value"><t t-esc="operator.string(criterion.value)" /></span>
+                    <i class="icon-remove remove" />
+                </div>
+            
+                <t t-if="criterion_index lt criteria_value.length - 1">
+                    <span class="domain_string">or</span>
+                </t>
+            </t>
+            
+            <t t-if="criteria_value.length gt 1 and group_size gt 1">
+                <span class="domain_string">)</span>
+            </t>   
+            
+            <t t-if="criteria_index lt (group_size - 1)">
+                <span class="domain_string">and</span>
+            </t>   
+        </t>
+    </t>
+    
+    <t t-name="TrobzDashboard.search.domain.form">
+        
+        <t t-call="TrobzDashboard.search.domain.field_list">
+            <t t-set="fields" t-value="fields"/>
+        </t>
+    
+        <div class="condition">
+        </div>        
+        
+        <span class="button cancel"><i class="icon-remove"></i></span>
+        <span class="button add"><i class="icon-plus"></i></span>
+    </t>
+    
+    <t t-name="TrobzDashboard.search.domain.field_list">
+        <select class="field">
+        <t t-foreach="fields" t-as="field">
+            <option t-att-value="field.get('id')"><t t-esc="field.get('name')"/></option>
+        </t>
+        </select>
+    </t>
+    
+    <t t-name="TrobzDashboard.search.domain.operator">
+        <select class="operator">
+        <t t-foreach="conditions" t-as="condition">
+            <option t-att-value="condition"><t t-esc="operators.byName(condition).text" /></option>
+        </t>
+        </select>
+    </t>
+    
+    
+    <t t-name="TrobzDashboard.search.domain.number">
+        
+       <t t-call="TrobzDashboard.search.domain.operator">
+            <t t-set="conditions" t-value="['e','ne', 'gt', 'lt', 'gte', 'lte']" />
+            <t t-set="operators" t-value="operators" />
+       </t>
+        
+        <input type="text" class="value" />
+    
+    </t>
+    
+    <t t-name="TrobzDashboard.search.domain.char">
+       
+        <t t-call="TrobzDashboard.search.domain.operator">
+            <t t-set="conditions" t-value="['contains','n_contains']" />
+            <t t-set="operators" t-value="operators" />
+        </t>
+       
+        <input type="text" class="value" />
+    </t>
+    
+    <t t-name="TrobzDashboard.search.domain.selection">
+       
+        <t t-call="TrobzDashboard.search.domain.operator">
+            <t t-set="conditions" t-value="['e','ne']" />
+            <t t-set="operators" t-value="operators" />
+        </t>
+       
+        <select class="value">
+        <t t-foreach="description.selection" t-as="select">
+            <option t-att-value="select[0]"><t t-esc="select[1]"/></option>
+        </t>
+        </select>        
+    </t>
+    
+    <t t-name="TrobzDashboard.search.domain.date">
+        
+    </t>
+    
+    <t t-name="TrobzDashboard.search.domain.datetime">
+    
+        <t t-call="TrobzDashboard.search.domain.operator">
+            <t t-set="conditions" t-value="['e','ne', 'gt', 'lt', 'gte', 'lte']" />
+            <t t-set="operators" t-value="operators" />
+       </t>
+       
+        <input type="text" class="value" />
+        
+    </t>
+    
+    
+    <t t-name="TrobzDashboard.search.domain.one2many">
+        
+    </t>
+    
+    
+    <t t-name="TrobzDashboard.widget.search.group">
+        <span>group</span>
+    </t>
+    
+    <t t-name="TrobzDashboard.widget.search.order">
+        <span>order</span>
+    </t>
+
+</template>
+

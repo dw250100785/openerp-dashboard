@@ -1,0 +1,127 @@
+openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
+      
+    //number of days used for the rolling period  
+    var rolling = {
+        day: 1,
+        week: 7,
+        month: 30,
+        quarter: 30 * 3,
+        semester: 30 * 4,
+        year: 365,
+    };
+          
+      
+    //return the start and end date for each types 
+    var calendar = {
+        day: function(current){
+            return { start: current, end: current };
+        },
+        
+        week: function(current){
+            var start = moment(current).subtract(((current.day() == 0 ? 6 : current.day() -1 )),'days');
+            var end = moment(start).add(1, 'week');
+            return { start: start, end: end };
+        },
+        
+        month: function(current){
+            var start = moment(current.format('YYYY-MM'));
+            var end = moment(start).add(1, 'months');
+            return { start: start, end: end };
+        },
+        
+        quarter: function(current){
+            var quarter = Math.floor(current.month() / 3);
+            var start = moment(current.format('YYYY') + '-' + ((quarter * 3) + 1));
+            var end = moment(start).add(3, 'months');
+            return { start: start, end: end };
+        },
+        
+        semester: function(current){
+            var semester = Math.floor(current.month() / 4);
+            var start = moment(current.format('YYYY') + '-' + ((semester * 4) + 1));
+            var end = moment(start).add(4, 'months');
+            return { start: start, end: end };
+        },
+        
+        year: function(current){
+            var start = moment(current.format('YYYY'));
+            var end = moment(start).add(1, 'year');
+            return { start: start, end: end };
+        }
+    };   
+       
+    var current = moment(),
+        Period = base.models('Period'),
+        _super = Period.prototype;
+    
+    var BoardPeriod = Period.extend({
+        
+        defaults: {
+            start: moment(current.subtract(15, 'days')),
+            end: moment(current.add(15, 'days')),
+            name: 'month',
+            type: 'rolling',
+        },
+        
+        calculated: function(){
+            return this.get('name') != 'custom' && this.get('type') != 'none';  
+        },
+        
+        set: function(key, val, options){
+            var attrs, attr;
+            if ( typeof key === 'object') {
+                attrs = key;
+                options = val;
+            } else {
+                (attrs = {})[key] = val;
+            }
+            
+            var type = attrs.type || this.get('type'),
+                name = attrs.name || this.get('name');
+            
+            if(name == 'custom'){
+                attrs.type = 'none';    
+            }
+            else if(attrs.start && attrs.end && !attrs.type){
+                attrs.name = 'custom';
+                attrs.type = 'none';    
+            }
+            else if(((attrs.name && type) || (attrs.type && name))){
+                type = attrs.type = type == 'none' ? 'calendar' : type;
+                var period = this.getRelativePeriod(type, name);
+                attrs.start = period.start;
+                attrs.end = period.end;   
+            }
+        
+            return _super.set.apply(this, [attrs, options]);
+        },
+        
+        getRelativePeriod: function(type, name){
+            var period = {
+                start: null,
+                end: null
+            };
+            
+            if(type == 'calendar'){
+                 period = calendar[name].apply(this, [current]);
+            }
+            else if (type == 'rolling'){
+                period.start = moment(current).subtract(rolling[name]/2, 'days');                
+                period.end = moment(current).add(rolling[name]/2, 'days');                
+            }
+        
+            return period;
+        },
+        
+        values: function(){
+            return [{
+                start: this.start('s'),
+                end: this.end('s')
+            }];
+        },
+        
+    });
+
+    dashboard.models('BoardPeriod', BoardPeriod);
+
+});

@@ -16,6 +16,7 @@
                                 <field name="type" />
                                 <field name="widget_id" />
                                 <field name="model" />
+                                <field name="query_name" />
                                 <field name="method" />
                                 <field name="options" widget="serialized" />
                                 <field name="values" widget="serialized" />
@@ -63,7 +64,7 @@
                     
                     <field name="field_ids" />
                     <field name="model" />
-                    <field name="method" />
+                    <field name="query_name" />
                     <field name="options" />
                     <field name="values" />
                 </tree>            

@@ -1,0 +1,21 @@
+<template>
+    
+    <t t-name="TrobzDashboard.widget.display.numeric">
+        <dl>
+        <t t-foreach="results" t-as="result">
+            <dt t-att-class="result.className"><t t-esc="result.label" /></dt>
+            <dd t-att-class="result.className"><t t-esc="result.value" /></dd>
+        </t>
+        </dl>
+    </t>
+    
+    <t t-name="TrobzDashboard.widget.display.list">
+        <span>list</span>
+    </t>
+    
+    <t t-name="TrobzDashboard.widget.display.graph">
+        <span>graph</span>
+    </t>
+    
+</template>
+

@@ -1,0 +1,50 @@
+/*
+ * widget.display
+ */
+
+#trobz_board .display {
+    width: 100%;    
+    overflow: auto;
+    min-height: 200px;
+}
+
+/*
+ * display.numeric
+ */
+
+#trobz_board .numeric dl { 
+    position: relative;
+}
+
+#trobz_board .numeric dt { 
+    font-size: 22px;
+    margin: 0 10px;
+    border-bottom-style: solid;
+    border-bottom-width: 3px;
+    clear: right;
+}
+
+#trobz_board .numeric dd { 
+    font-size: 26px;
+    font-weight: bolder;
+    float: right;    
+    margin: 0 10px;
+}
+
+
+#trobz_board .numeric         { color: #999; }
+#trobz_board .numeric .blue   { color: rgba(105, 126, 209, 0.7); }
+#trobz_board .numeric .yellow { color: rgba(235, 227,  21, 0.7); }
+#trobz_board .numeric .red    { color: rgba(218,  43,  43, 0.7); }
+#trobz_board .numeric .green  { color: rgba(59,  172,  54, 0.7); }
+#trobz_board .numeric .orange { color: rgba(248, 177,  25, 0.7); }
+#trobz_board .numeric .black  { color: rgba(19,  19,   19, 0.7); }
+
+#trobz_board .numeric            {  border-bottom-color: #999; }
+#trobz_board .numeric  dt.blue   {  border-bottom-color: rgba(105, 126, 209, 0.7); }
+#trobz_board .numeric  dt.yellow {  border-bottom-color: rgba(235, 227,  21, 0.7); }
+#trobz_board .numeric  dt.red    {  border-bottom-color: rgba(218,  43,  43, 0.7); }
+#trobz_board .numeric  dt.green  {  border-bottom-color: rgba(59,  172,  54, 0.7); }
+#trobz_board .numeric  dt.orange {  border-bottom-color: rgba(248, 177,  25, 0.7); }
+#trobz_board .numeric  dt.black  {  border-bottom-color: rgba(19,  19,   19, 0.7); }
+

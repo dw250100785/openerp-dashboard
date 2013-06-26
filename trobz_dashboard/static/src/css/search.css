@@ -1,0 +1,69 @@
+
+/*
+ * widget.search
+ */
+
+
+#trobz_board .search {
+    width: 100%;
+    overflow: auto;
+    background: #f3f3f3;
+    border-bottom: 2px solid #eee;
+    padding: 5px 0;
+}
+
+#trobz_board .search .search_part {
+    padding: 0 0 0 5px;
+}
+
+#trobz_board .search .search_action {
+    min-width: 100px;    
+}
+
+#trobz_board .search .current_domain,
+#trobz_board .search .search_action {
+    float: left;
+}
+
+
+/*
+ * widget.search.domain
+ */
+
+
+#trobz_board .domain .condition {
+    float: left;
+}
+
+
+#trobz_board .domain .field {
+    float: left;
+}
+#trobz_board .domain .button {
+    float: right;
+    margin: 0 5px;
+}
+
+#trobz_board .domain_criterion {
+    display: inline-block;
+}
+#trobz_board .domain .domain_value,
+#trobz_board .domain .domain_field {
+    font-weight: bolder;
+}
+
+#trobz_board .domain .domain_string {
+    font-style: italic;
+    color: #999;
+}
+
+#trobz_board .domain .remove {
+    cursor: pointer;
+    margin: 0 2px;
+    color: #999;
+}
+
+#trobz_board .domain .remove:hover {
+    color:  rgb(48, 132, 199);
+}
+

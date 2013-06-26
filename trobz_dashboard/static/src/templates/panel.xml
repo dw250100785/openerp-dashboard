@@ -1,0 +1,69 @@
+<template>
+
+<t t-name="TrobzDashboard.panel">
+    <div id="toolbar"></div>
+    <div id="widgets"></div>
+</t>
+
+
+
+<t t-name="TrobzDashboard.toolbar">
+    <div class="section period_type">
+        <span class="button rolling" data-type="rolling"><i class="icon-spinner"></i>Rolling</span>
+        <span class="button calendar" data-type="calendar"><i class="icon-calendar"></i>Calendar</span>
+    </div>
+    
+    <div class="section period_name">
+        <select>
+            <option value="custom">Custom</option>
+            <option value="day">Day</option>
+            <option value="week">Week</option>
+            <option value="month">Month</option>
+            <option value="quarter">Quarter</option>
+            <option value="semester">Semester</option>
+            <option value="year">Year</option>
+        </select>
+    </div>
+    
+    <div class="section period_selector">
+        <div class="period_dates">
+            <span class="daterange"><t t-esc="start + ' - ' + end" /></span>
+            <i class="icon-chevron-down"></i>
+        </div>
+    </div>
+
+    <div class="section board_action right">
+        <span class="button fullscreen"><i class="icon-resize-full"></i></span>
+    </div>
+    
+    <div class="section board_action right">
+        <span class="mode">
+            <t t-call="TrobzDashboard.toolbar.list" />
+        </span>
+    </div>    
+
+</t>
+
+<t t-name="TrobzDashboard.toolbar.sliding">
+    <select class="sliding_timeout">
+        <option value="30">30 sec.</option>
+        <option value="60">1 min.</option>
+        <option value="300">5 min.</option>
+        <option value="900">15 min.</option>
+    </select>
+    <span class="button list"><i class="icon-stop"></i></span>
+</t>
+
+<t t-name="TrobzDashboard.toolbar.list">
+    <span class="button sliding"><i class="icon-play"></i></span>
+</t>
+
+
+
+<t t-name="TrobzDashboard.widgets">
+    <h3>my widgets here</h3>
+</t>
+
+
+
+</template>

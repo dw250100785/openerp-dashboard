@@ -8,10 +8,8 @@
         </record>
         
         <record id="demo_dashboard_widget" model="dashboard.widget">
-            <field name="name">Count Employee</field>
+            <field name="name">Employee Figures</field>
             <field name="type">numeric</field>
-            <field name="options"></field>
-            <field name="board_id" ref="demo_dashboard_board" />
         </record>
         
         <record id="demo_dashboard_board_to_widget" model="dashboard.board_to_widget_rel">
@@ -22,12 +20,133 @@
             <field name="height">10</field>
         </record>
         
+        
+        <!-- metrics -->
+        
+        <record id="demo_dashboard_metric_1" model="dashboard.metric">
+            <field name="name">Count Employee</field>
+            <field name="type">number</field>
+       
+            <field name="query_name">count</field>
+            <field name="method">exec_metric</field>
+       
+            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
+            <field name="widget_id" ref="demo_dashboard_widget" />
+       
+            <field name="options" eval="{'format': '0.0','thresholders':{'&gt;=10': 'green', '&lt;10': 'red'}}" />
+            <field name="values" eval="{}"/>
+        </record>
+       
+        <record id="demo_dashboard_metric_2" model="dashboard.metric">
+            <field name="name">Custom Count Employee</field>
+            <field name="type">number</field>
+       
+            <field name="query_name">custom_count</field>
+            <field name="method">exec_metric</field>
+       
+            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
+            <field name="widget_id" ref="demo_dashboard_widget" />
+       
+            <field name="options" eval="{'format': '0.0','thresholders':{'&lt;2': 'red'}}" />
+            <field name="values" eval="{}"/>
+        </record>
+       
+       
+        <!-- field.types -->
+        
+        <record id="demo_dashboard_field_type_output" model="dashboard.field.type">
+            <field name="name">output</field>
+        </record>
+        <record id="demo_dashboard_field_type_period" model="dashboard.field.type">
+            <field name="name">period</field>
+        </record>
+        <record id="demo_dashboard_field_type_domain" model="dashboard.field.type">
+            <field name="name">domain</field>
+        </record>
+        <record id="demo_dashboard_field_type_order" model="dashboard.field.type">
+            <field name="name">order_by</field>
+        </record>
+        <record id="demo_dashboard_field_type_group" model="dashboard.field.type">
+            <field name="name">group_by</field>
+        </record>
+        
+        <!-- fields for metric 1 -->
+        
+        <record id="demo_dashboard_metric_1_field_name" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_metric_1" />
+            <field name="name">Name</field>
+            <field name="reference">name_related</field>
+            <field name="sql_name">name_related</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'domain')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'name_related')]" />
+            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
+        </record>
+        
+       <record id="demo_dashboard_metric_1_field_period" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_metric_1" />
+            <field name="name">Period</field>
+            <field name="reference">period</field>
+            <field name="sql_name">write_date</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), ('name', '=', 'period')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'write_date')]" />
+            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
+        </record>
+         
+       <record id="demo_dashboard_metric_1_field_count" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_metric_1" />
+            <field name="name">Count</field>
+            <field name="reference">count</field>
+            <field name="sql_name">count</field>
+            
+            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'output')]" />
+        </record>
+         
+      
+        <!-- fields for metric 2 -->
+        
+        <record id="demo_dashboard_metric_2_field_name" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_metric_2" />
+            <field name="name">Name</field>
+            <field name="reference">name_related</field>
+            <field name="sql_name">name_related</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'domain')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'name_related')]" />
+            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
+        </record>
+        
+       <record id="demo_dashboard_metric_2_field_period" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_metric_2" />
+            <field name="name">Period</field>
+            <field name="reference">period</field>
+            <field name="sql_name">write_date</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), ('name', '=', 'period')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'write_date')]" />
+            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
+        </record>
+         
+       <record id="demo_dashboard_metric_2_field_count" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_metric_2" />
+            <field name="name">Custom Count</field>
+            <field name="reference">count</field>
+            <field name="sql_name">count</field>
+            
+            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'output')]" />
+        </record>
+           
+        
+        <!-- menu entry -->
+        
         <record id="action_view_dashboard_demo_my" model="ir.actions.act_window">
             <field name="name">My Board</field>
             <field name="view_mode">dashboard</field>
             <field name="res_model">dashboard.board</field>
             <field name="res_id" ref="demo_dashboard_board" />
             <field name="target">inline</field>
+            
         </record>
         
         <menuitem action="action_view_dashboard_demo_my" id="menu_dashboard_my" sequence="1" parent="menu_dashboard_board" />

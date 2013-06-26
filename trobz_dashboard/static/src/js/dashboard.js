@@ -1,15 +1,32 @@
+var debug;
+
 openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, Backbone, base){
     
     var _t = instance.web._t,
-        _lt = instance.web._lt,
-        QWeb = instance.web.qweb;
+        _lt = instance.web._lt;
     
-    var Board = dashboard.views('Board');
     
+    
+    var //collections
+        WidgetsCollection = dashboard.collections('Widgets'),
+        
+        //models
+        State = dashboard.models('State'),
+        BoardPeriod = dashboard.models('BoardPeriod'),
+        Board = dashboard.models('Board'),
+        
+        //views
+        WidgetsView = dashboard.views('Widgets'),
+        ToolBar = dashboard.views('ToolBar'),
+        
+        //layout
+        PanelLayout = dashboard.views('PanelLayout');
+    
+   
     instance.web.views.add('dashboard', 'instance.trobz_dashboard.DashboardView');
     instance.trobz_dashboard.DashboardView = instance.web.View.extend({
         
-        display_name: _lt('dashboard'),
+        display_name: _lt('Dashboard'),
         template: "TrobzDashboard",
         view_type: 'form',
         
@@ -19,62 +36,130 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
         },
         
         init: function(parent, dataset, view_id, options) {
-    
+            
+            this.view_loaded = $.Deferred();
+            var board_id = dataset.ids[0] || null;
+   
+            if(!board_id){
+                throw new Error("Dashboard view can not be initialized with a 'res_id' configured in the action.");
+            }    
+   
+            
+            var models = {
+                state: new State(),
+                period: new BoardPeriod(),
+                board: new Board({
+                    id: board_id
+                })
+            };
+            
+            var collections = {
+                widgets: new WidgetsCollection([], {
+                    silent: true,
+                    board_id: board_id
+                })
+            };
+            
+            
+            var views = {
+                panel: new PanelLayout(),
+                
+                toolbar: new ToolBar({
+                    model: models.period
+                }),
+                     
+                widgets: new WidgetsView({
+                    collection: collections.widgets,
+                    period: models.period
+                })    
+            };
+            
+                //bind special event 
+            this.bind(models.state, views.toolbar);
+            
+            //the state is binded to all objects by default
+            models.state.link(models.period);
+            
+            //setup the state 
+            models.state.set($.bbq.getState());
+            
+   
+            var region = this.region = new Marionette.Region({
+                el: '#trobz_board'
+            });
+            
+            $.when(models.state.process(), this.view_loaded).done(function(){
+                models.state.bind();
+                
+                region.show(views.panel);
+                views.panel.toolbar.show(views.toolbar);
+                views.panel.widgets.show(views.widgets);
+            });
+            
             this._super(parent, dataset, view_id, options);
-    
-            var //views
-                board = new Board({
-                    ref: {
-                        display: QWeb
-                    }
-                });
-                    
-            this.views = { board: board };
-            this.collections = { };
-            this.models = { };
         },
         
+        bind: function(state, toolbar){
+            toolbar.on('fullscreen', this.fullscreen, this);
+            toolbar.on('mode', this.switchMode, this);
+            
+            //bind the state changes with the URL
+            state.on('change', this.stateChanged, this);
+        },
+        
+        
+        switchMode: function(type){
+            this.region.currentView.widgets.currentView.mode(type);
+        },
+        
+        fullscreen: function(enter){
+            if(enter){
+                this.enterFullscreen();
+            }
+            else {
+                this.exitFullscreen();
+            }
+        },
+        
+        enterFullscreen: function(){
+            var element = this.$el.get(0);
+
+            if (element.requestFullScreen) {
+                element.requestFullScreen();
+            } else if (element.mozRequestFullScreen) {
+                element.mozRequestFullScreen();
+            } else if (element.webkitRequestFullScreen) {
+                element.webkitRequestFullScreen();
+            }
+            
+            this.$el.addClass('fullscreen');
+        },
+        
+        exitFullscreen: function(){
+            if(document.cancelFullScreen) {
+                document.cancelFullScreen();
+            } else if(document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if(document.webkitCancelFullScreen) {
+                document.webkitCancelFullScreen();
+            }  
+  
+            this.$el.removeClass('fullscreen');
+        },
+        
+        stateChanged: function(state){
+            this.do_push_state(state.attributes);
+        },
         
         view_loading: function(data){
-            this.fields_view = data;
-            this.views.board.resetElement(this.$el);
-            this._super(data);
+            this.view_loaded.resolve();
+            return this._super(data);
         },
         
-        /**
-         * destroy all, rather twice than once...
-         */
         destroy: function() {
-            
-            _(this.views).each(function(view){
-                view.off();
-                view.destroy();
-            });
-            _(this.models).each(function(model){
-                model.off();
-            });
-            _(this.collections).each(function(collection){
-                collection.off();
-                collection.unbind();
-            });
-            _(this.collections).each(function(collection){
-                collection.reset();
-            });
-            
-            var name = null;
-            for(name in this.views){
-                this.views[name] = null;
-            }
-            for(name in this.collections){
-                this.collections[name] = null;
-            }
-            for(name in this.models){
-                this.models[name] = null;
-            }
-                
+            this.region.close();
             this._super();
         }
-        
     });     
 
 });
