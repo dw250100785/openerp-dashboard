@@ -19,7 +19,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         },
         
         onRender: function(){
-            this.collection.fetch();
+            this.collection.update();
         },
         
         mode: function(type){

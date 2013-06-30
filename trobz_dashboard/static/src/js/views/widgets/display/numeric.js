@@ -40,28 +40,27 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         },
         
         serializeData: function(){
-            var results = [];
+            var data = [];
             
             this.collection.each(function(metric){
-                var outputFields = metric.fields.filterByTypes('output'),
-                    result = metric.get('result'), 
-                    name, value;
+                var results = metric.results, 
+                    name, value, options = metric.get('options');
                 
-                if(result && result.length > 0){
-                    for(name in result[0]){
-                        value = result[0][name];
-                        
-                        results.push({
-                            label: this.getField(name, outputFields).get('name'),
-                            value: this.getValue(value, metric.get('options')),
-                            className: this.getClassName(value, metric.get('options'))
+                if(results && results.length > 0){
+                    var result = results.at(0);
+                    for(name in result.attributes){
+                        value = result.get(name);
+                        data.push({
+                            label: results.getColumn(name).get('name'),
+                            value: this.getValue(value, options),
+                            className: this.getClassName(value, options)
                         });    
-                    }    
+                    }
                 }
             }, this);
             
             return {
-              "results": results
+              "results": data
             };
         }
     });

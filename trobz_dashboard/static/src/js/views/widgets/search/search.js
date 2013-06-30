@@ -23,22 +23,30 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         onRender: function(){
             
-            var domain = new Domain({
-                collection: this.collection.filterByTypes('domain'),
-                search: this.search
-            });
-            this.domain.show(domain);
+            var fields = {
+                domain: this.collection.filterByTypes('domain'),
+                group: this.collection.filterByTypes('group_by'),
+                order: this.collection.filterByTypes('order_by'),
+            };
             
-            if(this.type != 'numeric'){
+            if(fields.domain.length > 0){
+                var domain = new Domain({
+                    collection: fields.domain,
+                    search: this.search
+                });
+                this.domain.show(domain);
+            }
+            
+            if(this.type != 'numeric' && fields.group.length > 0){
                 var group = new Group({
-                    collection: this.collection.filterByTypes('group'),
+                    collection: fields.group,
                     search: this.search
                 });
                 this.group.show(group);
             }
-            if(this.type == 'graph'){
+            if(this.type == 'graph' && fields.order.length > 0){
                 var order = new Order({
-                    collection: this.collection.filterByTypes('order'),
+                    collection: fields.order,
                     search: this.search
                 });
                 this.order.show(order);

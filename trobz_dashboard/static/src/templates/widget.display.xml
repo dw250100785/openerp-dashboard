@@ -1,5 +1,7 @@
 <template>
     
+    <!-- NUMBER -->
+    
     <t t-name="TrobzDashboard.widget.display.numeric">
         <dl>
         <t t-foreach="results" t-as="result">
@@ -9,9 +11,38 @@
         </dl>
     </t>
     
+    <!-- LIST -->
+    
     <t t-name="TrobzDashboard.widget.display.list">
-        <span>list</span>
+        <table class="oe_list_content">
+            <thead>
+                <t t-call="TrobzDashboard.widget.display.list.head">
+                    <t t-set="columns" t-value="columns"/>
+                </t>
+            </thead>
+            <tfoot>
+            </tfoot>
+            <tbody>
+            </tbody>
+        </table>
     </t>
+    
+    <t t-name="TrobzDashboard.widget.display.list.head">
+        <tr class="oe_list_header_columns">
+            <t t-foreach="columns" t-as="column">
+            <th t-att-data-id="column" class="oe_list_header_char oe_sortable"><div><t t-esc="column_value.get('name')"/></div></th>
+            </t>
+        </tr>
+    </t>
+    
+    <t t-name="TrobzDashboard.widget.display.list.body">
+        <t t-foreach="row" t-as="item">
+        <td class="oe_list_field_cell oe_list_field_char oe_required" t-att-data-field="item"><t t-esc="item_value" /></td>
+        </t>
+    </t>
+    
+    <!-- GRAPH -->
+    
     
     <t t-name="TrobzDashboard.widget.display.graph">
         <span>graph</span>

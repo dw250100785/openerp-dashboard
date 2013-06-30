@@ -18,6 +18,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             this.field = options.field || function(field){ return field; };
             this.string = options.string || function(val){ return val; };
             this.value = options.value || function(val){ return val; };
+            this.widget = options.widget || null;
         },
         
     });

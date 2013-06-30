@@ -1,5 +1,8 @@
 openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
     
+    var PagerResults = dashboard.collections('PagerResults'),
+        Results = dashboard.collections('Results');
+    
     var Fields = dashboard.collections('Fields');
             
     var BaseModel = base.models('BaseModel'),
@@ -14,50 +17,47 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             this.fields = new Fields([], {
                field_ids: this.get('field_ids') 
             });    
+            
+            var Collection = this.getResultCollection();
+            this.results = new Collection([], _.extend(this.get('options'), {
+                model_name: this.get('model_details').model,
+                method: this.get('method'),
+                query: this.get('query_name'),
+                fields: this.fields
+            }));
         },
         
-        // convert field reference to metric.fields.sql_name or the real field name in ORM mode
-        metricDomain: function(domain){
-            var result = [];
-            _(domain).each(function(criterion){
-                var criter = criterion.slice(0);
-                if(criter.length == 3){
-                    var field = this.fields.oneByRef(criter[0]);
-                    
-                    if(!field){
-                        throw new Error('field with reference "' + criter[0] + '" does not exist on metric "' + this.get('name') + '"');
-                    }
-                    
-                    if(field.get('sql_name') != ''){
-                        criter[0] = field.get('sql_name');    
-                    }
-                    else if(field.get('field_description').name){
-                        criter[0] = field.get('field_description').name;    
-                    }
-                    else {
-                        throw new Error('can not create a domain for metric: ' + this.get('name'))
-                    }
+        getResultCollection: function(){
+            return this.get('type') == 'list' ? PagerResults : Results; 
+        },
+        
+        execute: function(ids, domain, group_by, order_by){
+            //fields have to be loaded before the metric execution...
+            var def = $.Deferred();
+            this.fields.ready(function(){
+                
+                var rdef, options = {
+                    domain: domain,
+                    group_by: group_by,
+                    order_by: order_by
+                };
+                
+                //pager has to be re initialized first
+                if(this.results instanceof PagerResults){
+                    rdef = this.results.load(options);    
                 }
-                result.push(criter);
+                else {
+                    rdef = this.results.update(options);
+                }
+                
+                rdef.done(function(){
+                    def.resolve();
+                });
             }, this);
             
-            return result;
-        },
-        
-        execute: function(ids, domain, group_by, order_by, limit, offset){
-            
-            group_by = group_by || [];
-            order_by = order_by || [];
-            limit = limit || 'ALL';
-            offset = offset || 0;
-            
-            var metric_domain = this.metricDomain(domain.slice(0));
-            
-            return this.sync('call', { model_name: this.get('model_details').model }, {
-                method: this.get('method'),
-                args: [ids, this.get('query_name'), metric_domain, group_by, order_by, limit, offset]
-            });        
+            return def.promise();
         }
+    
     });
 
     dashboard.models('Metric', Metric);

@@ -5,12 +5,16 @@
 #trobz_board .display {
     width: 100%;    
     overflow: auto;
-    min-height: 200px;
+    border-top: 2px solid #cacaca;
 }
 
 /*
  * display.numeric
  */
+
+#trobz_board .numeric {
+    margin-bottom: 50px;
+}
 
 #trobz_board .numeric dl { 
     position: relative;
@@ -48,3 +52,16 @@
 #trobz_board .numeric  dt.orange {  border-bottom-color: rgba(248, 177,  25, 0.7); }
 #trobz_board .numeric  dt.black  {  border-bottom-color: rgba(19,  19,   19, 0.7); }
 
+/*
+ * display list
+ */
+
+#trobz_board .list tbody {
+    border-bottom: 2px solid #cacaca;
+}
+
+#trobz_board .widget .pager {
+    position: absolute;
+    right: 45px;
+    top: 5px;
+}

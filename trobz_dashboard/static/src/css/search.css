@@ -8,62 +8,68 @@
     width: 100%;
     overflow: auto;
     background: #f3f3f3;
-    border-bottom: 2px solid #eee;
-    padding: 5px 0;
+    
+    border-top: 2px solid #cacaca;
 }
 
 #trobz_board .search .search_part {
-    padding: 0 0 0 5px;
+    padding: 4px 5px;
+    min-height: 28px;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+#trobz_board .search .search_part:last_child {
+    border-bottom: none;
 }
 
 #trobz_board .search .search_action {
     min-width: 100px;    
 }
 
-#trobz_board .search .current_domain,
 #trobz_board .search .search_action {
     float: left;
 }
 
 
-/*
- * widget.search.domain
- */
-
-
-#trobz_board .domain .condition {
+#trobz_board .search .condition {
     float: left;
 }
 
 
-#trobz_board .domain .field {
+#trobz_board .search .field {
     float: left;
 }
-#trobz_board .domain .button {
+#trobz_board .search .button {
     float: right;
     margin: 0 5px;
 }
 
-#trobz_board .domain_criterion {
+#trobz_board .search .criterion {
     display: inline-block;
 }
-#trobz_board .domain .domain_value,
-#trobz_board .domain .domain_field {
+#trobz_board .search .search_value,
+#trobz_board .search .search_field {
     font-weight: bolder;
 }
 
-#trobz_board .domain .domain_string {
+#trobz_board .search .search_string {
     font-style: italic;
     color: #999;
 }
 
-#trobz_board .domain .remove {
+#trobz_board .condition .search_string {
+    margin: 0 10px;
+    line-height: 28px;
+}
+
+#trobz_board .search .remove {
     cursor: pointer;
     margin: 0 2px;
     color: #999;
 }
 
-#trobz_board .domain .remove:hover {
+#trobz_board .search .remove:hover {
     color:  rgb(48, 132, 199);
 }
 

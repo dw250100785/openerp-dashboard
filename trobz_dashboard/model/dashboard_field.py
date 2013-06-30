@@ -38,10 +38,10 @@ class dashboard_field(osv.osv):
     _columns = {
         'metric_id': fields.many2one('dashboard.metric','Metric', ondelete='cascade', required=True),
         'name': fields.char('Name', required=True),
+        'sequence': fields.integer('Sequence', help="field order, useful for list widgets"),
         'reference': fields.char('Reference', help="used to recognize fields with the same type of data", required=True),
         'sql_name': fields.char('SQL Name', help="name use in a SQL query, depend on the metric method. If the domain has to be used by the ORM, keep this field empty"),
         'field_name': fields.many2one('ir.model.fields','Field Name', help="field name in the model"),
-        'model': fields.many2one('ir.model','Field Model', help='OpenERP model of the field.'),
         'type_ids': fields.many2many('dashboard.field.type',id1='metric_field_id',id2='metric_field_type_id', string='Types', help='Defined the propose of the field: output, filter, group_by, order_by'),
         
         # used to access type names in JSON-RPC without an other query 

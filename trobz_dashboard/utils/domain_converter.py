@@ -363,7 +363,7 @@ class expression(object):
             params = []
 
         elif operator == 'inselect':
-            query = '"%s" in (%s)' % (left, right[0])
+            query = '%s in (%s)' % (left, right[0])
             params = right[1]
 
         elif operator in ['in', 'not in']:
@@ -375,7 +375,7 @@ class expression(object):
                     r = 'NOT NULL' if right else 'NULL'
                 else:
                     r = 'NULL' if right else 'NOT NULL'
-                query = '("%s" IS %s)' % (left, r)
+                query = '(%s IS %s)' % (left, r)
                 params = []
             elif isinstance(right, (list, tuple)):
                 params = list(right)
@@ -387,17 +387,17 @@ class expression(object):
 
                 if params:
                     instr = ','.join(['%s'] * len(params))
-                    query = '("%s" %s (%s))' % (left, operator, instr)
+                    query = '(%s %s (%s))' % (left, operator, instr)
                 else:
                     # The case for (left, 'in', []) or (left, 'not in', []).
                     query = 'FALSE' if operator == 'in' else 'TRUE'
 
                 if check_nulls and operator == 'in':
-                    query = '(%s OR "%s" IS NULL)' % (query, left)
+                    query = '(%s OR %s IS NULL)' % (query, left)
                 elif not check_nulls and operator == 'not in':
-                    query = '(%s OR "%s" IS NULL)' % (query, left)
+                    query = '(%s OR %s IS NULL)' % (query, left)
                 elif check_nulls and operator == 'not in':
-                    query = '(%s AND "%s" IS NOT NULL)' % (query, left)  # needed only for TRUE.
+                    query = '(%s AND %s IS NOT NULL)' % (query, left)  # needed only for TRUE.
             else:  # Must not happen
                 raise ValueError("Invalid domain term %r" % (leaf,))
 
@@ -406,7 +406,7 @@ class expression(object):
             need_wildcard = operator in ('like', 'ilike', 'not like', 'not ilike')
             sql_operator = {'=like': 'like', '=ilike': 'ilike'}.get(operator, operator)
 
-            query = '("%s" %s %s)' % (left, sql_operator, format)
+            query = '(%s %s %s)' % (left, sql_operator, format)
         
         
             add_null = False
@@ -424,7 +424,7 @@ class expression(object):
                 params = right
                 
             if add_null:
-                query = '(%s OR "%s" IS NULL)' % (query, left)
+                query = '(%s OR %s IS NULL)' % (query, left)
 
 
         if isinstance(params, basestring):

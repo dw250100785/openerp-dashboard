@@ -35,7 +35,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
          */
         
         addDomain: function(field, operator, value){
-            if(this.getCriterion(field, operator, value) == null && value){
+            if(this.getCriterion(field, operator, value) == null && (value || _(['true', 'false']).contains(operator))){
                 var domain = this.get('domain').slice(0);    
                 domain.push({
                     field: field, 
@@ -108,45 +108,85 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
          * Order manipulation
          */
         
-        addOrder: function(field, order){
-            this.get('order').push([field, order]);
+        addOrder: function(field, type){
+            if(order != 'ASC' || order != 'DESC'){
+                throw new Error('order type has to be ASC or DESC');
+            }
+        
+            var order = this.get('order').slice(0);
+            if(this.getGroupIndex(field, type) == null){
+                order.push([field, type]);
+                this.set('order', order);    
+            }
         },
         
-        removeOrder: function(field, order){
-            var order = this.get('order'),
-                index = this.getOrderIndex(field, order);
+        removeOrder: function(field, type){
+            var order = this.get('order').slice(0),
+                index = this.getOrderIndex(field, type);
             
-            order.splice(index, 1);
-            
-            this.set('order', order);
-            
+            if(index != null){
+                order.splice(index, 1);
+                this.set('order', order);
+            }
         },
         
-        getOrderIndex: function(){
-            var order = this.get('order');
+        getOrderIndex: function(field, type){
+            var index = null;
+            _(this.get('order')).each(function(val, i){
+                if(val.length == 2 && val[0].get('reference') == field.get('reference') && val[1] == type){
+                    index = i;
+                } 
+            });
+            return index;
         },
         
         order: function(){
-            return this.get('order');
+            var order = [];
+            _(this.get('order')).each(function(val){
+                order.push(val[0].get('sql_name') + ' ' + val[1]);
+            });
+            return order;
         },
         
         /*
          * Group manipulation
          */
         
-        addGroup: function(){
-            
+        addGroup: function(field){
+            var group = this.get('group').slice(0);  
+            if(this.getGroupIndex(field) == null){
+                group.push(field);
+                this.set('group', group);    
+            }
         },
         
-        removeGroup: function(){
+        removeGroup: function(field){
+            var group = this.get('group').slice(0),
+                index = this.getGroupIndex(field);
             
+            if(index != null){
+                group.splice(index, 1);
+                this.set('group', group);
+            }
+        },
+        
+        getGroupIndex: function(field){
+            var index = null;
+            _(this.get('group')).each(function(gfield, gindex){
+                if(field && field.get('reference') == gfield.get('reference')){
+                    index = gindex;
+                } 
+            });
+            return index;
         },
         
         group: function(){
-            return this.get('group');
-        },
-        
-        
+            var group = [];
+            _(this.get('group')).each(function(field){
+                group.push(field.get('sql_name'));
+            });
+            return group;
+        }
     });
 
     dashboard.models('Search', Search);

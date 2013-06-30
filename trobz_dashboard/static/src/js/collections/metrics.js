@@ -8,6 +8,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
     
     var Metrics = BaseCollection.extend({
         model_name: 'dashboard.metric',
+        
         model: Metric,
         
         initialize: function(data, options){
@@ -25,9 +26,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 self = this;
             
             this.each(function(metric){
-                var def = metric.execute(ids, domain, order, group).done(function(result){
-                    metric.set('result', result);
-                });
+                var def = metric.execute(ids, domain, order, group);
                 defs.push(def);
             });
             

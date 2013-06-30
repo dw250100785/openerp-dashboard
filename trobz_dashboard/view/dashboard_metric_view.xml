@@ -30,19 +30,19 @@
                                         <field name="type_ids" widget="many2many_tags" placeholder="Types..." />
                                     </group>
                                     <group>
+                                        <field name="sequence" />
                                         <field name="reference" />
                                         <field name="sql_name" />
                                         <field name="field_name" />
-                                        <field name="model" />
                                     </group>
                                 </form>
                                  <tree string="Fields">
                                     <field name="name" />
+                                    <field name="sequence" />
                                     <field name="type_ids" />
                                     <field name="reference" />
                                     <field name="sql_name" />
                                     <field name="field_name" />
-                                    <field name="model" />
                                 </tree>         
                             </field>
                         </page>

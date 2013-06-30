@@ -12,43 +12,57 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         },
     
         initialize: function(){
+            var _t = dashboard.web()._t;
+    
             this.add([
                  // general
-                new Operator('not', this.t('not'), '!'),
-                new Operator('|', this.t('or'), '|'),
-                new Operator('&', this.t('and'), '&'),
+                new Operator('not', _t('not'), '!'),
+                new Operator('|', _t('or'), '|'),
+                new Operator('&', _t('and'), '&'),
                 new Operator('(', '('),
                 new Operator(')', ')'),
         
+                // boolean
+                new Operator('true', _t('is true'), '=', {
+                    value: function(){ return true; }
+                }),
+                new Operator('false', _t('is false'), '=', {
+                    value: function(){ return false; }
+                }),
+               
                 // numeric
-                new Operator('e', this.t('is equal to'), '=' ),
-                new Operator('ne', this.t('is not equal to'), '!=' ),
-                new Operator('gt', this.t('is higher than'), '>' ),
-                new Operator('gte', this.t('is higher or equal to'), '>=' ),
-                new Operator('lt', this.t('is lower than'), '<' ),
-                new Operator('lte', this.t('is lower or equal to'), '<=' ),
+                new Operator('e', _t('is equal to'), '=' ),
+                new Operator('ne', _t('is not equal to'), '!=' ),
+                new Operator('gt', _t('is higher than'), '>' ),
+                new Operator('gte', _t('is higher or equal to'), '>=' ),
+                new Operator('lt', _t('is lower than'), '<' ),
+                new Operator('lte', _t('is lower or equal to'), '<=' ),
                 
                 // string
-                new Operator('contains', this.t('contains'), 'like'),
-                new Operator('n_contains', this.t('doesn\'t contains'), 'like', { 
+                new Operator('contains', _t('contains'), 'like'),
+                new Operator('n_contains', _t('doesn\'t contains'), 'like', { 
                     not: true 
                 }),
                 
                 // date
-                new Operator('day', this.t('of day'), '=', {
+                new Operator('day', _t('of day'), '=', {
                     string: function(val){ return moment().lang()._weekdays[val] },
-                    field: function(field){ return 'extract("dow" from ' + field + ')'; } 
+                    field: function(field){ return 'extract("dow" from ' + field + ')'; },
+                    widget: 'day' 
                 }),
-                new Operator('month', this.t('of month'), '=', {
-                    string: function(val){ return moment().lang()._months[val] },
-                    field: function(field){ return 'extract("month" from ' + field + ')'; } 
+                new Operator('month', _t('of month'), '=', {
+                    string: function(val){ return moment().lang()._months[val - 1] },
+                    field: function(field){ return 'extract("month" from ' + field + ')'; },
+                    widget: 'month' 
                 }),
-                new Operator('year', this.t('of year'), '=', {
-                    field: function(field){ return 'extract("year" from ' + field + ')'; } 
+                new Operator('year', _t('of year'), '=', {
+                    field: function(field){ return 'extract("year" from ' + field + ')'; },
+                    widget: 'year' 
                 }),
-                new Operator('quarter', this.t('of quarter'), '=', {
+                new Operator('quarter', _t('of quarter'), '=', {
                     string: function(val){ return numeral(val).format('0o'); },
-                    field: function(field){ return 'extract("quarter" from ' + field + ')'; } 
+                    field: function(field){ return 'extract("quarter" from ' + field + ')'; },
+                    widget: 'quarter'
                 })
             ]);                 
             

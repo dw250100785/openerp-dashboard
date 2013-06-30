@@ -1,5 +1,7 @@
 openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
+    var Pager = base.views('Pager');
+    
     var SearchModel = dashboard.models('Search');
 
     var SearchView = dashboard.views('WidgetSearch'),
@@ -10,6 +12,9 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         _super = Layout.prototype;
 
     var Widget = Layout.extend({
+        
+        className: 'widget',
+        
         template: 'TrobzDashboard.widget',
         
         events: {
@@ -19,12 +24,17 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         regions: {
             search: '.search',
             display: '.display',
-            status: '.status'
+            status: '.status',
+            pager: '.pager'
         },
         
         initialize: function(options){
             
+            this.hide();
+            
             this.model.ready(function(){
+                
+                this.resize();
                 
                 this.models = {
                     period: options.period,
@@ -49,15 +59,20 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                     
                     })
                 };
+            
                 
                 this.listenTo(this.models.period, 'change', this.changePeriod); 
                 this.listenTo(this.models.search, 'change', this.doSearch); 
             }, this);
         },
         
+        resize: function(){
+            this.$el.addClass('size' + this.model.get('width'));
+        },
+        
         doSearch: function(){
             var search = this.models.search;
-            this.model.metrics.execute([], search.domain(), search.order(), search.group());
+            this.model.metrics.execute([], search.domain(), search.group(), search.order());
         },
         
         changePeriod: function(){
@@ -72,8 +87,36 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 this.status.show(this.views.status);
                 this.search.show(this.views.search);
                 this.display.show(this.views.display);
+                
+                //add an region for the pagination
+                if(this.model.get('type') == 'list'){
+                    this.addPager();
+                }
+                
+                this.changePeriod();
                 this.doSearch();
+                
+                this.show();
+                
             }, this);
+        },
+        
+        addPager: function(){
+             if(this.model.metrics.length > 0){
+                var results = this.model.metrics.at(0).results;
+                var pager = new Pager({
+                    collection: results
+                });
+                this.pager.show(pager);
+            }
+        },
+        
+        hide: function(){
+            this.$el.hide();
+        },
+        
+        show: function(){
+            this.$el.show();
         },
         
         /*

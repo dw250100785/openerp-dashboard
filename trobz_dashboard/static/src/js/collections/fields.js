@@ -5,8 +5,11 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         _super = BaseCollection.prototype;
     
     var Fields = BaseCollection.extend({
+        
         model_name: 'dashboard.field',
         model: Field,
+        
+        comparator: 'sequence',
         
         initialize: function(data, options){
             this.field_ids = options ? options.field_ids : null;

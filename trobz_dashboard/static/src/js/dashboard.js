@@ -5,8 +5,6 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
     var _t = instance.web._t,
         _lt = instance.web._lt;
     
-    
-    
     var //collections
         WidgetsCollection = dashboard.collections('Widgets'),
         
@@ -35,12 +33,16 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
             'search_view': false,
         },
         
-        init: function(parent, dataset, view_id, options) {
-            
-            this.view_loaded = $.Deferred();
-            var board_id = dataset.ids[0] || null;
    
-            if(!board_id){
+        init: function(parent, dataset, view_id, options) {
+            this.view_loaded = $.Deferred();
+            this.board_id = dataset.ids[0] || null;
+            this._super(parent, dataset, view_id, options);
+        },
+   
+        start: function(){
+   
+            if(!this.board_id){
                 throw new Error("Dashboard view can not be initialized with a 'res_id' configured in the action.");
             }    
    
@@ -49,17 +51,16 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                 state: new State(),
                 period: new BoardPeriod(),
                 board: new Board({
-                    id: board_id
+                    id: this.board_id
                 })
             };
             
             var collections = {
                 widgets: new WidgetsCollection([], {
                     silent: true,
-                    board_id: board_id
+                    board_id: this.board_id
                 })
             };
-            
             
             var views = {
                 panel: new PanelLayout(),
@@ -73,6 +74,8 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                     period: models.period
                 })    
             };
+            
+            debug = collections;
             
                 //bind special event 
             this.bind(models.state, views.toolbar);
@@ -96,9 +99,9 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                 views.panel.widgets.show(views.widgets);
             });
             
-            this._super(parent, dataset, view_id, options);
+            return this._super();
         },
-        
+             
         bind: function(state, toolbar){
             toolbar.on('fullscreen', this.fullscreen, this);
             toolbar.on('mode', this.switchMode, this);

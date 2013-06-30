@@ -37,8 +37,17 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 throw new Error('metic type ' + this.type + ' is not yet supported.');
             }
             
+            var collection;
+            // list only have 1 metric, use results has data source
+            if(this.type == 'list' && this.collection.length > 0){
+                collection = this.collection.at(0).results;
+            }
+            else{
+                collection = this.collection;
+            }
+            
             var view = new this.views[this.type]({
-                collection: this.collection,
+                collection: collection,
             });
             
             this.el = view.el;
