@@ -3,6 +3,9 @@
 
 from osv import osv, fields
 
+import logging
+logger = logging.getLogger("zazabe")
+
 class dashboard_field(osv.osv):
 
     _name = "dashboard.field"
@@ -25,11 +28,12 @@ class dashboard_field(osv.osv):
         
         for field in self.browse(cr, uid, ids, context=context):
             try:
-                model = self.pool.get(field.model.model)
+                model = self.pool.get(field.field_name.model)
                 description = model.fields_get(cr, uid, [field.field_name.name], context=context)
                 description[field.field_name.name]['name'] = field.field_name.name
                 result[field.id] = description[field.field_name.name]
             except: 
+                logger.info("NOT FOUND")
                 result[field.id] = 'not found'
             
         return result
