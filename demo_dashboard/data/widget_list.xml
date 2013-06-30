@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    
+        <!-- widget -->
+        
+        <record id="demo_dashboard_list_widget" model="dashboard.widget">
+            <field name="name">Employee List</field>
+            <field name="type">list</field>
+        </record>
+        
+        <record id="demo_dashboard_list_board_to_widget_number" model="dashboard.board_to_widget_rel">
+            <field name="board_id" ref="demo_dashboard_board" />
+            <field name="widget_id" ref="demo_dashboard_list_widget" />
+            <field name="sequence">1</field>
+            <field name="width">8</field>
+            <field name="height">10</field>
+        </record>
+    
+        <!-- metric -->
+        
+        <record id="demo_dashboard_list_metric_1" model="dashboard.metric">
+            <field name="name">List Employee</field>
+            <field name="type">list</field>
+       
+            <field name="query_name">list</field>
+            <field name="method">exec_metric</field>
+       
+            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
+            <field name="widget_id" ref="demo_dashboard_list_widget" />
+       
+            <field name="options" eval="{}" />
+            <field name="values" eval="{}"/>
+        </record>
+    
+        <!-- fields for metric 1-->
+        
+        <record id="demo_dashboard_list_metric_1_field_name" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_list_metric_1" />
+            <field name="name">Name</field>
+            <field name="reference">name_related</field>
+            <field name="sequence" eval="1" />
+            <field name="sql_name">he.name_related</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), '|', ('name', '=', 'output'),  '|', ('name', '=', 'order_by'), ('name', '=', 'group_by')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'name_related')]" />
+            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
+        </record>
+        
+       
+        <record id="demo_dashboard_list_metric_1_field_country_id" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_list_metric_1" />
+            <field name="name">Country</field>
+            <field name="reference">country</field>
+            <field name="sequence" eval="2" />
+            <field name="sql_name">rc.name</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="[ ('name', '=', 'output') ]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'res.country'), ('name', '=', 'name')]" />
+        </record>
+        
+        <record id="demo_dashboard_list_metric_1_field_work_email" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_list_metric_1" />
+            <field name="name">Work email</field>
+            <field name="reference">work_email</field>
+            <field name="sequence" eval="4" />
+            <field name="sql_name">he.work_email</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), '|', ('name', '=', 'output'), ('name', '=', 'order_by')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'work_email')]" />
+        </record>
+       
+        <record id="demo_dashboard_list_metric_1_field_birthday" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_list_metric_1" />
+            <field name="name">Birthday</field>
+            <field name="reference">birthday</field>
+            <field name="sequence" eval="3" />
+            <field name="sql_name">he.birthday</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), '|', ('name', '=', 'output'), ('name', '=', 'order_by')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'birthday')]" />
+        </record>
+         
+        <record id="demo_dashboard_list_metric_1_field_manager" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_list_metric_1" />
+            <field name="name">Manager</field>
+            <field name="reference">manager</field>
+            <field name="sequence" eval="5" />
+            <field name="sql_name">he.manager</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), '|', ('name', '=', 'output'), ('name', '=', 'order_by')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'manager')]" />
+        </record>
+        
+         
+       <record id="demo_dashboard_list_metric_1_field_period" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_list_metric_1" />
+            <field name="name">Modified At</field>
+            <field name="reference">period</field>
+            <field name="sequence">6</field>
+            <field name="sql_name">he.write_date</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'period')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'write_date')]" />
+        </record>
+         
+       
+    </data>
+</openerp>

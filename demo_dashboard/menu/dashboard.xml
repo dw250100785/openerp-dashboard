@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="action_view_dashboard_demo_my" model="ir.actions.act_window">
+            <field name="name">My Board</field>
+            <field name="view_mode">dashboard</field>
+            <field name="res_model">dashboard.board</field>
+            <field name="res_id" ref="demo_dashboard_board" />
+            <field name="target">inline</field>
+        </record>
+        
+        <menuitem action="action_view_dashboard_demo_my" id="menu_dashboard_my" sequence="1" parent="trobz_dashboard.menu_dashboard_board" />
+        
+    </data>
+</openerp>
