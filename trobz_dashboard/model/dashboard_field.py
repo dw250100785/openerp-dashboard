@@ -3,9 +3,6 @@
 
 from osv import osv, fields
 
-import logging
-logger = logging.getLogger("zazabe")
-
 class dashboard_field(osv.osv):
 
     _name = "dashboard.field"
@@ -33,7 +30,6 @@ class dashboard_field(osv.osv):
                 description[field.field_name.name]['name'] = field.field_name.name
                 result[field.id] = description[field.field_name.name]
             except: 
-                logger.info("NOT FOUND")
                 result[field.id] = 'not found'
             
         return result

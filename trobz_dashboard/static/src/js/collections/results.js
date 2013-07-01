@@ -13,7 +13,6 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
              this.method = options.method;
              this.query = options.query;
              this.fields = options.fields;
-             this.columns = [];
         },
         
         update: function(options){
@@ -26,7 +25,6 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             
             // get column info
             var output_fields = this.fields.filterByTypes('output'), 
-                columns = {}, 
                 sorted = [];
             
             _(results).each(function(result, index){
@@ -35,28 +33,16 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 output_fields.each(function(field){
                     var sql_name = field.get('sql_name');
                     if(sql_name in result){
-                        // get fields for columns
-                        if(index == 0){
-                            columns[sql_name] = field;
-                        }
                         item[sql_name] = result[sql_name];
                     }
                 });
                 
                 sorted.push(item);
             });    
-            
-            this.columns = columns;
                 
             return sorted;
         },
         
-        getColumn: function(name){
-            if(!this.columns[name]){
-                throw new Error('name: ' + name + ' does not exist in result keys');
-            }
-            return this.columns[name];
-        },
         
         // convert field reference to metric.fields.sql_name or the real field name in ORM mode
         relativeDomain: function(domain){
@@ -117,7 +103,8 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 limit: 'ALL',
                 offset: 0,
                 success: function(){},
-                error: function(){}
+                error: function(){},
+                reset: true
             });
         
             var relative_domain = this.relativeDomain(options.domain.slice(0));

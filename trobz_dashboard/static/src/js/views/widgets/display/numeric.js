@@ -1,67 +1,73 @@
 openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
-    var Renderer = Marionette.Renderer,
-        View = Marionette.ItemView,
-        _super = View.prototype;
+    var Renderer = Marionette.Renderer;
+    
+    var ItemView = Marionette.ItemView,
+        _superItem = ItemView.prototype;
 
-    var DisplayNumeric = View.extend({
+    var Numeric = ItemView.extend({
     
         className: 'numeric', 
-    
-        template: 'TrobzDashboard.widget.display.numeric',
+        template: 'TrobzDashboard.widget.display.numeric.item',
 
-        getField: function(sql_name, fields){
-            var field = fields.oneBySQLName(sql_name);
-            if(!field){
-                throw new Error('output field with sql_name: ' + sql_name + ' can not be found.');
-            }
-            return field;
-        },
-        
-        getValue: function(value, options){
-            options = options || {};
-            return numeral(parseInt(value)).format(options.format || '0');
-        },
-        
-        getClassName: function(value, options){
-            options = options || {};
-            value = parseInt(value);
-            var classname = null, condition;
+        initialize: function(options){
+            this.options = $.extend({
+                format: '0',
+                thresholders: {}
+            }, options);
             
-            if(options.thresholders){
+            this.fields = options.fields;
+        },
+        
+        serializeData: function(){
+            
+            var process_value = function(value, options){
+                return numeral(parseInt(value)).format(options.format);
+            };
+            
+            var process_thresholders = function(value, options){
+                value = parseInt(value);
+                var classname = null, condition;
                 for(condition in options.thresholders){
                     if(eval(value + condition)){
                         classname = options.thresholders[condition];
                     }
                 }
+                return classname;
+            };
+                
+            //only one result for number type
+            var name, field, data = []; 
+        
+            for(name in this.model.attributes){
+                field = this.fields.filterByTypes('output').oneBySQLName(name);
+                value = this.model.get(name);
+                data = {
+                    label: field.get('name'),
+                    value: process_value(value, this.options),
+                    className: process_thresholders(value, this.options)
+                };    
             }
             
-            return classname;
+            return  data;
+        }
+    });
+    
+    
+    var DisplayNumeric = Backbone.Marionette.CompositeView.extend({
+
+        itemView : Numeric,
+        itemViewContainer : "dl",
+        template : "TrobzDashboard.widget.display.numeric",
+
+        initialize: function(options){
+            this.collection = this.model.results;
         },
-        
-        serializeData: function(){
-            var data = [];
-            
-            this.collection.each(function(metric){
-                var results = metric.results, 
-                    name, value, options = metric.get('options');
-                
-                if(results && results.length > 0){
-                    var result = results.at(0);
-                    for(name in result.attributes){
-                        value = result.get(name);
-                        data.push({
-                            label: results.getColumn(name).get('name'),
-                            value: this.getValue(value, options),
-                            className: this.getClassName(value, options)
-                        });    
-                    }
-                }
-            }, this);
-            
-            return {
-              "results": data
-            };
+
+        itemViewOptions: function(result){
+            return _.extend({
+                fields: this.model.fields
+            }, this.model.get('options'));
         }
     });
 

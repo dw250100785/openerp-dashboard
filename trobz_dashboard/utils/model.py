@@ -33,12 +33,7 @@ class metrics():
         e = expression(domain)
         domain_query, domain_params = e.to_sql()
         
-        
-        _logger.info("query before: %s", query)
-        
-        query = query.format(** {'generated': domain_query })
-        
-        _logger.info("query after: %s", query)
+        query = query.format(** {'generated': domain_query, 'group': ','.join(group_by) })
         
         query = '%s GROUP BY %s' % (query, ','.join(group_by)) if len(group_by) > 0 else query
         query = '%s ORDER BY %s' % (query, ','.join(order_by)) if len(order_by) > 0 else query
@@ -46,7 +41,6 @@ class metrics():
         query = '%s OFFSET %s' % (query, offset) if offset is not None else query
         
         params = params + domain_params
-        
         
         _logger.info("query: %s, params: %s", query, params)
         
@@ -59,14 +53,12 @@ class metrics():
         validate fields and prevent SQL Injection...
         """
         
-        _logger.info('validate: %s, %s, %s, %s', group_by, order_by, limit, offset)
-        
         pattern = re.compile("^[\w\.'\"]*$")
         for group in group_by:
             if pattern.match(group) is None:
                 raise Exception('group "%s" is not valid' % (group, ))
             
-        pattern = re.compile("[^[\w\.'\"]* [ASC|DESC]*$")
+        pattern = re.compile("^[\w\.'\"]* [ASC|DESC]*$")
         for order in order_by:
             if pattern.match(order) is None:
                 raise Exception('order "%s" is not valid' % (order, ))

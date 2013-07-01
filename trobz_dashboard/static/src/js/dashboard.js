@@ -125,7 +125,7 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
         },
         
         enterFullscreen: function(){
-            var element = this.$el.get(0);
+            var element = this.$el.parent().get(0);
 
             if (element.requestFullScreen) {
                 element.requestFullScreen();

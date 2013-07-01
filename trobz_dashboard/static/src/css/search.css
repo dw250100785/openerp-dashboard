@@ -8,8 +8,7 @@
     width: 100%;
     overflow: auto;
     background: #f3f3f3;
-    
-    border-top: 2px solid #cacaca;
+    border-bottom: 2px solid #cacaca;
 }
 
 #trobz_board .search .search_part {

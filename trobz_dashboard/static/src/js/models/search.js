@@ -109,15 +109,10 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
          */
         
         addOrder: function(field, type){
-            if(order != 'ASC' || order != 'DESC'){
+            if(type != 'ASC' && type != 'DESC'){
                 throw new Error('order type has to be ASC or DESC');
             }
-        
-            var order = this.get('order').slice(0);
-            if(this.getGroupIndex(field, type) == null){
-                order.push([field, type]);
-                this.set('order', order);    
-            }
+            this.set('order', [[field, type]]);    
         },
         
         removeOrder: function(field, type){
@@ -130,10 +125,10 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             }
         },
         
-        getOrderIndex: function(field, type){
+        getOrderIndex: function(field){
             var index = null;
             _(this.get('order')).each(function(val, i){
-                if(val.length == 2 && val[0].get('reference') == field.get('reference') && val[1] == type){
+                if(val.length == 2 && val[0].get('reference') == field.get('reference')){
                     index = i;
                 } 
             });

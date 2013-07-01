@@ -11,9 +11,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
     var Metric = BaseModel.extend({
         model_name: 'dashboard.metric',
         
-        constructor: function(data, options){
-            BaseModel.apply(this, arguments);
-        
+        initialize: function(data, options){
             this.fields = new Fields([], {
                field_ids: this.get('field_ids') 
             });    
@@ -25,13 +23,15 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 query: this.get('query_name'),
                 fields: this.fields
             }));
+            
+            this.listenTo(this.results, 'reset', this.resultChanged);
         },
         
         getResultCollection: function(){
             return this.get('type') == 'list' ? PagerResults : Results; 
         },
         
-        execute: function(ids, domain, group_by, order_by){
+        execute: function(ids, domain, order_by, group_by){
             //fields have to be loaded before the metric execution...
             var def = $.Deferred();
             this.fields.ready(function(){
@@ -56,6 +56,11 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             }, this);
             
             return def.promise();
+        },
+        
+        resultChanged: function(){
+            //something has changed on the result = metric has changed 
+            this.collection.trigger('reset', this, this.results);
         }
     
     });

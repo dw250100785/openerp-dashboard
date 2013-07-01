@@ -5,7 +5,6 @@
 #trobz_board .display {
     width: 100%;    
     overflow: auto;
-    border-top: 2px solid #cacaca;
 }
 
 /*
@@ -62,6 +61,66 @@
 
 #trobz_board .widget .pager {
     position: absolute;
-    right: 45px;
-    top: 5px;
+    right: 56px;
+    top: 16px;
+}
+
+
+#trobz_board .widget .pager ul {
+    background: #f5f5f5;
+    color: rgb(76, 76, 76); 
+    cursor: pointer;
+}
+#trobz_board .widget .pager li a:hover {
+    background: #fdfdfd;
+    color:  rgb(48, 132, 199);
+}
+
+
+
+#trobz_board .oe_list_content > tbody {
+    cursor: inherit;
+}
+
+#trobz_board .sortable {
+    cursor: pointer;
+    color: #7c7bad;
+}
+
+
+#trobz_board .sortable div:after {
+    float: right;
+    margin-right: 6px;
+    content: "";
+    margin-top: 7px;
+    border-width: 0 4px 4px;
+    border-style: solid;
+    border-color: black transparent;
+    filter: alpha(opacity=60);
+    opacity: 0.6;
+    visibility: hidden;
+}
+
+#trobz_board .sortable.asc div:after {
+    visibility: visible;
+}
+
+#trobz_board .sortable.desc div:after {
+    border-bottom: none;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 4px solid black;
+    visibility: visible;
+}
+
+
+#trobz_board .oe_list_content .oe_group_header {
+    background-color: #ededed;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#fcfcfc), to(#dedede));
+    background-image: -webkit-linear-gradient(top, #fcfcfc, #dedede);
+    background-image: -moz-linear-gradient(top, #fcfcfc, #dedede);
+    background-image: -ms-linear-gradient(top, #fcfcfc, #dedede);
+    background-image: -o-linear-gradient(top, #fcfcfc, #dedede);
+    background-image: linear-gradient(to bottom, #fcfcfc, #dedede);
+    cursor: pointer;
 }

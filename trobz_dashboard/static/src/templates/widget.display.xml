@@ -3,17 +3,19 @@
     <!-- NUMBER -->
     
     <t t-name="TrobzDashboard.widget.display.numeric">
-        <dl>
-        <t t-foreach="results" t-as="result">
-            <dt t-att-class="result.className"><t t-esc="result.label" /></dt>
-            <dd t-att-class="result.className"><t t-esc="result.value" /></dd>
-        </t>
-        </dl>
+        <dl></dl>
+    </t>
+    
+    <t t-name="TrobzDashboard.widget.display.numeric.item">
+        <dt t-att-class="className"><t t-esc="label" /></dt>
+        <dd t-att-class="className"><t t-esc="value" /></dd>
     </t>
     
     <!-- LIST -->
     
     <t t-name="TrobzDashboard.widget.display.list">
+        <div class="pager"></div>
+       
         <table class="oe_list_content">
             <thead>
                 <t t-call="TrobzDashboard.widget.display.list.head">
@@ -22,22 +24,47 @@
             </thead>
             <tfoot>
             </tfoot>
-            <tbody>
-            </tbody>
+            <t t-if="groups.length > 0">
+                <t t-foreach="groups" t-as="group">
+                
+                <tbody>
+                    <tr class="oe_group_header">
+                        <th class="oe_list_group_name">
+                            <span style="float: left; white-space: pre;"></span>
+                            <span class="ui-icon ui-icon-triangle-1-e" style="float: left;"></span>
+                            <span class="group_label"><t t-esc="group" /></span>
+                        </th>
+                        <td t-att-colspan="(columns.length - 1)" />
+                    </tr>
+                </tbody>
+                <tbody class="group hidden" t-att-group-name="group"></tbody>
+                </t>
+            </t>
+            <t t-if="groups.length == 0">
+            <tbody></tbody>
+            </t>
+            
         </table>
     </t>
     
     <t t-name="TrobzDashboard.widget.display.list.head">
         <tr class="oe_list_header_columns">
             <t t-foreach="columns" t-as="column">
-            <th t-att-data-id="column" class="oe_list_header_char oe_sortable"><div><t t-esc="column_value.get('name')"/></div></th>
+            
+            
+            <t t-set="sql_name" t-value="column.get('sql_name')" />
+            <t t-set="type_names" t-value="column.get('type_names')" />
+            <t t-set="sortable" t-value="(_(type_names).contains('order_by') ? ' sortable' : '')" />
+            <t t-set="order" t-value="(sql_name in reorder ? reorder[sql_name] : '')" />
+            
+            <th t-att-data-id="sql_name" t-att-class="sortable + ' ' + order"><div><t t-esc="column.get('name')"/></div></th>
             </t>
         </tr>
     </t>
     
     <t t-name="TrobzDashboard.widget.display.list.body">
         <t t-foreach="row" t-as="item">
-        <td class="oe_list_field_cell oe_list_field_char oe_required" t-att-data-field="item"><t t-esc="item_value" /></td>
+        <td class="oe_list_field_cell oe_list_field_char" t-att-data-field="item"><t t-esc="item_value" /></td>
         </t>
     </t>
     

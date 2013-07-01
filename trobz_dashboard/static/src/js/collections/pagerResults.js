@@ -19,6 +19,18 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             
             this.previousOptions = {};
         },
+        
+        refresh: function(){
+            _superPager.refresh.apply(this, arguments);
+            if('limit' in this.previousOptions){
+                delete this.previousOptions.limit;
+            }
+            if('offset' in this.previousOptions){
+                delete this.previousOptions.offset;
+            }
+            return this;
+        },
+        
 
         update: function(options){
             var options = options || this.previousOptions,

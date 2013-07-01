@@ -2,60 +2,38 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
     var DisplayNumeric = dashboard.views('DisplayNumeric'),
         DisplayGraph = dashboard.views('DisplayGraph'),
-        DisplayList = dashboard.views('DisplayList')
+        DisplayList = dashboard.views('DisplayList');
 
-    var Controller = Marionette.Controller,
-        _super = Controller.prototype;
+    var Collection = Marionette.CollectionView,
+        _super = Collection.prototype;
 
-    var WidgetDisplay = Controller.extend({
-    
-        template: 'TrobzDashboard.widget.display',
-    
+    var WidgetDisplay = Collection.extend({
+        
         views: {
-            'numeric': DisplayNumeric,
+            'number': DisplayNumeric,
             'graph': DisplayGraph,
-            'list': DisplayList
+            'list': DisplayList,
         },
-    
+        
         initialize: function(options){
-            this.type = options.type;
             this.search = options.search;
-            this.collection = options.collection;
-            
-            this.view = this.viewFactory();
-            
-            this.listenTo(this.collection, 'updated', this.render);
         },
         
-        render: function(){
-            this.view.render();
-            return this.view;
+        getItemView: function(model){
+            var type = model.get('type');
+            if(!(type in this.views)){
+                throw new Error('metic type ' + type + ' is not yet supported.');
+            }       
+            return this.views[type];
         },
         
-        viewFactory:function(){
-            if(!this.views[this.type]){
-                throw new Error('metic type ' + this.type + ' is not yet supported.');
-            }
-            
-            var collection;
-            // list only have 1 metric, use results has data source
-            if(this.type == 'list' && this.collection.length > 0){
-                collection = this.collection.at(0).results;
-            }
-            else{
-                collection = this.collection;
-            }
-            
-            var view = new this.views[this.type]({
-                collection: collection,
-            });
-            
-            this.el = view.el;
-            this.$el = view.$el;
-            
-            return view;
-        }, 
+        itemViewOptions: function(model, index){
+            return {
+                search: this.search 
+            };
+        }
     });
+
 
     dashboard.views('WidgetDisplay', WidgetDisplay);
 

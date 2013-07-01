@@ -1,7 +1,5 @@
 openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
-    var Pager = base.views('Pager');
-    
     var SearchModel = dashboard.models('Search');
 
     var SearchView = dashboard.views('WidgetSearch'),
@@ -28,6 +26,12 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             pager: '.pager'
         },
         
+        bindSearch: {
+            'numeric': ['domain'],
+            'list':    ['domain', 'order'],
+            'graph':   ['domain', 'order', 'group']
+        },
+        
         initialize: function(options){
             
             this.hide();
@@ -35,6 +39,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             this.model.ready(function(){
                 
                 this.resize();
+                
+                this.type = this.model.get('type');
                 
                 this.models = {
                     period: options.period,
@@ -55,14 +61,21 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                     }),
                     display: new Display({
                         collection: this.model.metrics,
-                        type: this.model.get('type')
-                    
+                        type: this.model.get('type'),
+                        search: this.models.search
                     })
                 };
             
                 
                 this.listenTo(this.models.period, 'change', this.changePeriod); 
-                this.listenTo(this.models.search, 'change', this.doSearch); 
+                this.listenTo(this.models.search, 'change:period', this.doSearch);
+                
+                // set search attribute listened by the widget
+                this.listen = this.type in this.bindSearch ? this.bindSearch[this.type] : []; 
+                _(this.listen).each(function(attr){
+                    this.listenTo(this.models.search, 'change:' + attr, this.doSearch);
+                }, this);    
+                       
             }, this);
         },
         
@@ -71,8 +84,21 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         },
         
         doSearch: function(){
-            var search = this.models.search;
-            this.model.metrics.execute([], search.domain(), search.group(), search.order());
+            var search = this.models.search, 
+                defaults = { ids: [], domain: [], order: [], group: [] },
+                args = [];
+       
+            //pass only search attributes than the widget is listening to     
+            _(defaults).each(function(def, attr){
+                if(_(this.listen).contains(attr) && $.isFunction(search[attr])){
+                    args.push(search[attr].call(search));
+                }
+                else {
+                    args.push(def);
+                }
+            }, this);    
+        
+            this.model.metrics.execute.apply(this.model.metrics, args);
         },
         
         changePeriod: function(){
@@ -88,27 +114,12 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 this.search.show(this.views.search);
                 this.display.show(this.views.display);
                 
-                //add an region for the pagination
-                if(this.model.get('type') == 'list'){
-                    this.addPager();
-                }
-                
                 this.changePeriod();
                 this.doSearch();
                 
                 this.show();
                 
             }, this);
-        },
-        
-        addPager: function(){
-             if(this.model.metrics.length > 0){
-                var results = this.model.metrics.at(0).results;
-                var pager = new Pager({
-                    collection: results
-                });
-                this.pager.show(pager);
-            }
         },
         
         hide: function(){
