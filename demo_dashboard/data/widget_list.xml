@@ -12,8 +12,8 @@
         <record id="demo_dashboard_list_board_to_widget_number" model="dashboard.board_to_widget_rel">
             <field name="board_id" ref="demo_dashboard_board" />
             <field name="widget_id" ref="demo_dashboard_list_widget" />
-            <field name="sequence">1</field>
-            <field name="width">8</field>
+            <field name="sequence">10</field>
+            <field name="width">10</field>
             <field name="height">10</field>
         </record>
     
@@ -29,7 +29,7 @@
             <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
             <field name="widget_id" ref="demo_dashboard_list_widget" />
        
-            <field name="options" eval="{}" />
+            <field name="options" eval="{'limit': 10}" />
             <field name="values" eval="{}"/>
         </record>
     

@@ -1,6 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+    
+        <!-- widget -->
+        
+        <record id="demo_dashboard_graph_widget" model="dashboard.widget">
+            <field name="name">Attendance Graph</field>
+            <field name="type">graph</field>
+        </record>
+        
+        <record id="demo_dashboard_graph_board_to_widget_graph" model="dashboard.board_to_widget_rel">
+            <field name="board_id" ref="demo_dashboard_board" />
+            <field name="widget_id" ref="demo_dashboard_graph_widget" />
+            <field name="sequence">1</field>
+            <field name="width">8</field>
+            <field name="height">10</field>
+        </record>
+    
+        <!-- metric 1 -->
+        
+        <record id="demo_dashboard_graph_metric_1" model="dashboard.metric">
+            <field name="name">Attendance Graph</field>
+            <field name="type">graph</field>
        
+            <field name="query_name">graph_attendance</field>
+            <field name="method">exec_metric</field>
+       
+            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
+            <field name="widget_id" ref="demo_dashboard_graph_widget" />
+       
+            <field name="options" eval="{'type': 'bar'}" />
+            <field name="values" eval="{}"/>
+        </record>
+    
+        <!-- metric 2 -->
+        
+        <record id="demo_dashboard_graph_metric_2" model="dashboard.metric">
+            <field name="name">Booking Graph</field>
+            <field name="type">graph</field>
+       
+            <field name="query_name">graph_booking</field>
+            <field name="method">exec_metric</field>
+       
+            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
+            <field name="widget_id" ref="demo_dashboard_graph_widget" />
+       
+            <field name="options" eval="{'type': 'line'}" />
+            <field name="values" eval="{}"/>
+        </record>
+    
+        <!-- fields for metric 1-->
+        
+        <record id="demo_dashboard_graph_metric_1_field_name" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_graph_metric_1" />
+            <field name="name">Name</field>
+            <field name="reference">name_related</field>
+            <field name="sql_name">he.name_related</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), '|', ('name', '=', 'output'),  '|', ('name', '=', 'order_by'), ('name', '=', 'group_by')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'name_related')]" />
+        </record>
+        
+       
+        <record id="demo_dashboard_graph_metric_1_field_country_id" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_graph_metric_1" />
+            <field name="name">Country</field>
+            <field name="reference">country</field>
+            <field name="sql_name">rc.name</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), '|', ('name', '=', 'output'),  '|', ('name', '=', 'order_by'), ('name', '=', 'group_by')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'res.country'), ('name', '=', 'name')]" />
+        </record>
+       
+        <record id="demo_dashboard_graph_metric_1_field_birthday" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_graph_metric_1" />
+            <field name="name">Birthday</field>
+            <field name="reference">birthday</field>
+            <field name="sql_name">he.birthday</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), ('name', '=', 'order_by')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'birthday')]" />
+        </record>
+        
+        <record id="demo_dashboard_graph_metric_1_field_count" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_graph_metric_1" />
+            <field name="name">Attendance count</field>
+            <field name="reference">count</field>
+            <field name="sql_name">count</field>
+            
+            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'output')]" />
+        </record>
+         
+        <record id="demo_dashboard_graph_metric_1_field_period" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_graph_metric_1" />
+            <field name="name">Attendance date</field>
+            <field name="reference">period</field>
+            <field name="sql_name">ha.name</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'period')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.attendance'), ('name', '=', 'name')]" />
+        </record>
+        
+
+        <!-- fields for metric 1-->
+        
+        <record id="demo_dashboard_graph_metric_2_field_name" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_graph_metric_2" />
+            <field name="name">Name</field>
+            <field name="reference">name_related</field>
+            <field name="sql_name">he.name_related</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), '|', ('name', '=', 'output'),  '|', ('name', '=', 'order_by'), ('name', '=', 'group_by')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'name_related')]" />
+            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
+        </record>
+        
+       
+        <record id="demo_dashboard_graph_metric_2_field_country_id" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_graph_metric_2" />
+            <field name="name">Country</field>
+            <field name="reference">country</field>
+            <field name="sql_name">rc.name</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), '|', ('name', '=', 'output'),  '|', ('name', '=', 'order_by'), ('name', '=', 'group_by')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'res.country'), ('name', '=', 'name')]" />
+        </record>
+       
+        <record id="demo_dashboard_graph_metric_2_field_birthday" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_graph_metric_2" />
+            <field name="name">Birthday</field>
+            <field name="reference">birthday</field>
+            <field name="sql_name">he.birthday</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), ('name', '=', 'order_by')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'birthday')]" />
+        </record>
+
+        <record id="demo_dashboard_graph_metric_2_field_count" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_graph_metric_2" />
+            <field name="name">Booking count</field>
+            <field name="reference">booking_count</field>
+            <field name="sql_name">booking_count</field>
+            
+            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'output')]" />
+        </record>
+         
+        <record id="demo_dashboard_graph_metric_2_field_period" model="dashboard.field">
+            <field name="metric_id" ref="demo_dashboard_graph_metric_2" />
+            <field name="name">Booking start date</field>
+            <field name="reference">period</field>
+            <field name="sql_name">br.date_start</field>
+       
+            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'period')]" />
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.attendance'), ('name', '=', 'name')]" />
+        </record>
+
     </data>
 </openerp>
