@@ -9,10 +9,22 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
     var WidgetDisplay = Collection.extend({
         
+        className: 'displayer',
+        
         views: {
-            'number': DisplayNumeric,
+            'numeric': DisplayNumeric,
             'graph': DisplayGraph,
             'list': DisplayList,
+        },
+        
+        
+        _initialEvents: function() {
+            _super._initialEvents.apply(this, arguments);
+            
+            //custom listener for metric.results update
+            if (this.collection) {
+                this.listenTo(this.collection, "results:updated", this.render, this);
+            }
         },
         
         initialize: function(options){
@@ -29,7 +41,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         itemViewOptions: function(model, index){
             return {
-                search: this.search 
+                search: this.search,
+                collectionView: this
             };
         }
     });

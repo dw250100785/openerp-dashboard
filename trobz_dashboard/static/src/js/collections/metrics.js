@@ -33,7 +33,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             var finished = $.when.apply($, defs);
             
             finished.done($.proxy(function(){
-                this.trigger('updated', this);
+                this.trigger('results:updated', this);
             }, this));
         },
         

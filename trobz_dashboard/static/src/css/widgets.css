@@ -1,4 +1,5 @@
 #trobz_board #widgets {
+    overflow: auto;
 }
 
 #trobz_board .hidden {

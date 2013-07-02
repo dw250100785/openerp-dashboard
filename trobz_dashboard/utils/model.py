@@ -18,22 +18,29 @@ class metrics():
         Execute a SQL query, used to process a metric object
         """
         
+        
+        
         if not sql_name in self._metrics_sql:
             raise Exception('"%s" is not defined in _metrics_sql' % (sql_name,))
         
-        params = []
+        
         query = self._metrics_sql[sql_name]
+        defaults = {}
+        params = []
         
         if isinstance(query, dict):
-            params = query['params']
-            query = query['query'] 
-         
+            params = query['params'] if 'params' in query else [] 
+            defaults = query['defaults'] if 'defaults' in query else {}
+            query = query['query'] if 'query' in query else ''
+        
+            
+        group_by, order_by, limit, offset = self.defaults_metric_params(defaults, group_by, order_by, limit, offset)
         self.validate_metric_params(group_by, order_by, limit, offset)
             
         e = expression(domain)
         domain_query, domain_params = e.to_sql()
         
-        query = query.format(** {'generated': domain_query, 'group': ','.join(group_by) })
+        query = query.format(** {'generated': domain_query, 'group': ','.join(group_by)})
         
         query = '%s GROUP BY %s' % (query, ','.join(group_by)) if len(group_by) > 0 else query
         query = '%s ORDER BY %s' % (query, ','.join(order_by)) if len(order_by) > 0 else query
@@ -46,7 +53,25 @@ class metrics():
         
         cr.execute(query, params)
         
-        return cr.dictfetchall()
+        return { 'columns': cr.description, 'results': cr.dictfetchall()}
+    
+    
+    def defaults_metric_params(self, defaults, group_by, order_by, limit, offset):
+        """
+        set default parameters if necessary
+        TODO: should find a better way, with inspect module maybe...
+        """
+        group_by = defaults['group_by'] if 'group_by' in defaults and len(group_by) == 0 else group_by
+        order_by = defaults['order_by'] if 'order_by' in defaults and len(order_by) == 0 else order_by
+        limit = defaults['limit'] if 'limit' in defaults and limit == "ALL" else limit
+        offset = defaults['offset'] if 'offset' in defaults and offset == 0 else offset
+        
+        # order by group if no order by default
+        if len(order_by) == 0 and len(group_by) != 0:
+            for field in group_by:
+                order_by.append(field + ' ASC')
+        
+        return group_by, order_by, limit, offset;
     
     def validate_metric_params(self, group_by, order_by, limit, offset):
         """

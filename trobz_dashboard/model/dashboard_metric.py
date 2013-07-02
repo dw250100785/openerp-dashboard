@@ -43,7 +43,7 @@ class dashboard_metric(osv.osv):
     
     _columns = {
         'name': fields.char('Name'),
-        'type':  fields.selection((('number','Single number'), ('list','List'), ('bar','Bar Chart'), ('line','Line Chart'), ('pie','Pie Chart'), ), 'Type of metric retrieved by the query'),
+        'type':  fields.selection((('numeric','Numeric'), ('list','List'), ('graph','Graph') ), 'Type of metric retrieved by the query'),
         'query_name': fields.char('SQL Query Name', help="Custom SQL query defined on the model to get metric data.", required=True),
         'method': fields.char('Model Method', help="Custom method to call on the model, do not change it if you use SQL Query Name"),
         'model':fields.many2one('ir.model','Model of the Resource', help='OpenERP model that will implement the method.', required=True),

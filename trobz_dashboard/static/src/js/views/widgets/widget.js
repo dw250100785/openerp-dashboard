@@ -34,8 +34,6 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         initialize: function(options){
             
-            this.hide();
-            
             this.model.ready(function(){
                 
                 this.resize();
@@ -67,7 +65,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 };
             
                 
-                this.listenTo(this.models.period, 'change', this.changePeriod); 
+                this.listenTo(this.models.period, 'change', this.periodChanged); 
                 this.listenTo(this.models.search, 'change:period', this.doSearch);
                 
                 // set search attribute listened by the widget
@@ -101,10 +99,14 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             this.model.metrics.execute.apply(this.model.metrics, args);
         },
         
-        changePeriod: function(){
+        periodChanged: function(){
+            this.searchPeriod();
+        },
+        
+        searchPeriod: function(options){
             var period = [], periodField = this.model.metrics.fields.filterByTypes('period');
             if(periodField.length > 0){
-                this.models.search.changePeriod(periodField.at(0), this.models.period);
+                this.models.search.changePeriod(periodField.at(0), this.models.period, options);
             }
         },
         
@@ -114,11 +116,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 this.search.show(this.views.search);
                 this.display.show(this.views.display);
                 
-                this.changePeriod();
+                this.searchPeriod({ silent: true });
                 this.doSearch();
-                
-                this.show();
-                
             }, this);
         },
         

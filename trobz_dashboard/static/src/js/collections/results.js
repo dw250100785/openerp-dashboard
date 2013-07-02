@@ -13,26 +13,36 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
              this.method = options.method;
              this.query = options.query;
              this.fields = options.fields;
+             this.columns = [];
         },
         
         update: function(options){
             return this.fetch(options);
         },
         
-        parse: function(results){
+        parse: function(data){
+            var results = data.results, desc = data.columns;
             
             results = !$.isArray(results) ? [results] : results;
             
             // get column info
-            var output_fields = this.fields.filterByTypes('output'), 
-                sorted = [];
+            var output_fields = this.fields.filterByTypes('output'),
+                sorted = [], columns = [], field;
             
             _(results).each(function(result, index){
                 var item = {};
-                    
-                output_fields.each(function(field){
-                    var sql_name = field.get('sql_name');
+        
+                _(desc).each(function(column){
+                    var sql_name = column.name;
+                
                     if(sql_name in result){
+                        if(index == 0){
+                            field = output_fields.oneBySQLName(sql_name);
+                            if(!field){
+                                throw new Error('output field "' + sql_name + '" can not be found in metric.fields, please define a field with the correct sql_name and "output" type');    
+                            }
+                            columns.push(field);
+                        }
                         item[sql_name] = result[sql_name];
                     }
                 });
@@ -40,6 +50,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 sorted.push(item);
             });    
                 
+            this.columns = columns;
             return sorted;
         },
         
@@ -48,9 +59,8 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         relativeDomain: function(domain){
             var result = [];
             _(domain).each(function(criterion){
-                var criter = criterion.slice(0);
-                if(criter.length == 3){
-                    
+                if(criterion && criterion.length == 3){
+                    var criter = criterion.slice(0);
                     var convert_field = function(fields, reference, metric_name){
                         var field = fields.oneByRef(reference), name;
                         

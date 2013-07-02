@@ -59,8 +59,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         },
         
         resultChanged: function(){
-            //something has changed on the result = metric has changed 
-            this.collection.trigger('reset', this, this.results);
+            this.collection.trigger('change:results', this);
         }
     
     });

@@ -124,3 +124,12 @@
     background-image: linear-gradient(to bottom, #fcfcfc, #dedede);
     cursor: pointer;
 }
+
+
+/*
+ * display.graph
+ */
+
+#trobz_board .graph {
+    margin: 20px auto;
+}

@@ -59,8 +59,8 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             
             //TODO: we should not execute the full queries with all columns returned just to know 
             //      the number of results of this query... 
-            this.execute(options).done(function(results){
-                def.resolve(results.length);
+            this.execute(options).done(function(data){
+                def.resolve(data.results.length);
             });
             
             return def.promise();
