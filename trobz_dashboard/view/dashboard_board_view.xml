@@ -43,7 +43,7 @@
                     </group>
                     <notebook>
                         <page string="Widgets">
-                            <field name="widget_ids" widget="one2many_list">
+                            <field name="widget_ids" widget="many2many">
                                 
                                 <form string="Widget">
                                     <notebook>
@@ -54,7 +54,7 @@
                                             </group>
                                         </page>    
                                         <page string="Metrics">
-                                            <field name="metric_ids" widget="one2many_list">
+                                            <field name="metric_ids" widget="many2many">
                                                 <form string="Metric">
                                                     <notebook>
                                                         <page string="General">

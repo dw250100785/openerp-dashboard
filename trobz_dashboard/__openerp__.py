@@ -36,6 +36,10 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
         # libs
         'static/lib/bootstrap-daterangepicker/daterangepicker.js',
         
+        # fix bugs in flotr2 lib
+        'static/src/js/extends/flotr2.js',
+        
+        
         'static/src/js/models/state.js',
         'static/src/js/models/period.js',
         'static/src/js/models/board.js',

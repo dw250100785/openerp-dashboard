@@ -17,7 +17,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             });    
             
             var Collection = this.getResultCollection();
-            this.results = new Collection([], _.extend(this.get('options'), {
+            this.results = new Collection([], _.extend(_(this.get('options')).clone(), {
                 model_name: this.get('model_details').model,
                 method: this.get('method'),
                 query: this.get('query_name'),

@@ -141,8 +141,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             var orders = this.search.get('order'),
                 reorder = {};
             _(orders).each(function(order){
-                var type = order[1] == 'ASC' ? 'DESC' : (order[1] == 'DESC' ? 'ASC' : '');
-                reorder[order[0].get('sql_name')] = (type).toLowerCase();
+                var type = order.type == 'ASC' ? 'DESC' : (order.type == 'DESC' ? 'ASC' : '');
+                reorder[order.field.get('sql_name')] = (type).toLowerCase();
             });
             
             

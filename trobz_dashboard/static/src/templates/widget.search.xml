@@ -243,8 +243,8 @@
         <t t-foreach="orders" t-as="order">
             
             <div class="criterion">
-                <span class="search_field" t-att-field-id="order[0].get('id')"><t t-esc="order[0].get('name')" /></span>
-                <span class="search_value" t-att-value="order[1]"><t t-esc="order[1]" /></span>
+                <span class="search_field" t-att-field-id="order.field.get('id')"><t t-esc="order.field.get('name')" /></span>
+                <span class="search_value" t-att-value="order.type"><t t-esc="order.type" /></span>
                 <i class="icon-remove remove" />
             </div>
                

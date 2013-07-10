@@ -3,8 +3,7 @@
 
 import logging
 
-from openerp.osv.orm import MAGIC_COLUMNS
-import openerp.tools as tools
+import tools as tools
 
 #.apidoc title: Domain Expressions
 

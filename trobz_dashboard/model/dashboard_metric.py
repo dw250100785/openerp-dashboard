@@ -2,36 +2,16 @@
 ##############################################################################
 
 from osv import osv, fields
+from trobz_dashboard.utils.model import metric_support 
 
 import logging
 _logger = logging.getLogger('ZAZADEV')
 
 
-class dashboard_metric(osv.osv):
+class dashboard_metric(osv.osv, metric_support):
 
     _name = "dashboard.metric"
     _description = "Widget Metric"
-
-    def execute(self, cr, uid, ids, fields, domain=[], order_by=[], group_by=[], limit=None, offset=None, context=None):
-        results = []
-        
-        for metric in self.browse(cr, uid, ids, context=context):
-            
-            _logger.info('for metric %s, with model: %s', metric.name, metric.model.model)
-            
-            model = self.pool.get(metric.model.model)
-            
-            if len(group_by) == 0:
-                _logger.info('get simple result')
-            
-                model.search(cr, uid, domain, order=order_by, limit=limit, offset=offset)
-                results.append(model.read(cr, uid, ids, fields, {'orderby': order_by})) 
-            else:
-                _logger.info('get group result')
-            
-                results.append(model.read_group(cr, uid, domain, fields, group_by, order=order_by, limit=limit, offset=offset))
-        
-        return results
 
     def model_details(self, cr, uid, ids, field_name, arg, context=None):
         result = {}
@@ -49,7 +29,7 @@ class dashboard_metric(osv.osv):
         'model':fields.many2one('ir.model','Model of the Resource', help='OpenERP model that will implement the method.', required=True),
                 
         'widget_id': fields.many2one('dashboard.widget','Widget', ondelete='cascade', required=True),
-        'field_ids': fields.one2many('dashboard.field', 'metric_id', 'Fields', ondelete='cascade', required=True),
+        'field_ids': fields.many2many('dashboard.field', 'dashboard_metric_to_field_rel', id1='metric_id',id2='field_id', string='Fields', ondelete='cascade', required=True),
         
         'options': fields.serialized('Options', help="""
 Options are defined according to the metric type:

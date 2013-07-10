@@ -2,6 +2,8 @@
 # -*- coding: utf-8 -*-
 
 from domain_converter import expression  
+import itertools
+import copy
 import re
  
 import logging
@@ -10,90 +12,401 @@ _logger = logging.getLogger('ZAZADEV')
  
 class metrics():
     
-    _metrics_sql = {
+    
+    envelopes = {
+        'query_date': """
+            select date_trunc('{period}', gdate.gtime) as "{reference}", {output} from 
+            (
+                {query}
+            ) AS result 
+            right outer join ( 
+                SELECT * FROM generate_series ( '{start}'::timestamp, '{end}', '1 {period}') as gtime
+            ) AS gdate ON result."{reference}" = date_trunc('{period}', gdate.gtime)
+            group by date_trunc('{period}', gdate.gtime)
+            {order}
+            {limit}
+            {offset}
+            """,
+            
+        'query_string': """
+            select result."{reference}" as {reference}, {output} from 
+            (
+                {query}
+            ) AS result 
+            group by result."{group}"
+            {order}
+            {limit}
+            {offset}
+            """
+        
     }
     
-    def exec_metric(self, cr, uid, ids, sql_name, domain, group_by=[], order_by=[], limit="ALL", offset=0, context=None):
+    def exec_metric(self, cr, uid, ids, domain=[], period={}, group_by=[], order_by=[], limit="ALL", offset=0, context=None):
         """
-        Execute a SQL query, used to process a metric object
+        Execute custom SQL queries to populate a trobz dashboard widget
+        """
+    
+        stacks = {}
+        metrics = self.browse(cr, uid, ids, context=context)
+        is_graph_metrics = self.is_graph_metrics(metrics)
+        
+        for metric in metrics:
+            model = self.pool.get(metric.model.model)
+            
+            query, params, defaults = self.get_query(model, metric)
+        
+            if is_graph_metrics:
+                self.set_stack_globals(metric, defaults, stacks, period, group_by, order_by, limit, offset)
+                # in graph mode, order will be applied to the global query 
+                order_by = []
+                #FIXME: should not disable the limit and offset on sub queries but it"s required if the ordering is different on sub queries and main query...
+                limit = 'ALL'
+                offset = 0
+            
+            args = self.defaults_arguments(defaults, group_by, order_by, limit, offset)
+            fields_domain, fields_args = self.convert_fields(metric, domain, args) 
+            fields_domain = self.add_period(period, fields_domain, metric)
+            query, domain_params = self.process_query(query, fields_domain, fields_args);
+                
+            params = params + domain_params
+        
+            stacks[metric.id] = {
+                'query': query,
+                'params': params,
+                'args':  fields_args,
+                'output': self.extract_aggregate_field(metric, query),
+            }
+        
+        return self.execute_stacks(cr, metrics, stacks, context)
+    
+    
+    def set_stack_globals(self, metric, defaults, stacks, period, group_by, order_by, limit, offset):
+        
+        group = copy.copy(defaults['group_by']) if 'group_by' in defaults and len(group_by) == 0 else copy.copy(group_by)
+        order = copy.copy(order_by)
+        
+        if len(group) <= 0:
+            raise Exception('graph metric require a group_by')
+            
+        # apply order by group for graph by default
+        if len(order) <= 0:
+            order.append(group[0] + ' ASC')
+        
+        stacks['global'] = {
+            'limit': limit,
+            'offset': offset,
+            'period': period
+        } if not 'global' in stacks else stacks['global'] 
+        try:
+            stacks['global']['order'] = self.convert_order(metric, order[0]) if 'order' not in stacks['global'] else stacks['global']['order']
+            stacks['global']['group'] = self.convert_group(metric, group[0]) if 'group' not in stacks['global']  else stacks['global']['group']
+        except:
+            pass
+        
+    def add_period(self, period, fields_domain, metric):
+        """
+        add a period to the domain if possible
+        """
+        period_field = self.get_field_by_type(metric, 'period')
+        if len(period) == 2 and period_field:
+            fields_domain.append([period_field, '>=', period['start']])
+            fields_domain.append([period_field, '<', period['end']])
+        return fields_domain
+        
+    def process_query(self, query, domain, arguments):
+        """
+        create query and parameters for psycopg2 
         """
         
+        group = arguments['group'][0] if len(arguments['group']) > 0 else None
+        group_sql = group.sql_name if group else ""
+        group_ref = group.reference if group else ""
         
-        
-        if not sql_name in self._metrics_sql:
-            raise Exception('"%s" is not defined in _metrics_sql' % (sql_name,))
-        
-        
-        query = self._metrics_sql[sql_name]
-        defaults = {}
-        params = []
-        
-        if isinstance(query, dict):
-            params = query['params'] if 'params' in query else [] 
-            defaults = query['defaults'] if 'defaults' in query else {}
-            query = query['query'] if 'query' in query else ''
-        
-            
-        group_by, order_by, limit, offset = self.defaults_metric_params(defaults, group_by, order_by, limit, offset)
-        self.validate_metric_params(group_by, order_by, limit, offset)
-            
-        e = expression(domain)
+        sql_domain, sql_args = self.to_sql(domain, arguments) 
+    
+        e = expression(sql_domain)
         domain_query, domain_params = e.to_sql()
+            
+        query = query.format(** {'generated': domain_query, 'group_sql': group_sql, 'group_ref': group_ref})
         
-        query = query.format(** {'generated': domain_query, 'group': ','.join(group_by)})
+        query = '%s GROUP BY %s' % (query, ','.join(sql_args['group'])) if len(sql_args['group']) > 0 else query
+        query = '%s ORDER BY %s' % (query, ','.join(sql_args['order'])) if len(sql_args['order']) > 0 else query
+        query = '%s LIMIT %s' % (query, sql_args['limit']) if sql_args['limit'] is not None else query
+        query = '%s OFFSET %s' % (query, sql_args['offset']) if sql_args['offset'] is not None else query
         
-        query = '%s GROUP BY %s' % (query, ','.join(group_by)) if len(group_by) > 0 else query
-        query = '%s ORDER BY %s' % (query, ','.join(order_by)) if len(order_by) > 0 else query
-        query = '%s LIMIT %s' % (query, limit) if limit is not None else query
-        query = '%s OFFSET %s' % (query, offset) if offset is not None else query
+        return query, domain_params
+    
+    def execute_stacks(self, cr, metrics, stacks, context=None):
+        result = {}
+        is_graph_metrics = self.is_graph_metrics(metrics)
         
-        params = params + domain_params
+        # execute one query in UNION for all metrics
+        if is_graph_metrics:
+            first_stack = next (iter (stacks.values()))
+            
+            if len(first_stack['args']['group']) <= 0:
+                raise Exception('graph metric require a group_by')
         
-        _logger.info("query: %s, params: %s", query, params)
+            global_args = stacks['global']
+            order = global_args['order']
+            group = global_args['group']
+            period = global_args['period']
+            limit = global_args['limit']
+            offset = global_args['offset']
+            del stacks['global']
+            
+            # rebuild output parameters
+            outputs = []
+            query_outputs = {}
+            queries = []
+            params = []
+            
+            for metric_id, stack in stacks.items():
+                output_ref = stack['output'].reference
+                outputs.append('max(result."%s") as "%s"' % (output_ref, output_ref))
+                query_outputs[metric_id] = 'NULL as "%s"' % (output_ref)
+            
+            for metric_id, stack in stacks.items():
+                queries.append('\n(' + self.replace_outputs(stack['query'], query_outputs, metric_id) + '\n)')
+                params += stack['params']
+                    
+            if group and group.period and group.field_description['type'] in ['date', 'datetime']:
+                
+                order_by = ''
+                if order:
+                    order_by = "ORDER BY date_trunc('%s', gdate.gtime) %s" % (order[0].period, order[1]) if order[0].period else 'ORDER BY max(result."%s") %s NULLS LAST' % (order[0].reference, order[1]) 
+                    
+                query = self.envelopes['query_date'].format(** {
+                  "start": period['start'],
+                  "end": period['end'],
+                  "reference": group.reference,
+                  "period": group.period,
+                  "output": ', '.join(outputs),
+                  "order": order_by,
+                  "limit": "LIMIT %s" % (limit), 
+                  "offset": "OFFSET %s" % (offset), 
+                  "query": '\nUNION ALL\n'.join(queries)
+                })
+            else:
+                query = self.envelopes['query_string'].format(** {
+                  "reference": group.reference,
+                  "output": ', '.join(outputs),
+                  "query": '\nUNION ALL\n'.join(queries),
+                  "group": group.reference,
+                  "limit": "LIMIT %s" % (limit), 
+                  "offset": "OFFSET %s" % (offset), 
+                  "order": 'ORDER BY max(result."%s") %s NULLS LAST' % (order[0].reference, order[1]) if order else ""
+                })
+                
+            cr.execute(query, params)
+            result = { 'columns': cr.description, 'results': cr.dictfetchall()}
+    
         
-        cr.execute(query, params)
-        
-        return { 'columns': cr.description, 'results': cr.dictfetchall()}
+        # execute each metric separately
+        else:
+            for metric_id, stack in stacks.items():
+                cr.execute(stack['query'], stack['params'])
+                result[metric_id] = { 'columns': cr.description, 'results': cr.dictfetchall()}
     
     
-    def defaults_metric_params(self, defaults, group_by, order_by, limit, offset):
+        return result
+    
+    def replace_outputs(self, query, outputs, metric_id):
+        """
+        rebuild query with parameters slot for other queries, required for UNION
+        """
+        pattern = re.compile(r"""(?is)^(.*select .*),(.* as [a-z0-9_'"]+)(.*from.*)""")
+        matches = pattern.match(query)
+        
+        fields = []
+        for mid, output in outputs.items():
+            if mid == metric_id:
+                fields.append(matches.group(2))
+            else:
+                fields.append(output)
+        
+        return pattern.sub('\\1,' + ','.join(fields) + '\\3', query)
+     
+        
+    def extract_aggregate_field(self, metric, query):
+        """
+        extract the last output field, used for graph metrics
+        """
+        
+        pattern = re.compile(r"""(?is)^.*select .* as (?:['"])?([a-z0-9_]+)(?:['"])?.*from""")
+        matches = pattern.match(query)
+        
+        if not matches or  matches.lastindex < 1:
+            raise Exception('can not get the last output field on metric "%s"' % (metric.name))
+        
+        
+        return self.get_field(metric, matches.group(1))    
+        
+    def to_sql(self, domain, arguments):
+        """
+        convert domain and arguments to field name
+        """
+        
+        converted_domain = []
+        for criteria in domain:
+            if len(criteria) == 3:
+                clone = copy.copy(criteria)
+                clone[0] = clone[0].sql_name
+                converted_domain.append(clone)
+            else:
+                converted_domain.append(copy.copy(criteria))
+         
+        converted_args = {
+           'group': [],
+           'order': [],
+           'limit': arguments['limit'],
+           'offset': arguments['offset']
+        }
+        
+        for group in arguments['group']:
+            converted_args['group'].append(group.sql_name)
+         
+        for order in arguments['order']:
+            converted_args['order'].append(order[0].sql_name + ' ' + order[1])
+        
+        
+        self.validate_arguments(converted_args)
+         
+        return converted_domain, converted_args       
+        
+    
+    def convert_fields(self, metric, domain, arguments):
+        """
+        convert all field reference to field object
+        """
+             
+        converted_domain = []
+        for criteria in domain:
+            if len(criteria) == 3:
+                clone = copy.copy(criteria)
+                clone[0] = self.get_field(metric, clone[0])
+                converted_domain.append(clone)
+            else:
+                converted_domain.append(copy.copy(criteria))
+         
+        converted_args = {
+           'group': [],
+           'order': [],
+           'limit': arguments['limit'],
+           'offset': arguments['offset']
+        }
+        
+        for group in arguments['group']:
+            converted_args['group'].append(self.convert_group(metric, group))
+         
+        for order in arguments['order']:
+            converted_args['order'].append(self.convert_order(metric, order))
+         
+        return converted_domain, converted_args;       
+     
+       
+    def convert_group(self, metric, group_by):
+        return self.get_field(metric, group_by)
+     
+    def convert_order(self, metric, order_by):
+        pattern = re.compile(r"""(?i)^([a-z0-9_-]+) (ASC|DESC)$""")
+        matches = pattern.match(order_by)
+        if not matches or matches.lastindex < 2:
+            raise Exception('can not get field reference from order "%s"' % (order_by))
+        return [self.get_field(metric, matches.group(1)), matches.group(2)]
+    
+    
+    def get_field_by_type(self, metric, field_type):
+        """
+        get a field object based on field type
+        """
+        for metric_field in metric.field_ids:
+            if field_type in metric_field.type_names:
+                return metric_field
+        return None
+    
+    def get_field(self, metric, field_reference):
+        """
+        get a field object based on the field reference
+        """
+        for metric_field in metric.field_ids:
+            if metric_field.reference == field_reference:
+                return metric_field
+        raise Exception('field reference "%s" is not associated with metric "%s"' % (field_reference,metric.name))
+        
+    
+    def get_query(self, model, metric):
+        """
+        get the query to execute and all default parameters
+        """
+        
+        if not hasattr(model, '_metrics_sql') or not metric.query_name in model._metrics_sql:
+            raise Exception('"%s" is not defined in model._metrics_sql' % (metric.query_name,))
+    
+        query = model._metrics_sql[metric.query_name]
+        
+        params = query['params'] if isinstance(query, dict) and 'params' in query else [] 
+        defaults = query['defaults'] if isinstance(query, dict) and 'defaults' in query else {}
+        sql_query = query['query'] if isinstance(query, dict) and 'query' in query else query
+   
+        return sql_query, params, defaults
+   
+    
+    def defaults_arguments(self, defaults, group_by, order_by, limit, offset):
         """
         set default parameters if necessary
-        TODO: should find a better way, with inspect module maybe...
         """
-        group_by = defaults['group_by'] if 'group_by' in defaults and len(group_by) == 0 else group_by
-        order_by = defaults['order_by'] if 'order_by' in defaults and len(order_by) == 0 else order_by
-        limit = defaults['limit'] if 'limit' in defaults and limit == "ALL" else limit
-        offset = defaults['offset'] if 'offset' in defaults and offset == 0 else offset
         
-        # order by group if no order by default
-        if len(order_by) == 0 and len(group_by) != 0:
-            for field in group_by:
-                order_by.append(field + ' ASC')
-        
-        return group_by, order_by, limit, offset;
+        arguments = {}
+        arguments['group'] = copy.copy(defaults['group_by']) if 'group_by' in defaults and len(group_by) == 0 else copy.copy(group_by)
+        arguments['order'] = copy.copy(defaults['order_by']) if 'order_by' in defaults and len(order_by) == 0 else copy.copy(order_by)
+        arguments['limit'] = defaults['limit'] if 'limit' in defaults and limit == "ALL" else limit
+        arguments['offset'] = defaults['offset'] if 'offset' in defaults and offset == 0 else offset
+          
+        return arguments;
     
-    def validate_metric_params(self, group_by, order_by, limit, offset):
+    
+    def validate_arguments(self, arguments):
         """
         validate fields and prevent SQL Injection...
         """
         
-        pattern = re.compile("^[\w\.'\"]*$")
-        for group in group_by:
-            if pattern.match(group) is None:
+        pattern = re.compile(r"""(?i)^(
+                                    (?:
+                                        (?:date_trunc\([\ ]*[a-z'"]+[\ ]*,[\ ]*[a-z0-9_'"\.]+[\ ]*\)){1} # extract on value
+                                        (?:\ asc|\ desc)? # required for order
+                                    )        
+                                    |
+                                    (?:[^\s]+(?:\ asc|\ desc)?)  # any groups, space not allowed
+                                 )$""", re.X)
+        
+        for group in arguments['group']:
+            if pattern.match(group) is None and pattern.match(group) is None:
                 raise Exception('group "%s" is not valid' % (group, ))
             
-        pattern = re.compile("^[\w\.'\"]* [ASC|DESC]*$")
-        for order in order_by:
-            if pattern.match(order) is None:
+        for order in arguments['order']:
+            if pattern.match(order) is None and pattern.match(order) is None:
                 raise Exception('order "%s" is not valid' % (order, ))
         
-        if not (isinstance(limit, int) or limit == "ALL"):
+        if not (isinstance(arguments['limit'], int) or arguments['limit'] == "ALL"):
             raise Exception('limit is not an integer or is not "ALL"')
         
-        if not isinstance(offset, int):
+        if not isinstance(arguments['offset'], int):
             raise Exception('offset is not an integer')
         
         return True
     
+    
+    def is_graph_metrics(self, metrics):
+        """
+        check if a collection of metrics are all graph type
+        """
+        
+        for metric in metrics:
+            if metric.type != "graph":
+                return False
+        
+        return True
+    
 metric_support = metrics
+
