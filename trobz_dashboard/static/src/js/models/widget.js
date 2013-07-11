@@ -10,29 +10,17 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         
         model_name: 'dashboard.widget',
         
-        initialize: function(){
-            this.callbacks = {
-                ready: new Backbone.Marionette.Callbacks(),
-            };
+        initialize: function(data, options){
             
-            this.metrics = new Metrics([], {
-                widget_id: this.get('id')
-            });
-        
-            this.setup();
-        },
-        
-        setup: function(){
-            var ready = this.callbacks.ready;
+            var metrics = [];
+            if('metrics' in data){
+                metrics = data.metrics;
+                delete data.metrics;
+            }
+         
+            this.metrics = new Metrics(metrics);
             
-            this.metrics.ready(function(){
-                ready.run({});    
-            });
-            this.metrics.update();
-        },
-        
-        ready: function(callback, context){
-            this.callbacks.ready.add(callback, context);
+            return data;
         }        
         
     });

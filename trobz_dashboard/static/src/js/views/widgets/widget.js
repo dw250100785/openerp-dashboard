@@ -34,47 +34,42 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         initialize: function(options){
             
-            this.model.ready(function(){
-                
-                this.resize();
-                
-                this.type = this.model.get('type');
-                
-                this.models = {
-                    period: options.period,
-                    search: new SearchModel({}, {
-                        fields: this.model.metrics.fields
-                    })
-                };
-                
-                this.views = {
-                    status: new Status({
-                        collection: this.model.metrics,
-                        search: this.models.search
-                    }),
-                    search: new SearchView({
-                        collection: this.model.metrics.fields,
-                        type: this.model.get('type'),
-                        search: this.models.search
-                    }),
-                    display: new Display({
-                        collection: this.model.metrics,
-                        type: this.model.get('type'),
-                        search: this.models.search
-                    })
-                };
+            this.resize();
             
-                
-                this.listenTo(this.models.period, 'change', this.periodChanged); 
-                this.listenTo(this.models.search, 'change:period', this.doSearch);
-                
-                // set search attribute listened by the widget
-                this.listen = this.type in this.bindSearch ? this.bindSearch[this.type] : []; 
-                _(this.listen).each(function(attr){
-                    this.listenTo(this.models.search, 'change:' + attr, this.doSearch);
-                }, this);    
-                       
-            }, this);
+            this.type = this.model.get('type');
+            
+            this.models = {
+                period: options.period,
+                search: new SearchModel({}, {
+                    fields: this.model.metrics.fields
+                })
+            };
+            
+            this.views = {
+                status: new Status({
+                    collection: this.model.metrics,
+                    search: this.models.search
+                }),
+                search: new SearchView({
+                    collection: this.model.metrics.fields,
+                    type: this.model.get('type'),
+                    search: this.models.search
+                }),
+                display: new Display({
+                    collection: this.model.metrics,
+                    type: this.model.get('type'),
+                    search: this.models.search
+                })
+            };
+        
+            
+            this.listenTo(this.models.search, 'change:period', this.doSearch);
+            
+            // set search attribute listened by the widget
+            this.listen = this.type in this.bindSearch ? this.bindSearch[this.type] : []; 
+            _(this.listen).each(function(attr){
+                this.listenTo(this.models.search, 'change:' + attr, this.doSearch);
+            }, this);    
         },
         
         resize: function(){
@@ -83,42 +78,25 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         doSearch: function(){
             var search = this.models.search, 
-                defaults = { ids: [], domain: [], order: [], group: [] },
-                args = [];
+                options = { period: this.models.period.values(), domain: [], order: [], group: [] };
        
-            //pass only search attributes than the widget is listening to     
-            _(defaults).each(function(def, attr){
+            //pass only search attributes that the widget is listening to     
+            _(options).each(function(def, attr){
                 if(_(this.listen).contains(attr) && $.isFunction(search[attr])){
-                    args.push(search[attr].call(search));
-                }
-                else {
-                    args.push(def);
+                    options[attr] = search[attr].call(search);
                 }
             }, this);    
         
-            this.model.metrics.execute.apply(this.model.metrics, args);
+            return this.model.metrics.execute(options);
         },
         
-        periodChanged: function(){
-            this.searchPeriod();
-        },
-        
-        searchPeriod: function(options){
-            var period = [], periodField = this.model.metrics.fields.filterByTypes('period');
-            if(periodField.length > 0){
-                this.models.search.changePeriod(periodField.at(0), this.models.period, options);
-            }
-        },
         
         onRender: function(){
-            this.model.ready(function(){
-                this.status.show(this.views.status);
-                this.search.show(this.views.search);
-                this.display.show(this.views.display);
-                
-                this.searchPeriod({ silent: true });
-                this.doSearch();
-            }, this);
+            this.status.show(this.views.status);
+            this.search.show(this.views.search);
+            this.display.show(this.views.display);
+            
+            this.doSearch();
         },
         
         hide: function(){

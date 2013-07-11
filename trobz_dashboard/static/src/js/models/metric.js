@@ -1,7 +1,6 @@
 openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
     
-    var PagerResults = dashboard.collections('PagerResults'),
-        Results = dashboard.collections('Results');
+    var Results = dashboard.collections('Results');
     
     var Fields = dashboard.collections('Fields');
             
@@ -12,50 +11,11 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         model_name: 'dashboard.metric',
         
         initialize: function(data, options){
-            this.fields = new Fields([], {
-               field_ids: this.get('field_ids') 
-            });    
-            
-            var Collection = this.getResultCollection();
-            this.results = new Collection([], _.extend(_(this.get('options')).clone(), {
-                model_name: this.get('model_details').model,
-                method: this.get('method'),
-                query: this.get('query_name'),
+            this.fields = new Fields(data.fields || []);    
+            this.results = new Results([], {
                 fields: this.fields
-            }));
-            
+            });
             this.listenTo(this.results, 'reset', this.resultChanged);
-        },
-        
-        getResultCollection: function(){
-            return this.get('type') == 'list' ? PagerResults : Results; 
-        },
-        
-        execute: function(ids, domain, order_by, group_by){
-            //fields have to be loaded before the metric execution...
-            var def = $.Deferred();
-            this.fields.ready(function(){
-                
-                var rdef, options = {
-                    domain: domain,
-                    group_by: group_by,
-                    order_by: order_by
-                };
-                
-                //pager has to be re initialized first
-                if(this.results instanceof PagerResults){
-                    rdef = this.results.load(options);    
-                }
-                else {
-                    rdef = this.results.update(options);
-                }
-                
-                rdef.done(function(){
-                    def.resolve();
-                });
-            }, this);
-            
-            return def.promise();
         },
         
         resultChanged: function(){

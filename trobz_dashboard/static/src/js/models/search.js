@@ -13,21 +13,9 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 domain: [],
                 order: [],
                 group: [],
-                period: []
             }, {silent: true});
         
             this.operators = new Operators();
-        },
-        
-        /*
-         * Period manipulation
-         */
-        
-        changePeriod: function(field, period, options){
-            this.set('period', [
-                [field.get('reference'), this.operators.byName('gte').domain, period.start().format('YYYY-MM-DD')],
-                [field.get('reference'), this.operators.byName('lt').domain, period.end().format('YYYY-MM-DD')],
-            ], options);
         },
         
         /*
@@ -98,8 +86,6 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 
             }, this);
         
-            // add the period    
-            object = object.concat(this.get('period'));
             return object;
         },
         

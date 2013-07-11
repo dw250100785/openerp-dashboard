@@ -283,6 +283,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             this.model = options.model;
 
             //create the graph object, at the first metric init
+            /*
             if(!graph || graph.rendered){
                 graph = new GraphRenderer({
                     search: options.search,
@@ -290,18 +291,21 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                     $el: options.collectionView.$el,
                     general: {}
                 });
-            }            
+            } 
+            */           
         },
 
         render: function(){
+            /*
             var results = this.model.results, 
                 x_axis = results.columns[0] || null,
                 y_axis = results.columns[1] || null,
                 options = _(this.model.get('options')).clone();
-            
             console.log('DisplayGraph render', options);
             
             graph.addData(this.model, x_axis, y_axis, options);
+            */
+            
         }
     });
 

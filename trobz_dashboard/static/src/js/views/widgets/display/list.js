@@ -49,16 +49,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 this.group_by = {
                     field: field 
                 };
-                    
-                default_limit = this.collection.pager.limit;
-                this.collection.changeLimit('all');
             }    
-            else {
-                this.group_by = {};    
-                this.collection.changeLimit(default_limit);
-            }
-            
-            console.log('groupChanged', this.group_by);
         },
         
         renderModel: function(){
@@ -85,17 +76,6 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                    $label.text($label.text() + ' (' + $items.length + ')');     
                 });
             }
-            
-            this.addPager();
-        },
-        
-        addPager: function(){
-            var pager = new Pager({
-                collection: this.model.results
-            });
-            this.pager = new Marionette.Region({ el: '.pager' });
-            this.pager.$el = this.$('.pager');
-            this.pager.show(pager);
         },
         
         appendHtml: function(collectionView, itemView, index){
@@ -154,7 +134,6 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         },
         
         remove: function(){
-            this.pager.reset();
             return _super.remove.apply(this, arguments);
         }
     }); 

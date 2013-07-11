@@ -18,7 +18,6 @@
                     <field name="period_end_at" />
                     
                     <field name="widget_ids" />
-                    <field name="menu_parent_id" />
                 </tree>
             </field>
         </record>
@@ -38,8 +37,6 @@
                         <field name="period_type" />
                         <field name="period_start_at" />
                         <field name="period_end_at" />
-                        
-                        <field name="menu_parent_id" />
                     </group>
                     <notebook>
                         <page string="Widgets">

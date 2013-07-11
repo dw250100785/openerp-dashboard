@@ -114,10 +114,10 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         },
         
         values: function(){
-            return [{
+            return {
                 start: this.start('s'),
                 end: this.end('s')
-            }];
+            };
         },
         
     });

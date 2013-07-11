@@ -14,14 +14,12 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         },
         
         render: function(){
-            this.collection.ready(function(){
-                var html = Renderer.render(this.template, {
-                    metrics: this.collection.toArray()
-                });
-                
-                this.$el.empty();
-                this.$el.html(html);    
-            }, this);
+            var html = Renderer.render(this.template, {
+                metrics: this.collection.toArray()
+            });
+            
+            this.$el.empty();
+            this.$el.html(html);    
         },
         
         // UI Events

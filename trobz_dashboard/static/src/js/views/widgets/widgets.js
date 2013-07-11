@@ -18,10 +18,6 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             this.period = options.period;
         },
         
-        onRender: function(){
-            this.collection.update();
-        },
-        
         mode: function(type){
             console.log('switch mode', type);
         }

@@ -4,20 +4,36 @@
 from osv import osv, fields
 from trobz_dashboard.utils.model import metric_support 
 
-import logging
-_logger = logging.getLogger('ZAZADEV')
-
 
 class dashboard_metric(osv.osv, metric_support):
 
     _name = "dashboard.metric"
     _description = "Widget Metric"
 
-    def model_details(self, cr, uid, ids, field_name, arg, context=None):
+    def extra_fields(self, cr, uid, ids, field_names, arg, context=None):
         result = {}
         
         for metric in self.browse(cr, uid, ids, context=context):
-            result[metric.id] = { 'id': metric.model.id, 'name': metric.model.name, 'model' : metric.model.model }
+            
+            fields = []
+            for field in metric.field_ids:
+                fields.append({
+                    'id': field.id,
+                    'name': field.name,
+                    'sequence': field.sequence,
+                    'reference': field.reference,
+                    'sql_name': field.sql_name,
+                    'type_names': field.type_names,
+                    'field_description': field.field_description,
+                    'period': field.period
+                })
+            
+            model_details = { 'id': metric.model.id, 'name': metric.model.name, 'model' : metric.model.model }
+            
+            result[metric.id] = {
+                'fields': fields,
+                'model_details': model_details
+            }
             
         return result
     
@@ -45,8 +61,10 @@ Pie / Line / Bar Chart:
         'values': fields.serialized('Values', help="Current metric state"),
      
         # get the model details directly by JSON-RPC
-        'model_details': fields.function(model_details, method=True, type='serialized', string='Model Details', readonly=True),
+        'model_details': fields.function(extra_fields, method=True, multi=True, type='serialized', string='Model Details', readonly=True),
         
+        # get field details directly by JSON-RPC (no need to query dashboard.field on web side)
+        'fields': fields.function(extra_fields, method=True, multi=True, type='serialized', string='Fields Data', readonly=True),
     }
     
     _defaults = {

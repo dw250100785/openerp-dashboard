@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from domain_converter import expression  
+from collections import OrderedDict
 import itertools
 import copy
 import re
@@ -41,10 +42,25 @@ class metrics():
         
     }
     
-    def exec_metric(self, cr, uid, ids, domain=[], period={}, group_by=[], order_by=[], limit="ALL", offset=0, context=None):
+    def exec_metric(self, cr, uid, ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, context=None):
         """
         Execute custom SQL queries to populate a trobz dashboard widget
         """
+
+        
+#    
+#        print """
+#        ZAZA| --------------------------------------------
+#        ZAZA| ids: %s
+#        ZAZA| period: %s
+#        ZAZA| domain: %s
+#        ZAZA| group_by: %s
+#        ZAZA| order_by: %s
+#        ZAZA| limit: %s
+#        ZAZA| offset: %s
+#        ZAZA| --------------------------------------------""" % (ids, period, domain, group_by, order_by, limit, offset)
+#        
+#    
     
         stacks = {}
         metrics = self.browse(cr, uid, ids, context=context)
@@ -140,13 +156,10 @@ class metrics():
         result = {}
         is_graph_metrics = self.is_graph_metrics(metrics)
         
+        
         # execute one query in UNION for all metrics
         if is_graph_metrics:
-            first_stack = next (iter (stacks.values()))
             
-            if len(first_stack['args']['group']) <= 0:
-                raise Exception('graph metric require a group_by')
-        
             global_args = stacks['global']
             order = global_args['order']
             group = global_args['group']
@@ -199,14 +212,36 @@ class metrics():
                 })
                 
             cr.execute(query, params)
-            result = { 'columns': cr.description, 'results': cr.dictfetchall()}
+   
+            fetch = cr.dictfetchall()
+            
+            columns_index = {}
+            for column in cr.description:
+                columns_index[column.name] = column
     
+            group_ref = group.reference
+            for metric_id, stack in stacks.items():
+                output_ref = stack['output'].reference
+                
+                desc = []
+                desc.append(columns_index[group_ref])
+                desc.append(columns_index[output_ref])
+              
+                res = []
+                for item in fetch:
+                    data = {}
+                    data[group_ref] = item[group_ref]
+                    data[output_ref] = item[output_ref]
+                    res.append(data)
+                
+                result[metric_id] = {'columns': desc, 'results': res}
         
         # execute each metric separately
         else:
             for metric_id, stack in stacks.items():
                 cr.execute(stack['query'], stack['params'])
-                result[metric_id] = { 'columns': cr.description, 'results': cr.dictfetchall()}
+             
+                result[metric_id] = {'columns': cr.description, 'results': cr.dictfetchall()}
     
     
         return result

@@ -11,14 +11,6 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         
         comparator: 'sequence',
         
-        initialize: function(data, options){
-            this.field_ids = options ? options.field_ids : null;
-            
-            this.callbacks = {
-                ready: new Backbone.Marionette.Callbacks() 
-            };
-        },
-        
         oneByRef: function(reference){
             return this.findWhere({'reference': reference});
         },
@@ -33,23 +25,6 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 return _.intersection(types, field.get('type_names')).length > 0;
             });
             return new Constructor(result);
-        },
-        
-        search: function(){
-            return {
-                filter: [['id', 'in', this.field_ids]]
-            }
-        },
-        
-        ready: function(callback, context){
-            this.callbacks.ready.add(callback, context);
-        },
-        
-        update: function(){
-            var self = this;
-            return _super.update.apply(this, arguments).done(function(){
-                self.callbacks.ready.run(self);
-            });
         }
     });
 
