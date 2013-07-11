@@ -19,8 +19,7 @@ class hr_employee(osv.osv, metric_support):
         },
                     
         'list': """
-             SELECT he.name_related as "he.name_related", he.work_email as "he.work_email", 
-                    he.birthday as "he.birthday", he.manager as "he.manager", rc.name as "rc.name"  
+             SELECT he.name_related, he.work_email, he.birthday, he.manager, rc.name as "country"  
              FROM hr_employee AS he 
              LEFT JOIN res_country rc ON rc.id = he.country_id 
              WHERE TRUE {generated}
@@ -28,20 +27,21 @@ class hr_employee(osv.osv, metric_support):
         
          'graph_attendance': {
             'query': """
-                 SELECT {group} AS "{group}", count(ha.id) AS count 
+                 SELECT {group_sql} AS "{group_ref}", count(ha.id) AS count 
                  FROM hr_employee AS he
                  INNER JOIN hr_attendance ha ON ha.employee_id = he.id
                  LEFT JOIN res_country rc ON rc.id = he.country_id 
                  WHERE TRUE {generated}
                  """,
             'defaults': {
-                 'group_by': ['he.name_related']
+                 'group_by': ['name_related'],
+                 'limit': 10
             }
          },
                     
          'graph_booking': {
             'query': """
-                SELECT {group} AS "{group}", count(br.id) AS booking_count 
+                SELECT {group_sql} AS "{group_ref}", count(br.id) AS booking_count 
                 FROM hr_employee AS he
                 LEFT JOIN booking_resource br ON he.id =  br.origin_id
                 LEFT JOIN ir_model ir ON ir.id =  br.origin_model
@@ -51,10 +51,11 @@ class hr_employee(osv.osv, metric_support):
                 """,
             'params': ['hr.employee'],
             'defaults': {
-                 'group_by': ['he.name_related']
+                 'group_by': ['name_related'],
+                 'limit': 10
             }
-         }
-}
+        }
+    }
     
     _columns = {
         'write_date': fields.datetime('Date Modified', readonly=True),

@@ -4,116 +4,93 @@
         
         <!-- widget -->
         
-        <record id="demo_dashboard_numeric_widget" model="dashboard.widget">
+        <record id="num_widget" model="dashboard.widget">
             <field name="name">Employee Figures</field>
             <field name="type">numeric</field>
         </record>
         
-        <record id="demo_dashboard_numeric_board_to_widget_numeric" model="dashboard.board_to_widget_rel">
+        <record id="num_board_to_widget_numeric" model="dashboard.board_to_widget_rel">
             <field name="board_id" ref="demo_dashboard_board" />
-            <field name="widget_id" ref="demo_dashboard_numeric_widget" />
-            <field name="sequence">2</field>
-            <field name="width">2</field>
+            <field name="widget_id" ref="num_widget" />
+            <field name="sequence">10</field>
+            <field name="width">3</field>
             <field name="height">10</field>
         </record>
         
         <!-- metrics -->
         
-        <record id="demo_dashboard_numeric_metric_1" model="dashboard.metric">
+        <record id="num_metric_1" model="dashboard.metric">
             <field name="name">Count Employee</field>
             <field name="type">numeric</field>
        
             <field name="query_name">count</field>
             <field name="method">exec_metric</field>
        
-            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
-            <field name="widget_id" ref="demo_dashboard_numeric_widget" />
+            <field name="model" ref="model_hr_employee" />
+            <field name="widget_id" ref="num_widget" />
        
             <field name="options" eval="{'format': '0.0','thresholders':{'&gt;=10': 'green', '&lt;10': 'red'}}" />
             <field name="values" eval="{}"/>
         </record>
        
-        <record id="demo_dashboard_numeric_metric_2" model="dashboard.metric">
+        <record id="num_metric_2" model="dashboard.metric">
             <field name="name">Custom Count Employee</field>
             <field name="type">numeric</field>
        
             <field name="query_name">custom_count</field>
             <field name="method">exec_metric</field>
        
-            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
-            <field name="widget_id" ref="demo_dashboard_numeric_widget" />
+            <field name="model" ref="model_hr_employee" />
+            <field name="widget_id" ref="num_widget" />
        
             <field name="options" eval="{'format': '0.0','thresholders':{'&lt;2': 'red'}}" />
             <field name="values" eval="{}"/>
         </record>
        
-        <!-- fields for metric 1 -->
+        <!-- common fields -->
         
-        <record id="demo_dashboard_numeric_metric_1_field_name" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_numeric_metric_1" />
+        <record id="num_metric_1_field_name" model="dashboard.field">
             <field name="name">Name</field>
             <field name="reference">name_related</field>
             <field name="sql_name">name_related</field>
             <field name="sequence" eval="1" />
             
-            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'domain')]" />
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'name_related')]" />
+            <field eval="[(6,0,[ref('num_metric_1'),ref('num_metric_2')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_domain')])]" name="type_ids"/>
+            <field name="field_name" ref="hr.field_hr_employee_name_related"/>
         </record>
         
-       <record id="demo_dashboard_numeric_metric_1_field_period" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_numeric_metric_1" />
+       <record id="num_metric_1_field_period" model="dashboard.field">
             <field name="name">Period</field>
             <field name="reference">period</field>
             <field name="sql_name">write_date</field>
             <field name="sequence" eval="2" />
             
-            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), ('name', '=', 'period')]" />
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'write_date')]" />
-        </record>
+            <field eval="[(6,0,[ref('num_metric_1'),ref('num_metric_2')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_domain'),ref('type_period')])]" name="type_ids"/>
+            <field name="field_name" ref="field_hr_employee_write_date"/>
+       </record>
          
-       <record id="demo_dashboard_numeric_metric_1_field_count" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_numeric_metric_1" />
+       <!-- specific for each metric -->
+         
+       <record id="num_metric_1_field_count" model="dashboard.field">
             <field name="name">Count</field>
             <field name="reference">count</field>
             <field name="sql_name">count</field>
             <field name="sequence" eval="3" />
             
-            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'output')]" />
+            <field eval="[(6,0,[ref('num_metric_1')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_output')])]" name="type_ids"/>
         </record>
          
-      
-        <!-- fields for metric 2 -->
-        
-        <record id="demo_dashboard_numeric_metric_2_field_name" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_numeric_metric_2" />
-            <field name="name">Name</field>
-            <field name="reference">name_related</field>
-            <field name="sql_name">name_related</field>
-            <field name="sequence" eval="1" />
-            
-            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'domain')]" />
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'name_related')]" />
-        </record>
-        
-        <record id="demo_dashboard_numeric_metric_2_field_period" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_numeric_metric_2" />
-            <field name="name">Period</field>
-            <field name="reference">period</field>
-            <field name="sql_name">write_date</field>
-            <field name="sequence" eval="2" />
-            
-            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), ('name', '=', 'period')]" />
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'write_date')]" />
-        </record>
-         
-        <record id="demo_dashboard_numeric_metric_2_field_count" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_numeric_metric_2" />
+        <record id="num_metric_2_field_count" model="dashboard.field">
             <field name="name">Count (start with "J")</field>
             <field name="reference">count</field>
             <field name="sql_name">count</field>
             <field name="sequence" eval="3" />
-            
-            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'output')]" />
+        
+            <field eval="[(6,0,[ref('num_metric_2')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_output')])]" name="type_ids"/>
         </record>
            
     </data>

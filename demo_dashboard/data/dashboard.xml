@@ -10,19 +10,19 @@
     
         <!-- field.types for all demo data -->
         
-        <record id="demo_dashboard_field_type_output" model="dashboard.field.type">
+        <record id="type_output" model="dashboard.field.type">
             <field name="name">output</field>
         </record>
-        <record id="demo_dashboard_field_type_period" model="dashboard.field.type">
+        <record id="type_period" model="dashboard.field.type">
             <field name="name">period</field>
         </record>
-        <record id="demo_dashboard_field_type_domain" model="dashboard.field.type">
+        <record id="type_domain" model="dashboard.field.type">
             <field name="name">domain</field>
         </record>
-        <record id="demo_dashboard_field_type_order" model="dashboard.field.type">
+        <record id="type_order" model="dashboard.field.type">
             <field name="name">order_by</field>
         </record>
-        <record id="demo_dashboard_field_type_group" model="dashboard.field.type">
+        <record id="type_group" model="dashboard.field.type">
             <field name="name">group_by</field>
         </record>
     

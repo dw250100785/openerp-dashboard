@@ -2,32 +2,48 @@
 <openerp>
     <data>
     
-        <!-- widget -->
+        <!-- widget 1 -->
         
-        <record id="demo_dashboard_graph_widget" model="dashboard.widget">
-            <field name="name">Attendance Graph</field>
+        <record id="graph_widget_1" model="dashboard.widget">
+            <field name="name">Employee</field>
             <field name="type">graph</field>
         </record>
         
-        <record id="demo_dashboard_graph_board_to_widget_graph" model="dashboard.board_to_widget_rel">
+        <record id="graph_board_to_widget_graph_1" model="dashboard.board_to_widget_rel">
             <field name="board_id" ref="demo_dashboard_board" />
-            <field name="widget_id" ref="demo_dashboard_graph_widget" />
-            <field name="sequence">1</field>
-            <field name="width">8</field>
+            <field name="widget_id" ref="graph_widget_1" />
+            <field name="sequence">11</field>
+            <field name="width">3</field>
             <field name="height">10</field>
         </record>
     
+        <!-- widget 2 -->
+        
+        <record id="graph_widget_2" model="dashboard.widget">
+            <field name="name">Total Sales</field>
+            <field name="type">graph</field>
+        </record>
+        
+        <record id="graph_board_to_widget_graph_2" model="dashboard.board_to_widget_rel">
+            <field name="board_id" ref="demo_dashboard_board" />
+            <field name="widget_id" ref="graph_widget_2" />
+            <field name="sequence">1</field>
+            <field name="width">7</field>
+            <field name="height">10</field>
+        </record>
+    
+    
         <!-- metric 1 -->
         
-        <record id="demo_dashboard_graph_metric_1" model="dashboard.metric">
+        <record id="graph_metric_1" model="dashboard.metric">
             <field name="name">Attendance Graph</field>
             <field name="type">graph</field>
        
             <field name="query_name">graph_attendance</field>
             <field name="method">exec_metric</field>
        
-            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
-            <field name="widget_id" ref="demo_dashboard_graph_widget" />
+            <field name="model" ref="hr.model_hr_employee" />
+            <field name="widget_id" ref="graph_widget_1" />
        
             <field name="options" eval="{'type': 'bar'}" />
             <field name="values" eval="{}"/>
@@ -35,125 +51,252 @@
     
         <!-- metric 2 -->
         
-        <record id="demo_dashboard_graph_metric_2" model="dashboard.metric">
+        <record id="graph_metric_2" model="dashboard.metric">
             <field name="name">Booking Graph</field>
             <field name="type">graph</field>
        
             <field name="query_name">graph_booking</field>
             <field name="method">exec_metric</field>
        
-            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
-            <field name="widget_id" ref="demo_dashboard_graph_widget" />
+            <field name="model" ref="hr.model_hr_employee" />
+            <field name="widget_id" ref="graph_widget_1" />
+       
+            <field name="options" eval="{'type': 'bar'}" />
+            <field name="values" eval="{}"/>
+        </record>
+    
+        <!-- metric 3 -->
+        
+        <record id="graph_metric_3" model="dashboard.metric">
+            <field name="name">Total Sales Graph</field>
+            <field name="type">graph</field>
+       
+            <field name="query_name">graph_total_sales</field>
+            <field name="method">exec_metric</field>
+       
+            <field name="model" ref="sale.model_sale_order_line" />
+            <field name="widget_id" ref="graph_widget_2" />
        
             <field name="options" eval="{'type': 'line'}" />
             <field name="values" eval="{}"/>
         </record>
     
-        <!-- fields for metric 1-->
+        <!-- common to metric 1 and 2-->
         
-        <record id="demo_dashboard_graph_metric_1_field_name" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_graph_metric_1" />
+        <record id="graph_metric_1_field_name" model="dashboard.field">
             <field name="name">Name</field>
             <field name="reference">name_related</field>
             <field name="sql_name">he.name_related</field>
        
-            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), '|', ('name', '=', 'output'),  '|', ('name', '=', 'order_by'), ('name', '=', 'group_by')]" />
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'name_related')]" />
+            <field eval="[(6,0,[ref('graph_metric_1'),ref('graph_metric_2')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field name="field_name" ref="hr.field_hr_employee_name_related"/>
         </record>
         
-       
-        <record id="demo_dashboard_graph_metric_1_field_country_id" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_graph_metric_1" />
+        <record id="graph_metric_1_field_country_id" model="dashboard.field">
             <field name="name">Country</field>
             <field name="reference">country</field>
             <field name="sql_name">rc.name</field>
        
-            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), '|', ('name', '=', 'output'),  '|', ('name', '=', 'order_by'), ('name', '=', 'group_by')]" />
+            <field eval="[(6,0,[ref('graph_metric_1'),ref('graph_metric_2')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
             <field name="field_name" model="ir.model.fields" search="[('model', '=', 'res.country'), ('name', '=', 'name')]" />
         </record>
        
-        <record id="demo_dashboard_graph_metric_1_field_birthday" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_graph_metric_1" />
+        <record id="graph_metric_1_field_birthday" model="dashboard.field">
             <field name="name">Birthday</field>
             <field name="reference">birthday</field>
             <field name="sql_name">he.birthday</field>
        
-            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), ('name', '=', 'order_by')]" />
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'birthday')]" />
+            <field eval="[(6,0,[ref('graph_metric_1'),ref('graph_metric_2')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_domain')])]" name="type_ids"/>
+            <field name="field_name" ref="hr.field_hr_employee_birthday"/>
         </record>
         
-        <record id="demo_dashboard_graph_metric_1_field_count" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_graph_metric_1" />
+        <!-- specific to metric 1 -->
+        
+        <record id="graph_metric_1_field_count" model="dashboard.field">
             <field name="name">Attendance count</field>
             <field name="reference">count</field>
             <field name="sql_name">count</field>
             
-            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'output')]" />
+            <field eval="[(6,0,[ref('graph_metric_1')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_output'),ref('type_order')])]" name="type_ids"/>
         </record>
          
-        <record id="demo_dashboard_graph_metric_1_field_period" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_graph_metric_1" />
+        <record id="graph_metric_1_field_period" model="dashboard.field">
             <field name="name">Attendance date</field>
             <field name="reference">period</field>
             <field name="sql_name">ha.name</field>
        
-            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'period')]" />
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.attendance'), ('name', '=', 'name')]" />
+            <field eval="[(6,0,[ref('graph_metric_1')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_period')])]" name="type_ids"/>
         </record>
         
-
-        <!-- fields for metric 1-->
+        <!-- specific to metric 2 -->
         
-        <record id="demo_dashboard_graph_metric_2_field_name" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_graph_metric_2" />
-            <field name="name">Name</field>
-            <field name="reference">name_related</field>
-            <field name="sql_name">he.name_related</field>
-       
-            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), '|', ('name', '=', 'output'),  '|', ('name', '=', 'order_by'), ('name', '=', 'group_by')]" />
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'name_related')]" />
-            <field name="model" model="ir.model" search="[('model', '=', 'hr.employee')]" />
-        </record>
-        
-       
-        <record id="demo_dashboard_graph_metric_2_field_country_id" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_graph_metric_2" />
-            <field name="name">Country</field>
-            <field name="reference">country</field>
-            <field name="sql_name">rc.name</field>
-       
-            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), '|', ('name', '=', 'output'),  '|', ('name', '=', 'order_by'), ('name', '=', 'group_by')]" />
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'res.country'), ('name', '=', 'name')]" />
-        </record>
-       
-        <record id="demo_dashboard_graph_metric_2_field_birthday" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_graph_metric_2" />
-            <field name="name">Birthday</field>
-            <field name="reference">birthday</field>
-            <field name="sql_name">he.birthday</field>
-       
-            <field name="type_ids" model="dashboard.field.type" search="['|', ('name', '=', 'domain'), ('name', '=', 'order_by')]" />
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'birthday')]" />
-        </record>
-
-        <record id="demo_dashboard_graph_metric_2_field_count" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_graph_metric_2" />
+        <record id="graph_metric_2_field_count" model="dashboard.field">
             <field name="name">Booking count</field>
             <field name="reference">booking_count</field>
             <field name="sql_name">booking_count</field>
             
-            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'output')]" />
+            <field eval="[(6,0,[ref('graph_metric_2')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_output'),ref('type_order')])]" name="type_ids"/>
         </record>
          
-        <record id="demo_dashboard_graph_metric_2_field_period" model="dashboard.field">
-            <field name="metric_id" ref="demo_dashboard_graph_metric_2" />
+        <record id="graph_metric_2_field_period" model="dashboard.field">
             <field name="name">Booking start date</field>
             <field name="reference">period</field>
             <field name="sql_name">br.date_start</field>
        
-            <field name="type_ids" model="dashboard.field.type" search="[('name', '=', 'period')]" />
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.attendance'), ('name', '=', 'name')]" />
+            <field eval="[(6,0,[ref('graph_metric_2')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_period')])]" name="type_ids"/>
         </record>
 
+
+        <!-- fields for metric 3-->
+        
+        <record id="graph_metric_3_field_company" model="dashboard.field">
+            <field name="name">Company</field>
+            <field name="reference">company</field>
+            <field name="sql_name">rco.name</field>
+
+            <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'res.company'), ('name', '=', 'name')]" />
+        </record>
+        
+        <record id="graph_metric_3_field_shop" model="dashboard.field">
+            <field name="name">Shop</field>
+            <field name="reference">shop</field>
+            <field name="sql_name">ssh.name</field>
+       
+            <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.shop'), ('name', '=', 'name')]" />
+        </record>
+        
+        <record id="graph_metric_3_field_customer" model="dashboard.field">
+            <field name="name">Customer</field>
+            <field name="reference">customer</field>
+            <field name="sql_name">rpa.name</field>
+       
+            <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'res.partner'), ('name', '=', 'name')]" />
+        </record>
+        
+        <record id="graph_metric_3_field_department" model="dashboard.field">
+            <field name="name">Department</field>
+            <field name="reference">department</field>
+            <field name="sql_name">hde.name</field>
+       
+            <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.department'), ('name', '=', 'name')]" />
+        </record>
+       
+        <record id="graph_metric_3_field_salesman" model="dashboard.field">
+            <field name="name">Salesman</field>
+            <field name="reference">salesman</field>
+            <field name="sql_name">rre.name</field>
+       
+            <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'resource.resource'), ('name', '=', 'name')]" />
+        </record>
+       
+        <record id="graph_metric_3_field_product_category" model="dashboard.field">
+            <field name="name">Product Category</field>
+            <field name="reference">product_category</field>
+            <field name="sql_name">pca.name</field>
+       
+            <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'product.category'), ('name', '=', 'name')]" />
+        </record>
+            
+        <record id="graph_metric_3_field_product" model="dashboard.field">
+            <field name="name">Product</field>
+            <field name="reference">product</field>
+            <field name="sql_name">pte.name</field>
+       
+            <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'product.template'), ('name', '=', 'name')]" />
+        </record>
+       
+       
+        <record id="graph_metric_3_field_total_order_year" model="dashboard.field">
+            <field name="name">Order Date - Year</field>
+            <field name="reference">order_date_year</field>
+            <field name="sql_name">date_trunc('year', sor.date_order)</field>
+       
+            <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+        </record>
+       
+        <record id="graph_metric_3_field_total_order_month" model="dashboard.field">
+            <field name="name">Order Date - Month</field>
+            <field name="reference">order_date_month</field>
+            <field name="sql_name">date_trunc('month', sor.date_order)</field>
+       
+            <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+        </record>
+        
+        <record id="graph_metric_3_field_total_order_quarter" model="dashboard.field">
+            <field name="name">Order Date - Quarter</field>
+            <field name="reference">order_date_quarter</field>
+            <field name="sql_name">date_trunc('quarter', sor.date_order)</field>
+       
+            <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+        </record>
+        
+        <record id="graph_metric_3_field_total_order_week" model="dashboard.field">
+            <field name="name">Order Date - Week</field>
+            <field name="reference">order_date_week</field>
+            <field name="sql_name">date_trunc('week', sor.date_order)</field>
+       
+            <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+        </record>
+       
+        <record id="graph_metric_3_field_total_order_day" model="dashboard.field">
+            <field name="name">Order Date - Day</field>
+            <field name="reference">order_date_day</field>
+            <field name="sql_name">date_trunc('day', sor.date_order)</field>
+       
+            <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+        </record>
+         
+         
+        <record id="graph_metric_3_field_total_period" model="dashboard.field">
+            <field name="name">Order Date</field>
+            <field name="reference">period</field>
+            <field name="sql_name">sor.date_order</field>
+       
+            <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_period')])]" name="type_ids"/>
+            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+        </record>
+       
+       
+        <record id="graph_metric_3_field_total_sales" model="dashboard.field">
+            <field name="name">Total Sales Amount</field>
+            <field name="reference">total_sales</field>
+            <field name="sql_name">total_sales</field>
+      
+            <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_output'),ref('type_order')])]" name="type_ids"/>
+        </record>
+             
     </data>
 </openerp>

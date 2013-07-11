@@ -10,6 +10,8 @@ Demo data for Trobz Dashboard module
     'website': 'http://trobz.com',
     'depends': [
         'trobz_dashboard',
+        'hr',
+        'sale'
     ],
     'data': [
         'data/dashboard.xml',
@@ -17,10 +19,15 @@ Demo data for Trobz Dashboard module
         'data/widget_list.xml',
         'data/widget_graph.xml',
     
+        'data/dashboard_unit_test_data.xml',
+    
         'menu/dashboard.xml',
+    
+        'data/dashboard.test-unit_test.csv'
     ],
     
     'demo': [],
+    
     'application': True,
     'sequence': -99,
     'installable': True,
