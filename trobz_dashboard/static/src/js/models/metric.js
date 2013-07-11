@@ -11,17 +11,13 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         model_name: 'dashboard.metric',
         
         initialize: function(data, options){
-            this.fields = new Fields(data.fields || []);    
+            this.fields = new Fields(data.fields || []);
+            delete data.fields;
+                
             this.results = new Results([], {
                 fields: this.fields
             });
-            this.listenTo(this.results, 'reset', this.resultChanged);
-        },
-        
-        resultChanged: function(){
-            this.collection.trigger('change:results', this);
         }
-    
     });
 
     dashboard.models('Metric', Metric);

@@ -52,12 +52,12 @@
             <t t-foreach="columns" t-as="column">
             
             
-            <t t-set="sql_name" t-value="column.get('sql_name')" />
+            <t t-set="reference" t-value="column.get('reference')" />
             <t t-set="type_names" t-value="column.get('type_names')" />
             <t t-set="sortable" t-value="(_(type_names).contains('order_by') ? ' sortable' : '')" />
-            <t t-set="order" t-value="(sql_name in reorder ? reorder[sql_name] : '')" />
+            <t t-set="order" t-value="(reference in reorder ? reorder[reference] : '')" />
             
-            <th t-att-data-id="sql_name" t-att-class="sortable + ' ' + order"><div><t t-esc="column.get('name')"/></div></th>
+            <th t-att-data-id="reference" t-att-class="sortable + ' ' + order"><div><t t-esc="column.get('name')"/></div></th>
             </t>
         </tr>
     </t>

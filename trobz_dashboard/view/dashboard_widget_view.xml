@@ -5,8 +5,6 @@
         <record id="dashboard_widget_form" model="ir.ui.view">
             <field name="name">dashboard.widget.form</field>
             <field name="model">dashboard.widget</field>
-            <field name="type">form</field>
-            
             <field name="arch" type="xml">
                 <form string="Widget">
                     <notebook>
@@ -65,7 +63,6 @@
         <record id="dashboard_widget_tree" model="ir.ui.view">
             <field name="name">dashboard.widget.tree</field>
             <field name="model">dashboard.widget</field>
-            <field name="type">tree</field>
                               
             <field name="arch" type="xml">
                 <tree string="Widgets">

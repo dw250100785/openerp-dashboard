@@ -5,8 +5,6 @@
         <record id="dashboard_metric_form" model="ir.ui.view">
             <field name="name">dashboard.metric.form</field>
             <field name="model">dashboard.metric</field>
-            <field name="type">form</field>
-                
             <field name="arch" type="xml">
                 <form string="Metric">
                     <notebook>
@@ -55,7 +53,6 @@
         <record id="dashboard_metric_tree" model="ir.ui.view">
             <field name="name">dashboard.metric.tree</field>
             <field name="model">dashboard.metric</field>
-            <field name="type">tree</field>
             <field name="field_parent">fields</field>
                       
             <field name="arch" type="xml">

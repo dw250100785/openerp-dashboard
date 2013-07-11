@@ -12,13 +12,15 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         
         initialize: function(data, options){
             
+            this.metrics = new Metrics();
+            
             var metrics = [];
             if('metrics' in data){
                 metrics = data.metrics;
                 delete data.metrics;
             }
          
-            this.metrics = new Metrics(metrics);
+            this.metrics.reset(metrics);
             
             return data;
         }        

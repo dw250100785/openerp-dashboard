@@ -19,6 +19,10 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             'click .toggle_search': 'toggleSearch'
         },
         
+        ui: {
+            loader: '.loader'
+        },
+        
         regions: {
             search: '.search',
             display: '.display',
@@ -62,8 +66,9 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 })
             };
         
+            this.addDefaultsSearch();
             
-            this.listenTo(this.models.search, 'change:period', this.doSearch);
+            this.listenTo(this.models.period, 'change', this.doSearch);
             
             // set search attribute listened by the widget
             this.listen = this.type in this.bindSearch ? this.bindSearch[this.type] : []; 
@@ -87,7 +92,23 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 }
             }, this);    
         
-            return this.model.metrics.execute(options);
+            promise = this.model.metrics.execute(options);
+            
+            var $loader = this.ui.loader;
+            
+            $loader.attr('class', 'loader icon-refresh icon-spin');
+            promise.done(function(){
+                $loader.attr('class', 'loader invisible icon-refresh');
+            });
+            promise.fail(function(){
+                var _t = dashboard.web()._t;
+                $loader.attr({
+                    'class': 'loader icon-warning-sign',
+                    'title':  _t('Oops, error during widget loading, please check your search parameters again...')
+                });
+            });
+            
+            return promise;
         },
         
         
@@ -105,6 +126,35 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         show: function(){
             this.$el.show();
+        },
+        
+        addDefaultsSearch: function(){
+            var search_model = this.models.search,
+                search_view = this.views.search;
+            
+            this.model.metrics.each(function(metric){
+                var defaults = metric.get('defaults'),
+                    field, type, matches;
+                    
+                if('group_by' in defaults && defaults['group_by'].length > 0){
+                    field = metric.fields.oneByRef(defaults['group_by'][0]);
+                    if(field){
+                        search_model.defaultGroup(field);
+                        search_view.fields.order.add(field);
+                    }
+                }
+                if('order_by' in defaults && defaults['order_by'].length > 0){
+                    matches = defaults['order_by'][0].match(/(?:['"])?([a-z0-9_-]+)(?:['"])? (asc|desc)/i);
+                    if(matches.length == 3){
+                        field = metric.fields.oneByRef(matches[1]);
+                        type = matches[2].toUpperCase();
+                        if(field && type) {
+                            search_model.defaultOrder(field, type);    
+                        }
+                    }
+                }
+            });
+        
         },
         
         /*

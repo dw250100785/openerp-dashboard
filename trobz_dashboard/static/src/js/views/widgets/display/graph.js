@@ -127,11 +127,13 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             this.series.push({ x_axis: x_axis, y_axis: y_axis });
         
             metric.results.each(function(result, index){
-                var name = result.get(x_axis.get('sql_name')) || dashboard.web()._t('undefined'),
-                    x = this.getTickIndex(name, index, x_axis),
-                    y = parseInt(result.get(y_axis.get('sql_name')));
+                var name = result.get(x_axis.get('reference')) || dashboard.web()._t('undefined'),
+                    x = this.getTickIndex(name, x_axis),
+                    y = result.get(y_axis.get('reference'));
                 
-                data.push([x, y]);
+                if($.isNumeric(y)){
+                    data.push([x, parseInt(y)]);    
+                }
             }, this);
             
             this.data.push(
@@ -154,60 +156,33 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             return _.extend(options, defaults[type]);
         },
         
-        getTickIndex: function(name, index, x_axis){
+        getTickIndex: function(name, x_axis){
             var current_serie = this.series.length - 1,
-                last_tick = _(this.ticks).last(),
                 tick = _(this.ticks).find(function(tick){ 
-                    return x_axis.unformat(tick[0]) == name; 
+                    return tick.origin == name; 
                 });
         
             if(!tick){
-                if(x_axis.type() != 'string' && last_tick && $.isNumeric(name)){
-                    var next_value = x_axis.nextIndex(x_axis.unformat(last_tick[0])),
-                        value = parseInt(name);
-                    
-                    while(next_value != value){
-                        this.ticks.push([x_axis.format(next_value), this.ticks.length * this.ticks_group]);
-                        next_value = x_axis.nextIndex(next_value);
-                    }
-                }
-                tick = [x_axis.format(name), this.ticks.length * this.ticks_group];
+                tick = {
+                    value: x_axis.format(name),
+                    origin: name,
+                    index: this.ticks.length * this.ticks_group
+                };
                 this.ticks.push(tick);
             }
         
-            return tick[1] + (this.options.group ? current_serie : 0);
+            return tick.index + (this.options.group ? current_serie : 0);
         },
         
         getTick: function(index){
             index = parseInt(index);
             var group = this.ticks_group;
             return _(this.ticks).find(function(tick){ 
-                return tick[1] <= index && index < tick[1] + group; 
+                return tick.index <= index && index < tick.index + group; 
             });
         },
         
         getTicks: function(){
-            // reorder ticks
-            
-            if(this.search){
-                var _ticks = _(this.ticks),
-                    order = this.search.get('order'),
-                    serie = _(this.series).last();
-                
-                // force ordering by x_axis if no order are selected
-                order = order.length > 0 ? order : (serie ? [{ field: serie.x_axis, type: 'ASC' }] : []);
-            
-                if(order.length > 0 && serie.x_axis.type() == 'string' && serie.x_axis.compatible(order[0].field)){
-                    this.ticks = _ticks.sortBy(function(tick){
-                        return tick[0];
-                    });
-                }
-                
-                if(order.type == 'DESC'){
-                    this.ticks.reverse();
-                }
-            }
-            
             // recreate all ticks based on group required 
             
             var group = this.ticks_group,
@@ -215,8 +190,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 ticks = [];
             
             _(this.ticks).each(function(tick){
-                var index = tick[1], value = tick[0];
-                for(var i=0 ; i<group ; i++){
+                var index = tick.index, value = tick.value;
+                for(var i=0 ; i < group ; i++){
                     ticks.push([ index + i, (i == half ? value : '') ]);
                 }
             });
@@ -227,7 +202,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         trackFormatter: function(item){
             
             var tick = this.getTick(item.x);
-                label = tick && tick[0] ? tick[0] : item.x;
+                label = tick && tick.value ? tick.value : item.x;
             
             
             return label + ': ' + item.y;
@@ -283,7 +258,6 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             this.model = options.model;
 
             //create the graph object, at the first metric init
-            /*
             if(!graph || graph.rendered){
                 graph = new GraphRenderer({
                     search: options.search,
@@ -291,21 +265,18 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                     $el: options.collectionView.$el,
                     general: {}
                 });
-            } 
-            */           
+            }            
         },
 
         render: function(){
-            /*
             var results = this.model.results, 
                 x_axis = results.columns[0] || null,
                 y_axis = results.columns[1] || null,
                 options = _(this.model.get('options')).clone();
+            
             console.log('DisplayGraph render', options);
             
             graph.addData(this.model, x_axis, y_axis, options);
-            */
-            
         }
     });
 

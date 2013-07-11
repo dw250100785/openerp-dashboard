@@ -21,7 +21,7 @@ class metrics():
                 {query}
             ) AS result 
             right outer join ( 
-                SELECT * FROM generate_series ( '{start}'::timestamp, '{end}', '1 {period}') as gtime
+                SELECT * FROM generate_series ( '{start}'::timestamp, '{end}', '{period_inc}') as gtime
             ) AS gdate ON result."{reference}" = date_trunc('{period}', gdate.gtime)
             group by date_trunc('{period}', gdate.gtime)
             {order}
@@ -47,33 +47,21 @@ class metrics():
         Execute custom SQL queries to populate a trobz dashboard widget
         """
 
-        
-#    
-#        print """
-#        ZAZA| --------------------------------------------
-#        ZAZA| ids: %s
-#        ZAZA| period: %s
-#        ZAZA| domain: %s
-#        ZAZA| group_by: %s
-#        ZAZA| order_by: %s
-#        ZAZA| limit: %s
-#        ZAZA| offset: %s
-#        ZAZA| --------------------------------------------""" % (ids, period, domain, group_by, order_by, limit, offset)
-#        
-#    
-    
         stacks = {}
         metrics = self.browse(cr, uid, ids, context=context)
         is_graph_metrics = self.is_graph_metrics(metrics)
-        
+        order_tmp = order_by
+                
         for metric in metrics:
             model = self.pool.get(metric.model.model)
             
             query, params, defaults = self.get_query(model, metric)
         
             if is_graph_metrics:
+                order_by = order_tmp
                 self.set_stack_globals(metric, defaults, stacks, period, group_by, order_by, limit, offset)
                 # in graph mode, order will be applied to the global query 
+                order_tmp = order_by
                 order_by = []
                 #FIXME: should not disable the limit and offset on sub queries but it"s required if the ordering is different on sub queries and main query...
                 limit = 'ALL'
@@ -97,24 +85,29 @@ class metrics():
     
     
     def set_stack_globals(self, metric, defaults, stacks, period, group_by, order_by, limit, offset):
-        
         group = copy.copy(defaults['group_by']) if 'group_by' in defaults and len(group_by) == 0 else copy.copy(group_by)
         order = copy.copy(order_by)
         
         if len(group) <= 0:
             raise Exception('graph metric require a group_by')
             
+            
         # apply order by group for graph by default
         if len(order) <= 0:
             order.append(group[0] + ' ASC')
-        
+       
         stacks['global'] = {
             'limit': limit,
             'offset': offset,
             'period': period
         } if not 'global' in stacks else stacks['global'] 
+        
         try:
             stacks['global']['order'] = self.convert_order(metric, order[0]) if 'order' not in stacks['global'] else stacks['global']['order']
+        except:
+            pass
+        
+        try:
             stacks['global']['group'] = self.convert_group(metric, group[0]) if 'group' not in stacks['global']  else stacks['global']['group']
         except:
             pass
@@ -189,11 +182,13 @@ class metrics():
                 if order:
                     order_by = "ORDER BY date_trunc('%s', gdate.gtime) %s" % (order[0].period, order[1]) if order[0].period else 'ORDER BY max(result."%s") %s NULLS LAST' % (order[0].reference, order[1]) 
                     
+                    
                 query = self.envelopes['query_date'].format(** {
                   "start": period['start'],
                   "end": period['end'],
                   "reference": group.reference,
                   "period": group.period,
+                  "period_inc": "1 %s" % group.period if group.period != 'quarter' else "3 %s" % "month",
                   "output": ', '.join(outputs),
                   "order": order_by,
                   "limit": "LIMIT %s" % (limit), 
@@ -201,6 +196,7 @@ class metrics():
                   "query": '\nUNION ALL\n'.join(queries)
                 })
             else:
+                
                 query = self.envelopes['query_string'].format(** {
                   "reference": group.reference,
                   "output": ', '.join(outputs),
@@ -250,7 +246,8 @@ class metrics():
         """
         rebuild query with parameters slot for other queries, required for UNION
         """
-        pattern = re.compile(r"""(?is)^(.*select .*),(.* as [a-z0-9_'"]+)(.*from.*)""")
+        
+        pattern = re.compile(r"""(?is)^(.*select .* as [^,]+),(.* as [a-z0-9_'"]+)(.*from.*)""")
         matches = pattern.match(query)
         
         fields = []

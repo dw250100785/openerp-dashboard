@@ -18,11 +18,10 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         },
         
         setup: function(){
-            var fields = [];
-            _(data).each(function(metric){
-                fields.concat(metric.fields || []);
+            var fields = this.fields;
+            this.each(function(metric){
+                fields.add(metric.fields.models);
             });
-            this.fields.reset(fields);
         },
         
         execute: function(options){
@@ -31,15 +30,15 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             options = _.defaults(options || {}, {
                 period: {},
                 domain: [], 
-                group_by: [],
-                order_by: [],
+                group: [],
+                order: [],
                 limit: 'ALL',
                 offset: 0
             });
             
             var promise = this.sync('call', { model_name: this.model_name }, {
                 method: 'exec_metric',
-                args: [this.pluck('id'), options.period, options.domain, options.group_by, options.order_by, options.limit, options.offset]
+                args: [this.pluck('id'), options.period, options.domain, options.group, options.order, options.limit, options.offset]
             });      
             
             var metrics = this;
@@ -48,6 +47,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                     var results = metrics.get(metric_id).results;
                     results.reset(results.parse(result));
                 });
+                metrics.trigger('results:updated', this);
                 def.resolve();
             });
             

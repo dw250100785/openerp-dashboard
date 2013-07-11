@@ -20,6 +20,8 @@
 #trobz_board .widget.size10 { width: 100%; }
 
 
+
+
 #trobz_board .widget .widget_content {
     border: 1px solid #c8c8d3;
     -moz-box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
@@ -48,6 +50,20 @@
     -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 9px rgba(0, 0, 0, 0.1);
     -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 9px rgba(0, 0, 0, 0.1);
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 9px rgba(0, 0, 0, 0.1);
+}
+
+#trobz_board .widget .head .loader {
+    font-size: 20px;
+    float: left;
+    margin: 3px 0 0 8px;
+}
+
+#trobz_board .widget .head .loader.invisible {
+    visibility: hidden;
+}
+
+#trobz_board .widget .head .loader.icon-warning-sign {
+    color: #900;
 }
 
 #trobz_board .widget .head h2 {

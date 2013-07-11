@@ -30,9 +30,16 @@ class dashboard_metric(osv.osv, metric_support):
             
             model_details = { 'id': metric.model.id, 'name': metric.model.name, 'model' : metric.model.model }
             
+            defaults = {}
+            model = self.pool.get(metric.model.model)
+            if hasattr(model, '_metrics_sql') and metric.query_name in model._metrics_sql:
+                query = model._metrics_sql[metric.query_name]
+                defaults = query['defaults'] if isinstance(query, dict) and 'defaults' in query else {}
+            
             result[metric.id] = {
                 'fields': fields,
-                'model_details': model_details
+                'model_details': model_details,
+                'defaults': defaults
             }
             
         return result
@@ -65,6 +72,9 @@ Pie / Line / Bar Chart:
         
         # get field details directly by JSON-RPC (no need to query dashboard.field on web side)
         'fields': fields.function(extra_fields, method=True, multi=True, type='serialized', string='Fields Data', readonly=True),
+        
+        # get defaults metric filters defined on the model, in _metrics_sql attribute
+        'defaults': fields.function(extra_fields, method=True, multi=True, type='serialized', string='Defaults for SQL', readonly=True),   
     }
     
     _defaults = {

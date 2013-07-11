@@ -23,6 +23,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         initialize: function(options){
             this.search = options.search;
+            this.listenTo(this.search, 'change:group', this.render);
         },
         
         renderForm: function(e){
@@ -41,9 +42,9 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             e.preventDefault();
             
             var field = this.collection.get(this.$el.find('.field').val());
-                    
-            this.search.addGroup(field);
-            
+                  
+            this.trigger('search:add', field);
+              
             this.render();
         },
         
@@ -55,7 +56,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             
             field = this.collection.get(field);
             
-            this.search.removeGroup(field);
+            this.trigger('search:remove', field);
             
             this.render();
         },
@@ -64,6 +65,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             var groups = this.search.get('group');
             
             return {
+              "is_default": this.search.isDefault('group'),
               "groups": groups,
               "has_group": groups.length > 0
             }

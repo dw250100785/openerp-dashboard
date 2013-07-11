@@ -23,6 +23,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         initialize: function(options){
             this.search = options.search;
+            this.listenTo(this.search, 'change:order', this.render);
         },
         
         renderForm: function(e){
@@ -43,9 +44,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             var field = this.collection.get(this.$el.find('.field').val()),
                 type = this.$el.find('.type').val();
                     
-            this.search.addOrder(field, type);
-            
-            this.render();
+            this.trigger('search:add', field, type);
         },
         
         removeOrder: function(e){
@@ -57,15 +56,14 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             
             field = this.collection.get(field);
             
-            this.search.removeOrder(field, type);
-            
-            this.render();
+            this.trigger('search:remove', field, type);
         },
         
         serializeData: function(){
             var orders = this.search.get('order');
             
             return {
+              "is_default": this.search.isDefault('order'),
               "orders": orders,
               "has_order": orders.length > 0
             }

@@ -40,7 +40,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             var name, field, data = []; 
         
             for(name in this.model.attributes){
-                field = this.fields.filterByTypes('output').oneBySQLName(name);
+                field = this.fields.types('output').oneBySQLName(name);
                 value = this.model.get(name);
                 data = {
                     label: field.get('name'),

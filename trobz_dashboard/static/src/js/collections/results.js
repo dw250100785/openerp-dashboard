@@ -20,7 +20,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             var results = response.results, desc = response.columns;
             
             // get column info
-            var output_fields = this.fields.filterByTypes('output'),
+            var output_fields = this.fields.types('output'),
                 sorted = [], columns = [], field;
             
             _(results).each(function(result, index){

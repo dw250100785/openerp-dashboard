@@ -19,10 +19,18 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             return this.findWhere({'sql_name': sql_name});
         },
         
-        filterByTypes: function(){
+        types: function(){
             var types = _.toArray(arguments), Constructor = this.constructor;
             var result = this.filter(function(field){
                 return _.intersection(types, field.get('type_names')).length > 0;
+            });
+            return new Constructor(result);
+        },
+        
+        notTypes: function(){
+            var types = _.toArray(arguments), Constructor = this.constructor;
+            var result = this.filter(function(field){
+                return _.intersection(types, field.get('type_names')).length == 0;
             });
             return new Constructor(result);
         }

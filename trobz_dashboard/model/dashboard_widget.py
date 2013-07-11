@@ -23,6 +23,7 @@ class dashboard_widget(osv.osv):
                     'method': metric.method,
                     'options': metric.options,
                     'values': metric.values,
+                    'defaults': metric.defaults,
                     'model_details': metric.model_details,
                     'fields': metric.fields,
                 })

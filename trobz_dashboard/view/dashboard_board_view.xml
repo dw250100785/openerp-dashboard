@@ -5,7 +5,6 @@
         <record id="dashboard_board_tree" model="ir.ui.view">
             <field name="name">dashboard.board.tree</field>
             <field name="model">dashboard.board</field>
-            <field name="type">tree</field>
             <field name="field_parent">widgets</field>
             
             <field name="arch" type="xml">
@@ -25,9 +24,6 @@
         <record id="dashboard_board_form" model="ir.ui.view">
             <field name="name">dashboard.board.form</field>
             <field name="model">dashboard.board</field>
-            
-            <field name="type">form</field>
-            
             <field name="arch" type="xml">
                 <form string="Board" version="7.0">
                     <group>
