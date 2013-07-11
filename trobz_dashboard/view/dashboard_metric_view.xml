@@ -21,7 +21,7 @@
                             </group>
                         </page>
                         <page string="Fields">
-                            <field name="field_ids" widget="one2many_list">
+                            <field name="field_ids" widget="many2many">
                                 <form string="Field">
                                     <group>
                                         <field name="name"/>

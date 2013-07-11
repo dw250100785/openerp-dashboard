@@ -186,6 +186,7 @@
         <div class="current">
             <t t-if="has_group">
                 <t t-call="TrobzDashboard.search.group.string">
+                    <t t-set="is_default" t-value="is_default" />
                     <t t-set="groups" t-value="groups" />
                 </t>
             </t>
@@ -201,7 +202,13 @@
             
             <div class="criterion">
                 <span class="search_field" t-att-field-id="group.get('id')"><t t-esc="group.get('name')" /></span>
-                <i class="icon-remove remove" />
+                <t t-if="is_default">
+                    <span class="search_string">(default)</span>
+                </t>
+                <t t-if="!is_default">
+                    <i class="icon-remove remove" />
+                </t>
+            
             </div>
                
             <t t-if="group_index lt groups.length - 1">
@@ -229,6 +236,7 @@
         <div class="current">
             <t t-if="has_order">
                 <t t-call="TrobzDashboard.search.order.string">
+                    <t t-set="is_default" t-value="is_default" />
                     <t t-set="orders" t-value="orders" />
                 </t>
             </t>
@@ -243,9 +251,14 @@
         <t t-foreach="orders" t-as="order">
             
             <div class="criterion">
-                <span class="search_field" t-att-field-id="order[0].get('id')"><t t-esc="order[0].get('name')" /></span>
-                <span class="search_value" t-att-value="order[1]"><t t-esc="order[1]" /></span>
-                <i class="icon-remove remove" />
+                <span class="search_field" t-att-field-id="order.field.get('id')"><t t-esc="order.field.get('name')" /></span>
+                <span class="search_value" t-att-value="order.type"><t t-esc="order.type" /></span>
+                <t t-if="is_default">
+                    <span class="search_string">(default)</span>
+                </t>
+                <t t-if="!is_default">
+                    <i class="icon-remove remove" />
+                </t>
             </div>
                
             <t t-if="order_index lt orders.length - 1">

@@ -55,13 +55,6 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                 })
             };
             
-            var collections = {
-                widgets: new WidgetsCollection([], {
-                    silent: true,
-                    board_id: this.board_id
-                })
-            };
-            
             var views = {
                 panel: new PanelLayout(),
                 
@@ -70,12 +63,12 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                 }),
                      
                 widgets: new WidgetsView({
-                    collection: collections.widgets,
+                    collection: models.board.widgets,
                     period: models.period
                 })    
             };
             
-            debug = collections;
+            debug = models.board;
             
                 //bind special event 
             this.bind(models.state, views.toolbar);
@@ -91,9 +84,9 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                 el: '#trobz_board'
             });
             
-            $.when(models.state.process(), this.view_loaded).done(function(){
+            var def = models.board.update();
+            $.when(def, models.state.process(), this.view_loaded).done(function(){
                 models.state.bind();
-                
                 region.show(views.panel);
                 views.panel.toolbar.show(views.toolbar);
                 views.panel.widgets.show(views.widgets);

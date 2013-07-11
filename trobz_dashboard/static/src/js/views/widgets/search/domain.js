@@ -34,6 +34,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         initialize: function(options){
             this.search = options.search;
+            this.listenTo(this.search, 'change:domain', this.render);
 
             this.current_widget = null;
             
@@ -115,8 +116,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             var field = this.collection.get(this.$el.find('.field').val()),
                 operator = this.$el.find('.operator').val() || 'e',
                 value = this.$el.find('.value').val() || this.$el.find('select.value').val() || this.$el.find('[name="' + field.get('reference') + '"]').val();
-                    
-            this.search.addDomain(field, operator, value);
+          
+            this.trigger('search:add', field, operator, value);
             
             this.render();
         },
@@ -132,7 +133,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             field = this.collection.get(field);
             value = $.isNumeric(value) ? parseInt(value) : value;   
                 
-            this.search.removeDomain(field, operator, value);
+            this.trigger('search:remove', field, operator, value);
             
             this.render();
         },

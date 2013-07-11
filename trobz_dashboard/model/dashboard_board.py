@@ -7,75 +7,45 @@ from textwrap import dedent
 
 class dashboard_board(osv.osv):
 
-    def create(self, cr, uid, vals, context=None):
-        board_id = super(dashboard_board, self).create(cr, uid, vals, context=context)
-        return board_id
-#        
-#        action_id = self.pool.get('ir.actions.act_window').create(cr, uid, {
-#            'name': vals['name'],
-#            'view_mode': 'dashboard',
-#            'res_model': 'dashboard.board',
-#            'res_id': board_id,
-#            'target': 'inline'
-#        }, context=context)
-#       
-#        self.pool.get('ir.ui.menu').create(cr, uid, {
-#            'name': vals['name'],
-#            'parent_id': vals['menu_parent_id'],
-#            'action': 'ir.actions.act_window,%s' % (action_id,)
-#        }, context=context)
-#    
-#        return id
-
-
-    def write(self, cr, uid, ids, vals, context=None):
-        
-#        action_ids = self.pool.get('ir.actions.act_window').search(cr, uid, [
-#            ('view_mode', '=', 'dashboard'),
-#            ('res_id', '=', ids[0] ),
-#        ])
-#       
-#        _logger.info('action found: %s', action_ids)
-#        
-#        actions = self.pool.get('ir.actions.act_window').read(cr, uid, action_ids,  ['name', 'context'], context)
-#       
-#        _logger.info('action details: %s', actions)
-#        
-#        menu_action = 'ir.actions.act_window,%s' % (action_ids[0],)
-#       
-#        
-#        _logger.info('menu_action: %s', menu_action)
-#        
-#        menu_ids = self.pool.get('ir.ui.menu').search(cr, uid, [
-#            ('action', '=', menu_action),
-#        ])
-#       
-#        _logger.info('menu_ids: %s', menu_ids)
-#        
-#        menus = self.pool.get('ir.ui.menu').read(cr, uid, menu_ids,  ['name', 'action'], context)
-#       
-#        _logger.info('menu details: %s', menus)
-#        
-        #self.pool.get('ir.actions.act_window').unlink(cr, uid, action_ids)
-        #self.pool.get('ir.ui.menu').unlink(cr, uid, menu_ids)
-        #_logger.info('action and menu deleted')
-        
-        return super(dashboard_board, self).write(cr, uid, ids, vals, context=context)
-       
-
-    def _default_menu_parent_id(self, cr, uid, context=None):
-        _, menu_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'trobz_dashboard', 'menu_dashboard_board')
-        return menu_id
-
-    
     _name = "dashboard.board"
     _description = "Dashboard"
+
+    def extra_fields(self, cr, uid, ids, field_names, arg, context=None):
+        result = {}
+        
+        for board in self.browse(cr, uid, ids, context=context):
+            widgets = []
+            for widget in board.widget_ids:
+                
+                sequence = 0
+                width = 10 
+                for rel in board.widget_rel:
+                    if rel.widget_id == widget.id:
+                        sequence = rel.sequence
+                        width = rel.width
+                        
+                widgets.append({
+                    'id': widget.id,
+                    'name': widget.name,
+                    'type': widget.type,
+                    'sequence': sequence,
+                    'width': width,
+                    'metrics': widget.metrics,
+                })
+            
+            result[board.id] = {
+                'widgets': widgets
+            }
+            
+        return result
 
     _columns = {
         'name': fields.char('Name'),
         
         'widget_ids': fields.many2many('dashboard.widget', 'dashboard_board_to_widget_rel', id1='board_id',id2='widget_id', string='Widgets', ondelete='cascade', required=True),
         
+        'widget_rel': fields.one2many('dashboard.board_to_widget_rel', 'board_id', 'widget relation'),
+    
         'period_name': fields.selection(
                                         (('day','Day'), ('week','Week'), ('month','Month'), ('quarter','Quarter'), ('semester','Semester'), ('year','Year')), 
                                         'Period Name'
@@ -83,12 +53,12 @@ class dashboard_board(osv.osv):
         'period_type':  fields.selection((('rolling','Rolling'), ('calendar','Calendar')), 'Period Type'),
         'period_start_at': fields.date('Period Start', help="override Period Name and Period Type if defined"),
         'period_end_at': fields.date('Period End', help="override Period Name and Period Type if defined"),
-        
-        'menu_parent_id': fields.many2one('ir.ui.menu', 'Parent Menu', required=True),
+    
+        # get widget details directly by JSON-RPC (no need to query dashboard.widget on web side)
+        'widgets': fields.function(extra_fields, method=True, multi=True, type='serialized', string='Metrics Data', readonly=True),
     }
     
     _defaults = {
-        'menu_parent_id': _default_menu_parent_id,
         'period_name': 'month',
         'period_type': 'calendar',
         

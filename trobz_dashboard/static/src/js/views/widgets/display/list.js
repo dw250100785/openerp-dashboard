@@ -49,21 +49,12 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 this.group_by = {
                     field: field 
                 };
-                    
-                default_limit = this.collection.pager.limit;
-                this.collection.changeLimit('all');
             }    
-            else {
-                this.group_by = {};    
-                this.collection.changeLimit(default_limit);
-            }
-            
-            console.log('groupChanged', this.group_by);
         },
         
         renderModel: function(){
             if('field' in this.group_by){
-                this.group_by.groups = _.uniq(this.collection.pluck(this.group_by.field.get('sql_name')));
+                this.group_by.groups = _.uniq(this.collection.pluck(this.group_by.field.get('reference')));
                 if(_(this.group_by.groups).contains(null)){
                     this.group_by.groups = _(this.group_by.groups).without(null);
                     this.group_by.groups.push('undefined');    
@@ -85,25 +76,14 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                    $label.text($label.text() + ' (' + $items.length + ')');     
                 });
             }
-            
-            this.addPager();
-        },
-        
-        addPager: function(){
-            var pager = new Pager({
-                collection: this.model.results
-            });
-            this.pager = new Marionette.Region({ el: '.pager' });
-            this.pager.$el = this.$('.pager');
-            this.pager.show(pager);
         },
         
         appendHtml: function(collectionView, itemView, index){
             var $el = this.$('tbody'), item = itemView.model;
             
             if('field' in this.group_by){
-                var sql_name = this.group_by.field.get('sql_name');
-                $el = this.$('tbody.group[group-name="' + (item.get(sql_name) || 'undefined') + '"]');
+                var reference = this.group_by.field.get('reference');
+                $el = this.$('tbody.group[group-name="' + (item.get(reference) || 'undefined') + '"]');
             } 
             $el.append(itemView.el);
         },
@@ -129,8 +109,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             e.preventDefault();
             
             var $column = $(e.currentTarget),
-                field = this.model.fields.oneBySQLName($column.attr('data-id')),
-                type = $column.is('.desc') ? 'DESC' : 'ASC';
+                field = this.model.fields.oneByRef($column.attr('data-id')),
+                type = $column.is('.asc') ? 'ASC' : 'DESC';
             
             if(field){
                 this.search.addOrder(field, type);
@@ -141,20 +121,19 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             var orders = this.search.get('order'),
                 reorder = {};
             _(orders).each(function(order){
-                var type = order[1] == 'ASC' ? 'DESC' : (order[1] == 'DESC' ? 'ASC' : '');
-                reorder[order[0].get('sql_name')] = (type).toLowerCase();
+                var type = order.type == 'ASC' ? 'DESC' : (order.type == 'DESC' ? 'ASC' : '');
+                reorder[order.field.get('reference')] = (type).toLowerCase();
             });
             
             
             return {
                 'groups': 'groups' in this.group_by ? this.group_by.groups : [], 
-                'columns': this.model.fields.filterByTypes('output').toArray(),
+                'columns': this.model.fields.types('output').toArray(),
                 'reorder': reorder
             };
         },
         
         remove: function(){
-            this.pager.reset();
             return _super.remove.apply(this, arguments);
         }
     }); 

@@ -8,6 +8,8 @@
     <t t-name="TrobzDashboard.widget">
         <div class="widget_content">
             <div class="head">
+                <i class="loader invisible icon-refresh icon-spin" />
+                    
                 <h2><t t-esc="name"/></h2>
                 
                 <span class="button toggle_search">

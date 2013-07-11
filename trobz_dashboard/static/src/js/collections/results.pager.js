@@ -55,12 +55,13 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         },
         
         count: function(options){
-            var def = $.Deferred();
+            var def = $.Deferred(), self = this;
             
             //TODO: we should not execute the full queries with all columns returned just to know 
             //      the number of results of this query... 
             this.execute(options).done(function(data){
-                def.resolve(data.results.length);
+                var response = self.getResponse(data);
+                def.resolve(response.results.length);
             });
             
             return def.promise();

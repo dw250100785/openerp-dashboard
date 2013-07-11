@@ -9,25 +9,19 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         
         initialize: function(){
             
+            this.defaults = {
+                domain: [],
+                order: {},
+                group: [],
+            };
+            
             this.set({
                 domain: [],
                 order: [],
                 group: [],
-                period: []
             }, {silent: true});
         
             this.operators = new Operators();
-        },
-        
-        /*
-         * Period manipulation
-         */
-        
-        changePeriod: function(field, period, options){
-            this.set('period', [
-                [field.get('reference'), this.operators.byName('gte').domain, period.start().format('YYYY-MM-DD')],
-                [field.get('reference'), this.operators.byName('lt').domain, period.end().format('YYYY-MM-DD')],
-            ], options);
         },
         
         /*
@@ -98,8 +92,6 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 
             }, this);
         
-            // add the period    
-            object = object.concat(this.get('period'));
             return object;
         },
         
@@ -108,11 +100,16 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
          * Order manipulation
          */
         
-        addOrder: function(field, type){
+        defaultOrder: function(field, type){
+            this.defaults.order = { field: field, type: type };
+            this.addOrder(this.defaults.order.field, this.defaults.order.type);
+        },
+        
+        addOrder: function(field, type, options){
             if(type != 'ASC' && type != 'DESC'){
                 throw new Error('order type has to be ASC or DESC');
             }
-            this.set('order', [[field, type]]);    
+            this.set('order', [{ 'field': field, 'type': type }], options);    
         },
         
         removeOrder: function(field, type){
@@ -121,14 +118,27 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             
             if(index != null){
                 order.splice(index, 1);
-                this.set('order', order);
+                if(order.length == 0 && _.size(this.defaults.order) > 0){
+                    this.addOrder(this.defaults.order.field, this.defaults.order.type);
+                }
+                else {
+                    this.set('order', order);
+                }
             }
+        },
+        
+        resetOrder: function(options){
+            this.set('order', [], options);
+            if(this.defaults.order.length > 0){
+                this.addOrder(this.defaults.order.field, this.defaults.order.type, options);
+            }
+            
         },
         
         getOrderIndex: function(field){
             var index = null;
             _(this.get('order')).each(function(val, i){
-                if(val.length == 2 && val[0].get('reference') == field.get('reference')){
+                if(val.field.get('reference') == field.get('reference')){
                     index = i;
                 } 
             });
@@ -138,7 +148,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         order: function(){
             var order = [];
             _(this.get('order')).each(function(val){
-                order.push(val[0].get('sql_name') + ' ' + val[1]);
+                order.push(val.field.get('reference') + ' ' + val.type);
             });
             return order;
         },
@@ -146,6 +156,11 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         /*
          * Group manipulation
          */
+        
+        defaultGroup: function(field){
+            this.defaults.group = [field];
+            this.addGroup(this.defaults.group[0]);
+        },
         
         addGroup: function(field){
             this.set('group', [field]);    
@@ -157,7 +172,12 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             
             if(index != null){
                 group.splice(index, 1);
-                this.set('group', group);
+                if(group.length == 0 && this.defaults.group.length > 0){
+                    this.addGroup(this.defaults.group[0]);
+                }
+                else {
+                    this.set('group', group);
+                }
             }
         },
         
@@ -174,10 +194,41 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         group: function(){
             var group = [];
             _(this.get('group')).each(function(field){
-                group.push(field.get('sql_name'));
+                group.push(field.get('reference'));
             });
             return group;
-        }
+        },
+        
+        /* others */
+       
+       isDefault: function(type){
+           var is_default = false, defaults, item, has_defaults = false, has_item = false,
+               extra = true, field, default_field;
+               
+           if(type == 'order'){
+               defaults = this.defaults.order;
+               item = this.get('order');
+               has_defaults = _.size(defaults) > 0;
+               has_item = item.length > 0;
+               
+               field = has_item ? item[0].field : null;
+               default_field = has_defaults ? defaults.field : null;
+               extra = has_defaults && has_item ? item[0].type == defaults.type  : false;
+           }
+           else if(type == 'group'){
+               defaults = this.defaults.group;
+               item = this.get('group');
+               has_defaults = defaults.length > 0;
+               has_item = item.length > 0;
+               
+               field = has_item ? item[0] : null;
+               default_field = has_defaults ? defaults[0] : null;
+           }
+           
+           is_default = extra && field && default_field && field.get('reference') == default_field.get('reference'); 
+           
+           return is_default;
+       }
     });
 
     dashboard.models('Search', Search);

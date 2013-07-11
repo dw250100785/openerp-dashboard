@@ -19,38 +19,87 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         initialize: function(options){
             this.type = options.type;
             this.search = options.search;
+            
+            this.fields = {
+                domain: this.collection.types('domain'),
+                group: this.collection.types('group_by'),
+                order: this.collection.notTypes('group_by').types('order_by'),
+            };
+            
+            this.views = {
+                domain: new Domain({
+                    collection: this.fields.domain,
+                    search: this.search
+                }),
+                
+                group: new Group({
+                    collection: this.fields.group,
+                    search: this.search
+                }),
+                
+                order: new Order({
+                    collection: this.fields.order,
+                    search: this.search
+                })
+            };
+            
         },
         
         onRender: function(){
-            
-            var fields = {
-                domain: this.collection.filterByTypes('domain'),
-                group: this.collection.filterByTypes('group_by'),
-                order: this.collection.filterByTypes('order_by'),
-            };
-            
-            if(fields.domain.length > 0){
-                var domain = new Domain({
-                    collection: fields.domain,
-                    search: this.search
-                });
-                this.domain.show(domain);
+            if(this.fields.domain.length > 0){
+                this.domain.show(this.views.domain);
+                
+                this.listenTo(this.views.domain, 'search:add', this.addDomain, this);
+                this.listenTo(this.views.domain, 'search:remove', this.removeDomain, this);
             }
             
-            if(this.type != 'numeric' && fields.group.length > 0){
-                var group = new Group({
-                    collection: fields.group,
-                    search: this.search
-                });
-                this.group.show(group);
+            if(this.type != 'numeric' && this.fields.group.length > 0){
+                this.group.show(this.views.group);
+            
+                this.listenTo(this.views.group, 'search:add', this.addGroup, this);
+                this.listenTo(this.views.group, 'search:remove', this.removeGroup, this);
             }
-            if(this.type == 'graph' && fields.order.length > 0){
-                var order = new Order({
-                    collection: fields.order,
-                    search: this.search
-                });
-                this.order.show(order);
+            if(this.type == 'graph' && this.fields.order.length > 0){
+                this.order.show(this.views.order);
+                
+                this.listenTo(this.views.order, 'search:add', this.addOrder, this);
+                this.listenTo(this.views.order, 'search:remove', this.removeOrder, this);
             }
+        },
+        
+        
+        addDomain: function(field, operator, value){
+            this.search.addDomain(field, operator, value);
+        },
+        
+        removeDomain: function(field, operator, value){
+            this.search.removeDomain(field, operator, value);
+        },
+        
+        addOrder: function(field, type){
+            this.search.addOrder(field, type);
+        },
+        
+        removeOrder: function(field, type){
+            this.search.removeOrder(field, type);
+        },
+        
+        addGroup: function(field){
+            var order_fields = this.fields.order,
+                current_groups = order_fields.types('group_by').models;
+            
+            order_fields.remove(current_groups);
+            order_fields.add(field);
+            
+            this.search.resetOrder({silent: true});
+            this.views.order.render();
+            this.search.addGroup(field);
+        },
+        
+        removeGroup: function(field){
+            this.search.resetOrder({silent: true});
+            this.views.order.render();
+            this.search.removeGroup(field);
         }
         
     });
