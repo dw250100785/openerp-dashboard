@@ -2,8 +2,6 @@
 # -*- coding: utf-8 -*-
 
 from domain_converter import expression  
-from collections import OrderedDict
-import itertools
 import copy
 import re
  
