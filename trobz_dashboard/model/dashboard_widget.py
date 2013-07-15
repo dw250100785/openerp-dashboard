@@ -2,8 +2,10 @@
 ##############################################################################
 
 from osv import osv, fields
+from trobz_dashboard.utils.model import metric_support 
 
-class dashboard_widget(osv.osv):
+
+class dashboard_widget(osv.osv, metric_support):
 
     _name = "dashboard.widget"
     _description = "Widget"
@@ -20,7 +22,6 @@ class dashboard_widget(osv.osv):
                     'name': metric.name,
                     'type':  metric.type,
                     'query_name': metric.query_name,
-                    'method': metric.method,
                     'options': metric.options,
                     'values': metric.values,
                     'defaults': metric.defaults,
@@ -38,6 +39,8 @@ class dashboard_widget(osv.osv):
         'name': fields.char('Name'),
         'type': fields.selection((('numeric','Numeric'), ('list','List'), ('graph','Graph')), 'Widget type'),
         
+        'method': fields.char('Model Method', help="Widget model method to execute related metrics"),
+        
         'board_ids': fields.many2many('dashboard.board', 'dashboard_board_to_widget_rel', id1='widget_id',id2='board_id', string='Boards', ondelete='cascade', required=True),
         'metric_ids': fields.one2many('dashboard.metric', 'widget_id','Metrics', ondelete='cascade', required=True),
         
@@ -45,6 +48,9 @@ class dashboard_widget(osv.osv):
         'metrics': fields.function(extra_fields, method=True, multi=True, type='serialized', string='Metrics Data', readonly=True),
     }
     
+    _defaults = {
+        'method': 'execute',
+   }
 
 
 

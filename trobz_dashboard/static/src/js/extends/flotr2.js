@@ -17,6 +17,7 @@
             }
         }
     };
+    
 
     //fix bug
     // only listen to mouse even on Graph element, not on all the document !?
@@ -110,6 +111,16 @@
         x2.setScale();
         y.setScale();
         y2.setScale();
+    };
+
+
+   // fix bug (side effect of margin)
+    var drawMouseTrackMethod = Flotr.plugins.hit.drawMouseTrack;
+    Flotr.plugins.hit.drawMouseTrack = function(){
+        var right = this.plotOffset.right;
+        this.plotOffset.right += 10;
+        drawMouseTrackMethod.apply(this, arguments);
+        this.plotOffset.right = right;
     };
 
 })(Flotr)

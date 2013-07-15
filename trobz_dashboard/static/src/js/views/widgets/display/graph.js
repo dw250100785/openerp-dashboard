@@ -6,7 +6,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
     var graph = null, call = 0;
     
     var defaults = {
-        general : {
+        general: {
             group: false,
             HtmlText : false,
             mouse: {
@@ -14,12 +14,6 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 track: true,
                 position: 'ne',
                 lineColor: '#333333',
-                trackFormatter: function(item){
-                    if(graph && graph.trackFormatter){
-                        return graph.trackFormatter(item);
-                    }
-                    return item.x + ', ' + item.y;
-                },
             },
             legend : {
               backgroundColor : '#ffffff',
@@ -27,12 +21,6 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
               customBoxBorderColor: '#cacaca'
             },
             xaxis: {
-                tickFormatter:  function(tick){
-                    if(graph && graph.tickFormatter){
-                        return graph.tickFormatter(tick);
-                    }
-                    return tick;
-                },
                 labelsAngle : 45
             },
             grid: {
@@ -86,7 +74,9 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             
             if(this.options.group){
                 this.ticks_group = this.total + (this.total > 1 ? 1 : 0);    
-            }    
+            }
+            
+            this.options.mouse.trackFormatter = $.proxy(this.trackFormatter, this);   
         },
         
         render: function(){

@@ -2,10 +2,9 @@
 ##############################################################################
 
 from osv import osv, fields
-from trobz_dashboard.utils.model import metric_support 
 
 
-class dashboard_metric(osv.osv, metric_support):
+class dashboard_metric(osv.osv):
 
     _name = "dashboard.metric"
     _description = "Widget Metric"
@@ -47,9 +46,8 @@ class dashboard_metric(osv.osv, metric_support):
     _columns = {
         'name': fields.char('Name'),
         'type':  fields.selection((('numeric','Numeric'), ('list','List'), ('graph','Graph') ), 'Type of metric retrieved by the query'),
-        'query_name': fields.char('SQL Query Name', help="Custom SQL query defined on the model to get metric data.", required=True),
-        'method': fields.char('Model Method', help="Custom method to call on the model, do not change it if you use SQL Query Name"),
-        'model':fields.many2one('ir.model','Model of the Resource', help='OpenERP model that will implement the method.', required=True),
+        'model':fields.many2one('ir.model','Model of the Resource', help='OpenERP model that will define sql queries to execute.'),
+        'query_name': fields.char('SQL Query Name', help="Custom SQL query defined on the model to get metric data."),
                 
         'widget_id': fields.many2one('dashboard.widget','Widget', ondelete='cascade', required=True),
         'field_ids': fields.many2many('dashboard.field', 'dashboard_metric_to_field_rel', id1='metric_id',id2='field_id', string='Fields', ondelete='cascade', required=True),
@@ -78,7 +76,6 @@ Pie / Line / Bar Chart:
     }
     
     _defaults = {
-        'method': 'exec_metric',
         'options': {},
         'values': {},
     }

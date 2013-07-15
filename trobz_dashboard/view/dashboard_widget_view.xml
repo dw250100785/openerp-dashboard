@@ -12,6 +12,7 @@
                             <group>
                                 <field name="name" />
                                 <field name="type" />
+                                <field name="method" />
                             </group>
                         </page>    
                         <page string="Metrics">
@@ -22,7 +23,6 @@
                                             <group colspan="2">
                                                 <field name="name" />
                                                 <field name="model" />
-                                                <field name="method" />
                                                 <field name="options" widget="serialized" />
                                                 <field name="values" widget="serialized" />
                                             </group>
@@ -68,7 +68,8 @@
                 <tree string="Widgets">
                     <field name="name"/>
                     <field name="type"/>
-                    
+                    <field name="method" />
+                            
                     <field name="board_ids"/>
                     <field name="metric_ids"/>
                 </tree>

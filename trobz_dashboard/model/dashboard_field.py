@@ -16,7 +16,7 @@ class dashboard_field(osv.osv):
         for field in self.browse(cr, uid, ids, context=context):
             
             # field "period"
-            matches = pattern.match(field.sql_name)
+            matches = pattern.match(field.sql_name or "")
             period = matches.group(1) if matches and matches.lastindex == 1 else ""
             
             # field "type_names"

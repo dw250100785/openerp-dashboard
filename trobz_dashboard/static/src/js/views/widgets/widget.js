@@ -92,7 +92,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 }
             }, this);    
         
-            promise = this.model.metrics.execute(options);
+            promise = this.model.execute(options);
             
             var $loader = this.ui.loader;
             

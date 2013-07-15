@@ -40,16 +40,28 @@ class metrics():
         
     }
     
-    def exec_metric(self, cr, uid, ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, context=None):
+    def execute(self, cr, uid, ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, context=None):
         """
         Execute custom SQL queries to populate a trobz dashboard widget
         """
 
+        result = {}
+        widgets = self.browse(cr, uid, ids, context=context)
+        
+        for widget in widgets:
+            result[widget.id] = self.exec_metrics(cr, uid, ids, widget.metric_ids, period=period, domain=domain, group_by=group_by, order_by=order_by, limit=limit, offset=offset, context=context) 
+            
+        return result
+    
+    
+    def exec_metrics(self, cr, uid, ids, metrics, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, context=None):
+        """
+        Execute metrics SQL queries
+        """
         stacks = {}
-        metrics = self.browse(cr, uid, ids, context=context)
         is_graph_metrics = self.is_graph_metrics(metrics)
         order_tmp = order_by
-                
+        
         for metric in metrics:
             model = self.pool.get(metric.model.model)
             
@@ -80,6 +92,7 @@ class metrics():
             }
         
         return self.execute_stacks(cr, metrics, stacks, context)
+        
     
     
     def set_stack_globals(self, metric, defaults, stacks, period, group_by, order_by, limit, offset):
@@ -146,7 +159,6 @@ class metrics():
     def execute_stacks(self, cr, metrics, stacks, context=None):
         result = {}
         is_graph_metrics = self.is_graph_metrics(metrics)
-        
         
         # execute one query in UNION for all metrics
         if is_graph_metrics:
