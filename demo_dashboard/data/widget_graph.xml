@@ -291,8 +291,8 @@
        
         <record id="graph_metric_3_field_total_sales" model="dashboard.field">
             <field name="name">Total Sales Amount</field>
-            <field name="reference">total_sales</field>
-            <field name="sql_name">total_sales</field>
+            <field name="reference">total_sales_amount</field>
+            <field name="sql_name">total_sales_amount</field>
       
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_output'),ref('type_order')])]" name="type_ids"/>
