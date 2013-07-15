@@ -7,6 +7,7 @@
         <record id="list_widget" model="dashboard.widget">
             <field name="name">Employee List</field>
             <field name="type">list</field>
+            <field name="method">execute</field>
         </record>
         
         <record id="list_board_to_widget_number" model="dashboard.board_to_widget_rel">
@@ -24,8 +25,7 @@
             <field name="type">list</field>
        
             <field name="query_name">list</field>
-            <field name="method">exec_metric</field>
-       
+            
             <field name="model" ref="model_hr_employee" />
             <field name="widget_id" ref="list_widget" />
        

@@ -6,6 +6,7 @@
         
         <record id="num_widget" model="dashboard.widget">
             <field name="name">Employee Figures</field>
+            <field name="method">execute</field>
             <field name="type">numeric</field>
         </record>
         
@@ -24,8 +25,7 @@
             <field name="type">numeric</field>
        
             <field name="query_name">count</field>
-            <field name="method">exec_metric</field>
-       
+            
             <field name="model" ref="model_hr_employee" />
             <field name="widget_id" ref="num_widget" />
        
@@ -38,8 +38,7 @@
             <field name="type">numeric</field>
        
             <field name="query_name">custom_count</field>
-            <field name="method">exec_metric</field>
-       
+            
             <field name="model" ref="model_hr_employee" />
             <field name="widget_id" ref="num_widget" />
        

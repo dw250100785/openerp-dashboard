@@ -6,7 +6,6 @@
             <field name="name">Total Sales Amount (in bVND)</field>
             <field name="type">graph</field>
             <field name="query_name">graph_total_sales</field>
-            <field name="method">exec_metric</field>
             <field name="model" ref="sale.model_sale_order_line" />
             <field name="widget_id" ref="graph_widget_sales_amount_quantity" />
             <field name="options" eval="{'type': 'line'}" />
@@ -17,7 +16,6 @@
             <field name="name">Total Sales Quantity</field>
             <field name="type">graph</field>
             <field name="query_name">graph_total_sales_quantity</field>
-            <field name="method">exec_metric</field>
             <field name="model" ref="sale.model_sale_order_line" />
             <field name="widget_id" ref="graph_widget_sales_amount_quantity" />
             <field name="options" eval="{'type': 'line'}" />
@@ -28,7 +26,6 @@
             <field name="name">Kitchen Sales (bVND)</field>
             <field name="type">graph</field>
             <field name="query_name">graph_kitchen_sales</field>
-            <field name="method">exec_metric</field>
             <field name="model" ref="sale.model_sale_order_line" />
             <field name="widget_id" ref="graph_widget_sales_amount_quantity_kitchen" />
             <field name="options" eval="{'type': 'line'}" />
@@ -39,7 +36,6 @@
             <field name="name">Sales by Category (bVND)</field>
             <field name="type">graph</field>
             <field name="query_name">graph_sales_by_category</field>
-            <field name="method">exec_metric</field>
             <field name="model" ref="sale.model_sale_order_line" />
             <field name="widget_id" ref="graph_widget_sales_amount_by_category" />
             <field name="options" eval="{'type': 'bar'}" />
@@ -50,7 +46,6 @@
             <field name="name">Total Sales</field>
             <field name="type">numeric</field>
             <field name="query_name">total_sales_numeric</field>
-            <field name="method">exec_metric</field>
             <field name="model" ref="sale.model_sale_order_line" />
             <field name="widget_id" ref="sales_key_figures_widget" />
             <field name="options" eval="{'format': '0.0'}" />
@@ -62,7 +57,6 @@
             <field name="name">Number of Customers</field>
             <field name="type">numeric</field>
             <field name="query_name">number_customers</field>
-            <field name="method">exec_metric</field>
             <field name="model" ref="sale.model_sale_order_line" />
             <field name="widget_id" ref="sales_key_figures_widget" />
             <field name="options" eval="{'format': '0.0'}" />
@@ -74,7 +68,6 @@
             <field name="name">Average Sales Repetition</field>
             <field name="type">numeric</field>
             <field name="query_name">average_sale_repetition</field>
-            <field name="method">exec_metric</field>
             <field name="model" ref="sale.model_sale_order_line" />
             <field name="widget_id" ref="sales_key_figures_widget" />
             <field name="options" eval="{'format': '0.0'}" />

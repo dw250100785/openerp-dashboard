@@ -6,6 +6,7 @@
         
         <record id="graph_widget_1" model="dashboard.widget">
             <field name="name">Employee</field>
+            <field name="method">execute</field>
             <field name="type">graph</field>
         </record>
         
@@ -21,6 +22,7 @@
         
         <record id="graph_widget_2" model="dashboard.widget">
             <field name="name">Total Sales</field>
+            <field name="method">execute</field>
             <field name="type">graph</field>
         </record>
         
@@ -40,8 +42,7 @@
             <field name="type">graph</field>
        
             <field name="query_name">graph_attendance</field>
-            <field name="method">exec_metric</field>
-       
+            
             <field name="model" ref="hr.model_hr_employee" />
             <field name="widget_id" ref="graph_widget_1" />
        
@@ -56,8 +57,7 @@
             <field name="type">graph</field>
        
             <field name="query_name">graph_booking</field>
-            <field name="method">exec_metric</field>
-       
+            
             <field name="model" ref="hr.model_hr_employee" />
             <field name="widget_id" ref="graph_widget_1" />
        
@@ -72,8 +72,7 @@
             <field name="type">graph</field>
        
             <field name="query_name">graph_total_sales</field>
-            <field name="method">exec_metric</field>
-       
+            
             <field name="model" ref="sale.model_sale_order_line" />
             <field name="widget_id" ref="graph_widget_2" />
        

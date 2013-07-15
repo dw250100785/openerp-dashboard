@@ -31,7 +31,7 @@
             <field name="type">numeric</field>
        
             <field name="query_name">count</field>
-            <field name="method">exec_metric</field>
+            <field name="method">execute</field>
        
             <field name="model" ref="model_dashboard_test" />
             <field name="widget_id" ref="ut_widget" />
@@ -45,7 +45,7 @@
             <field name="type">numeric</field>
        
             <field name="query_name">custom_count</field>
-            <field name="method">exec_metric</field>
+            <field name="method">execute</field>
        
             <field name="model" ref="model_dashboard_test" />
             <field name="widget_id" ref="ut_widget" />
@@ -59,7 +59,7 @@
             <field name="type">graph</field>
        
             <field name="query_name">graph_price</field>
-            <field name="method">exec_metric</field>
+            <field name="method">execute</field>
        
             <field name="model" ref="model_dashboard_test" />
             <field name="widget_id" ref="ut_widget" />
@@ -73,7 +73,7 @@
             <field name="type">graph</field>
        
             <field name="query_name">graph_quantity</field>
-            <field name="method">exec_metric</field>
+            <field name="method">execute</field>
        
             <field name="model" ref="model_dashboard_test" />
             <field name="widget_id" ref="ut_widget" />

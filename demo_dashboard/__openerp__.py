@@ -18,6 +18,7 @@ Demo data for Trobz Dashboard module
         'data/widget_number.xml',
         'data/widget_list.xml',
         'data/widget_graph.xml',
+        'data/widget_custom.xml',
         'data/dashboard_unit_test_data.xml',
         'data/dashboard.test-unit_test.csv',
         #Sales Dashboard

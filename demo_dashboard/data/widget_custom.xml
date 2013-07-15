@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+    
+        <!-- widget 1 -->
+        
+        <record id="custom_widget_1" model="dashboard.widget">
+            <field name="name">Custom Method</field>
+            <field name="method">custom_execute</field>
+            <field name="type">graph</field>
+        </record>
+        
+        <record id="custom_board_to_widget_custom_1" model="dashboard.board_to_widget_rel">
+            <field name="board_id" ref="demo_dashboard_board" />
+            <field name="widget_id" ref="custom_widget_1" />
+            <field name="sequence">30</field>
+            <field name="width">10</field>
+            <field name="height">10</field>
+        </record>
+    
+        <!-- metric 1 -->
+        
+        <record id="custom_metric_1" model="dashboard.metric">
+            <field name="name">Textfile data</field>
+            <field name="type">graph</field>
+            <field name="widget_id" ref="custom_widget_1" />
+       
+            <field name="options" eval="{'type': 'bar'}" />
+            <field name="values" eval="{}"/>
+        </record>
+    
+           <!-- common to metric 1 and 2-->
+        
+        <record id="custom_metric_1_custom_name" model="dashboard.field">
+            <field name="name">Name</field>
+            <field name="reference">custom_name</field>
+            <field eval="[(6,0,[ref('custom_metric_1')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_output')])]" name="type_ids"/>
+        </record>
+        
+        <record id="custom_metric_1_custom_value" model="dashboard.field">
+            <field name="name">Value</field>
+            <field name="reference">custom_value</field>
+            <field eval="[(6,0,[ref('custom_metric_1')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('type_output')])]" name="type_ids"/>
+        </record>
+                     
+    </data>
+</openerp>
