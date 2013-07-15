@@ -85,7 +85,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             });
             
             if(this.options.group){
-                this.ticks_group = this.total + 1;    
+                this.ticks_group = this.total + (this.total > 1 ? 1 : 0);    
             }    
         },
         
