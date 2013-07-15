@@ -21,7 +21,7 @@
     <!-- search.domain -->
     
     <t t-name="TrobzDashboard.search.domain.view">
-        <a class="search_action">domain:</a> 
+        <a class="search_action">filter:</a> 
         
         <div class="current">
             <t t-if="has_domain">
