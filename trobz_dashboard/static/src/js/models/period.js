@@ -57,8 +57,8 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
     var BoardPeriod = Period.extend({
         
         defaults: {
-            start: moment(current.subtract(15, 'days')),
-            end: moment(current.add(15, 'days')),
+            start: moment(current.subtract(30, 'days')),
+            end: moment(current.subtract(1, 'days')),
             name: 'month',
             type: 'rolling',
         },
@@ -106,8 +106,8 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                  period = calendar[name].apply(this, [current]);
             }
             else if (type == 'rolling'){
-                period.start = moment(current).subtract(rolling[name]/2, 'days');                
-                period.end = moment(current).add(rolling[name]/2, 'days');                
+                period.start = moment(current).subtract(rolling[name], 'days');                
+                period.end = moment(current).subtract(1, 'days');                
             }
         
             return period;

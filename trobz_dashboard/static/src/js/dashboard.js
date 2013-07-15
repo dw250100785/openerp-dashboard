@@ -10,7 +10,6 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
         
         //models
         State = dashboard.models('State'),
-        BoardPeriod = dashboard.models('BoardPeriod'),
         Board = dashboard.models('Board'),
         
         //views
@@ -47,55 +46,54 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
             }    
    
             
-            var models = {
-                state: new State(),
-                period: new BoardPeriod(),
-                board: new Board({
-                    id: this.board_id
-                })
-            };
             
-            var views = {
-                panel: new PanelLayout(),
-                
-                toolbar: new ToolBar({
-                    model: models.period
-                }),
-                     
-                widgets: new WidgetsView({
-                    collection: models.board.widgets,
-                    period: models.period
-                })    
-            };
+            var debug = board = new Board({
+                id: this.board_id
+            });
             
-            debug = models.board;
-            
-                //bind special event 
-            this.bind(models.state, views.toolbar);
-            
-            //the state is binded to all objects by default
-            models.state.link(models.period);
-            
-            //setup the state 
-            models.state.set($.bbq.getState());
-            
+            var dashboard = this;
+            board.update().done(function(){
    
-            var region = this.region = new Marionette.Region({
-                el: '#trobz_board'
+                var state = new State();
+                
+                var views = {
+                    panel: new PanelLayout(),
+                    
+                    toolbar: new ToolBar({
+                        model: board.period
+                    }),
+                         
+                    widgets: new WidgetsView({
+                        collection: board.widgets,
+                        period: board.period
+                    })    
+                };
+                
+                
+                //bind special event 
+                dashboard.bind(state, views.toolbar);
+                
+                //setup the state 
+                state.set($.bbq.getState());
+                state.push();
+       
+                var region = dashboard.region = new Marionette.Region({
+                    el: '#trobz_board'
+                });
+                
+                $.when(state.process(), this.view_loaded).done(function(){
+                    state.bind();
+                    region.show(views.panel);
+                    views.panel.toolbar.show(views.toolbar);
+                    views.panel.widgets.show(views.widgets);
+                });
             });
-            
-            var def = models.board.update();
-            $.when(def, models.state.process(), this.view_loaded).done(function(){
-                models.state.bind();
-                region.show(views.panel);
-                views.panel.toolbar.show(views.toolbar);
-                views.panel.widgets.show(views.widgets);
-            });
-            
             return this._super();
         },
              
         bind: function(state, toolbar){
+            
+            
             toolbar.on('fullscreen', this.fullscreen, this);
             toolbar.on('mode', this.switchMode, this);
             
