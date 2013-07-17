@@ -89,7 +89,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_1'),ref('graph_metric_2')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" ref="hr.field_hr_employee_name_related"/>
+            <field name="field_id" ref="hr.field_hr_employee_name_related"/>
         </record>
         
         <record id="graph_metric_1_field_country_id" model="dashboard.field">
@@ -99,7 +99,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_1'),ref('graph_metric_2')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'res.country'), ('name', '=', 'name')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'res.country'), ('name', '=', 'name')]" />
         </record>
        
         <record id="graph_metric_1_field_birthday" model="dashboard.field">
@@ -109,7 +109,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_1'),ref('graph_metric_2')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain')])]" name="type_ids"/>
-            <field name="field_name" ref="hr.field_hr_employee_birthday"/>
+            <field name="field_id" ref="hr.field_hr_employee_birthday"/>
         </record>
         
         <!-- specific to metric 1 -->
@@ -162,7 +162,7 @@
 
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'res.company'), ('name', '=', 'name')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'res.company'), ('name', '=', 'name')]" />
         </record>
         
         <record id="graph_metric_3_field_shop" model="dashboard.field">
@@ -172,7 +172,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.shop'), ('name', '=', 'name')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.shop'), ('name', '=', 'name')]" />
         </record>
         
         <record id="graph_metric_3_field_customer" model="dashboard.field">
@@ -182,7 +182,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'res.partner'), ('name', '=', 'name')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'res.partner'), ('name', '=', 'name')]" />
         </record>
         
         <record id="graph_metric_3_field_department" model="dashboard.field">
@@ -192,7 +192,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.department'), ('name', '=', 'name')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'hr.department'), ('name', '=', 'name')]" />
         </record>
        
         <record id="graph_metric_3_field_salesman" model="dashboard.field">
@@ -202,7 +202,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'resource.resource'), ('name', '=', 'name')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'resource.resource'), ('name', '=', 'name')]" />
         </record>
        
         <record id="graph_metric_3_field_product_category" model="dashboard.field">
@@ -212,7 +212,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'product.category'), ('name', '=', 'name')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'product.category'), ('name', '=', 'name')]" />
         </record>
             
         <record id="graph_metric_3_field_product" model="dashboard.field">
@@ -222,7 +222,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'product.template'), ('name', '=', 'name')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'product.template'), ('name', '=', 'name')]" />
         </record>
        
        
@@ -233,7 +233,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
        
         <record id="graph_metric_3_field_total_order_month" model="dashboard.field">
@@ -243,7 +243,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
         
         <record id="graph_metric_3_field_total_order_quarter" model="dashboard.field">
@@ -253,7 +253,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
         
         <record id="graph_metric_3_field_total_order_week" model="dashboard.field">
@@ -263,7 +263,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
        
         <record id="graph_metric_3_field_total_order_day" model="dashboard.field">
@@ -273,7 +273,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
          
          
@@ -284,7 +284,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_period')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
        
        

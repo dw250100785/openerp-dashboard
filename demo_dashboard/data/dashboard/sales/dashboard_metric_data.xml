@@ -10,6 +10,7 @@
             <field name="widget_id" ref="graph_widget_sales_amount_quantity" />
             <field name="options" eval="{'type': 'line'}" />
             <field name="values" eval="{}"/>
+            <field name="help">Help for graph_metric_sales_amount.</field>
         </record>
 
         <record id="graph_metric_sales_quantity" model="dashboard.metric">
@@ -20,6 +21,7 @@
             <field name="widget_id" ref="graph_widget_sales_amount_quantity" />
             <field name="options" eval="{'type': 'line'}" />
             <field name="values" eval="{}"/>
+            <field name="help">Help for graph_metric_sales_quantity.</field>
         </record>
 
         <record id="graph_metric_sales_kitchen" model="dashboard.metric">
@@ -30,6 +32,7 @@
             <field name="widget_id" ref="graph_widget_sales_amount_quantity_kitchen" />
             <field name="options" eval="{'type': 'line'}" />
             <field name="values" eval="{}"/>
+            <field name="help">Help for graph_metric_sales_kitchen.</field>
         </record>
 
         <record id="graph_metric_sales_amount_by_category" model="dashboard.metric">
@@ -40,6 +43,7 @@
             <field name="widget_id" ref="graph_widget_sales_amount_by_category" />
             <field name="options" eval="{'type': 'bar'}" />
             <field name="values" eval="{}"/>
+            <field name="help">Help for graph_metric_sales_amount_by_category.</field>
         </record>
        
         <record id="numeric_total_sales" model="dashboard.metric">
@@ -50,6 +54,7 @@
             <field name="widget_id" ref="sales_key_figures_widget" />
             <field name="options" eval="{'format': '0.0'}" />
             <field name="values" eval="{}"/>
+            <field name="help">Help for numeric_total_sales.</field>
         </record>
 
        
@@ -61,6 +66,7 @@
             <field name="widget_id" ref="sales_key_figures_widget" />
             <field name="options" eval="{'format': '0.0'}" />
             <field name="values" eval="{}"/>
+            <field name="help">Help for numeric_number_customers.</field>
         </record>
         
                
@@ -72,6 +78,7 @@
             <field name="widget_id" ref="sales_key_figures_widget" />
             <field name="options" eval="{'format': '0.0'}" />
             <field name="values" eval="{}"/>
+            <field name="help">Help for numeric_average_sale_repetition.</field>
         </record>
 
 

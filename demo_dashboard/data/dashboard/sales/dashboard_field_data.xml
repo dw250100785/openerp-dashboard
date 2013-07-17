@@ -8,7 +8,7 @@
             <field name="sql_name">rco.name</field>
             <field eval="[(6,0,[ref('graph_metric_sales_amount'),ref('graph_metric_sales_quantity'),ref('graph_metric_sales_kitchen'),ref('graph_metric_sales_amount_by_category')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'res.company'), ('name', '=', 'name')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'res.company'), ('name', '=', 'name')]" />
         </record>
         
         <record id="dashboard_field_shop" model="dashboard.field">
@@ -17,7 +17,7 @@
             <field name="sql_name">ssh.name</field>
             <field eval="[(6,0,[ref('graph_metric_sales_amount'),ref('graph_metric_sales_quantity'),ref('graph_metric_sales_kitchen'),ref('graph_metric_sales_amount_by_category')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.shop'), ('name', '=', 'name')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.shop'), ('name', '=', 'name')]" />
         </record>
         
         <record id="dashboard_field_customer" model="dashboard.field">
@@ -26,7 +26,7 @@
             <field name="sql_name">rpa.name</field>
             <field eval="[(6,0,[ref('graph_metric_sales_amount'),ref('graph_metric_sales_quantity'),ref('graph_metric_sales_kitchen'),ref('graph_metric_sales_amount_by_category')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'res.partner'), ('name', '=', 'name')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'res.partner'), ('name', '=', 'name')]" />
         </record>
         
         <record id="dashboard_field_department" model="dashboard.field">
@@ -35,7 +35,7 @@
             <field name="sql_name">hde.name</field>
             <field eval="[(6,0,[ref('graph_metric_sales_amount'),ref('graph_metric_sales_quantity'),ref('graph_metric_sales_kitchen'),ref('graph_metric_sales_amount_by_category')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.department'), ('name', '=', 'name')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'hr.department'), ('name', '=', 'name')]" />
         </record>
        
         <record id="dashboard_field_salesman" model="dashboard.field">
@@ -44,7 +44,7 @@
             <field name="sql_name">rre.name</field>
             <field eval="[(6,0,[ref('graph_metric_sales_amount'),ref('graph_metric_sales_quantity'),ref('graph_metric_sales_kitchen'),ref('graph_metric_sales_amount_by_category')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'resource.resource'), ('name', '=', 'name')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'resource.resource'), ('name', '=', 'name')]" />
         </record>
        
         <record id="dashboard_field_product_category" model="dashboard.field">
@@ -53,7 +53,7 @@
             <field name="sql_name">pca.name</field>
             <field eval="[(6,0,[ref('graph_metric_sales_amount'),ref('graph_metric_sales_quantity'),ref('graph_metric_sales_kitchen'),ref('graph_metric_sales_amount_by_category')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'product.category'), ('name', '=', 'name')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'product.category'), ('name', '=', 'name')]" />
         </record>
             
         <record id="dashboard_field_product" model="dashboard.field">
@@ -62,7 +62,7 @@
             <field name="sql_name">pte.name</field>
             <field eval="[(6,0,[ref('graph_metric_sales_amount'),ref('graph_metric_sales_quantity'),ref('graph_metric_sales_kitchen'),ref('graph_metric_sales_amount_by_category')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'product.template'), ('name', '=', 'name')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'product.template'), ('name', '=', 'name')]" />
         </record>
        
        
@@ -72,7 +72,7 @@
             <field name="sql_name">date_trunc('year', sor.date_order)</field>
             <field eval="[(6,0,[ref('graph_metric_sales_amount'),ref('graph_metric_sales_quantity'),ref('graph_metric_sales_kitchen'),ref('graph_metric_sales_amount_by_category')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
        
         <record id="dashboard_field_total_order_month" model="dashboard.field">
@@ -82,7 +82,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_sales_amount'),ref('graph_metric_sales_quantity'),ref('graph_metric_sales_kitchen'),ref('graph_metric_sales_amount_by_category')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
         
         <record id="dashboard_field_total_order_quarter" model="dashboard.field">
@@ -91,7 +91,7 @@
             <field name="sql_name">date_trunc('quarter', sor.date_order)</field>
             <field eval="[(6,0,[ref('graph_metric_sales_amount'),ref('graph_metric_sales_quantity'),ref('graph_metric_sales_kitchen'),ref('graph_metric_sales_amount_by_category')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
         
         <record id="dashboard_field_total_order_week" model="dashboard.field">
@@ -100,7 +100,7 @@
             <field name="sql_name">date_trunc('week', sor.date_order)</field>
             <field eval="[(6,0,[ref('graph_metric_sales_amount'),ref('graph_metric_sales_quantity'),ref('graph_metric_sales_kitchen'),ref('graph_metric_sales_amount_by_category')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
        
         <record id="dashboard_field_total_order_day" model="dashboard.field">
@@ -109,7 +109,7 @@
             <field name="sql_name">date_trunc('day', sor.date_order)</field>
             <field eval="[(6,0,[ref('graph_metric_sales_amount'),ref('graph_metric_sales_quantity'),ref('graph_metric_sales_kitchen'),ref('graph_metric_sales_amount_by_category')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
          
          
@@ -119,7 +119,7 @@
             <field name="sql_name">sor.date_order</field>
             <field eval="[(6,0,[ref('graph_metric_sales_amount'),ref('graph_metric_sales_quantity'),ref('graph_metric_sales_kitchen'),ref('graph_metric_sales_amount_by_category')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_period')])]" name="type_ids"/>
-            <field name="field_name" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+            <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
        
        
