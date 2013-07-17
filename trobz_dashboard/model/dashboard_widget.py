@@ -27,6 +27,7 @@ class dashboard_widget(osv.osv, metric_support):
                     'defaults': metric.defaults,
                     'model_details': metric.model_details,
                     'fields': metric.fields,
+                    'help':metric.help,
                 })
             
             result[widget.id] = {

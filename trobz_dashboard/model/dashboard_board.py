@@ -2,7 +2,6 @@
 ##############################################################################
 
 from osv import osv, fields
-from textwrap import dedent
 
 
 class dashboard_board(osv.osv):

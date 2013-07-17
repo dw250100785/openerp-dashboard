@@ -9,13 +9,15 @@
         <div class="widget_content">
             <div class="head">
                 <i class="loader invisible icon-refresh icon-spin" />
-                    
+                
+                <i class="icon-question-sign"></i>
+                
                 <h2><t t-esc="name"/></h2>
                 
                 <span class="button toggle_search">
                     <i class="icon-search"></i>
                 </span>
-            </div>    
+            </div>
         
             <div class="body loading">
                 <div class="search hidden" />
@@ -23,6 +25,11 @@
             </div>
             
             <div class="foot status" />
+        </div>
+        <div class="widget_help hidden">
+        	<t t-foreach="metrics" t-as="metric">
+            	<b><t t-esc="metric.get('name')" />: </b><t t-esc="metric.get('help')" /><br/>
+        	</t>
         </div>
     </t>
     

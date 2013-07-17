@@ -54,8 +54,9 @@
 
 #trobz_board .widget .head .loader {
     font-size: 20px;
-    float: left;
-    margin: 3px 0 0 8px;
+    position:absolute;
+    left:25px;
+    top:5px;
 }
 
 #trobz_board .widget .head .loader.invisible {
@@ -78,6 +79,23 @@
     right: 10px;
     top: 5px;
 }
+
+#trobz_board .widget .head .icon-question-sign{
+    position: absolute;
+    left: 10px;
+    top: 5px;
+}
+
+#trobz_board .widget .widget_help {
+    position:absolute;
+    left:30px;
+    top:28px;
+    z-index:2;
+    border:1px solid grey;
+    background:white;
+    padding:5px;
+}
+
 
 #trobz_board .widget .body {
     width: 100%;    

@@ -52,7 +52,7 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
             });
             
             var self = this;
-            board.update().done(function(){
+            board.fetch().done(function(){
    
                 var state = new State();
                 
@@ -118,7 +118,6 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
         
         enterFullscreen: function(){
             var element = this.$el.parent().get(0);
-
             if (element.requestFullScreen) {
                 element.requestFullScreen();
             } else if (element.mozRequestFullScreen) {
@@ -127,7 +126,7 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                 element.webkitRequestFullScreen();
             }
             
-            this.$el.addClass('fullscreen');
+            this.$el.parent().addClass('fullscreen');
         },
         
         exitFullscreen: function(){
@@ -139,7 +138,7 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                 document.webkitCancelFullScreen();
             }  
   
-            this.$el.removeClass('fullscreen');
+            this.$el.parent().removeClass('fullscreen');
         },
         
         stateChanged: function(state){

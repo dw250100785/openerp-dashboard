@@ -6,13 +6,13 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone){
             Field = dashboard.models('Field'); 
             
         var field = {
-            numeric1: new Field({ name: 'Numeric 1', sql_name: 'ut.num1', reference: 'num1', field_name: 'num1', model: 'unit.test1', type_names: ['domain']}),  
+            numeric1: new Field({ name: 'Numeric 1', sql_name: 'ut.num1', reference: 'num1', field_id: 'num1', model: 'unit.test1', type_names: ['domain']}),  
             
-            string1: new Field({ name: 'String 1', sql_name: 'ut.str1', reference: 'str1', field_name: 'str1', model: 'unit.test1', type_names: ['domain']}),  
+            string1: new Field({ name: 'String 1', sql_name: 'ut.str1', reference: 'str1', field_id: 'str1', model: 'unit.test1', type_names: ['domain']}),  
         
-            date1: new Field({ name: 'Date 1', sql_name: 'ut.date1', reference: 'date1', field_name: 'date1', model: 'unit.test1', type_names: ['domain']}),  
+            date1: new Field({ name: 'Date 1', sql_name: 'ut.date1', reference: 'date1', field_id: 'date1', model: 'unit.test1', type_names: ['domain']}),  
 
-            numeric1bis: new Field({ name: 'Numeric 1', sql_name: 'ut2.num1_bis', reference: 'num1', field_name: 'num1_bis', model: 'unit.test2', type_names: ['domain']}),  
+            numeric1bis: new Field({ name: 'Numeric 1', sql_name: 'ut2.num1_bis', reference: 'num1', field_id: 'num1_bis', model: 'unit.test2', type_names: ['domain']}),  
         
         };
                        

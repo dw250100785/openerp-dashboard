@@ -30,7 +30,7 @@
                                         <field name="sequence" />
                                         <field name="reference" />
                                         <field name="sql_name" />
-                                        <field name="field_name" />
+                                        <field name="field_id" />
                                     </group>
                                 </form>
                                  <tree string="Fields">
@@ -39,9 +39,15 @@
                                     <field name="type_ids" />
                                     <field name="reference" />
                                     <field name="sql_name" />
-                                    <field name="field_name" />
+                                    <field name="field_id" />
                                 </tree>         
                             </field>
+                        </page>
+                                                
+                        <page string="Help">
+                            <group colspan="2">
+                                <field name="help" colspan="2" nolabel="1"/>
+                            </group>
                         </page>
                     </notebook>
                 </form>

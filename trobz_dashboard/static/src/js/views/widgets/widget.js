@@ -16,11 +16,14 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         template: 'TrobzDashboard.widget',
         
         events: {
-            'click .toggle_search': 'toggleSearch'
+            'click .toggle_search': 'toggleSearch',
+            'mouseenter .icon-question-sign': 'toggleHelp',
+            'mouseout .icon-question-sign': 'toggleHelp'
         },
         
         ui: {
-            loader: '.loader'
+            loader: '.loader',
+            helper: '.widget_help'
         },
         
         regions: {
@@ -173,10 +176,22 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 this.search.$el.addClass('hidden');
             }
         },
+
+        toggleHelp: function(e){
+            e.preventDefault();
+            
+            if(this.ui.helper.hasClass('hidden')){
+            	this.ui.helper.removeClass('hidden');
+            }
+            else {
+            	this.ui.helper.addClass('hidden');
+            }
+        },
         
-        serializeData: function(){
+        serializeData: function(){                  	
             return {
               "name": this.model.get('name'),
+              'metrics': this.model.metrics.toArray()
             }
         }
     });

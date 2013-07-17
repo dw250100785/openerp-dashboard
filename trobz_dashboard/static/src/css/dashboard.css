@@ -19,3 +19,7 @@
     color:  rgb(48, 132, 199);
 }
 
+.fullscreen{
+	overflow-y:auto;
+}
+

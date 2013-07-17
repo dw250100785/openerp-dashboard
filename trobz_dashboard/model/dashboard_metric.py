@@ -72,7 +72,8 @@ Pie / Line / Bar Chart:
         'fields': fields.function(extra_fields, method=True, multi=True, type='serialized', string='Fields Data', readonly=True),
         
         # get defaults metric filters defined on the model, in _metrics_sql attribute
-        'defaults': fields.function(extra_fields, method=True, multi=True, type='serialized', string='Defaults for SQL', readonly=True),   
+        'defaults': fields.function(extra_fields, method=True, multi=True, type='serialized', string='Defaults for SQL', readonly=True),
+        'help': fields.text('Help'),   
     }
     
     _defaults = {

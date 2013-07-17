@@ -192,7 +192,10 @@ class metrics():
             for metric_id, stack in stacks.items():
                 queries.append('\n(' + self.replace_outputs(stack['query'], query_outputs, metric_id) + '\n)')
                 params += stack['params']
-                    
+            
+            if group and group.period:
+                print 'group.field_description: ', group.field_description
+            
             if group and group.period and group.field_description['type'] in ['date', 'datetime']:
                 
                 order_by = ''
