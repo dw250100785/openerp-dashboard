@@ -40,6 +40,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             
             this.resize();
             
+            this.debug = options.debug;
             this.type = this.model.get('type');
             
             this.models = {
@@ -83,7 +84,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         doSearch: function(){
             var search = this.models.search, 
-                options = { period: this.models.period.values(), domain: [], order: [], group: [] };
+                options = { debug: this.debug, period: this.models.period.values(), domain: [], order: [], group: [] };
        
             //pass only search attributes that the widget is listening to     
             _(options).each(function(def, attr){
@@ -92,6 +93,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 }
             }, this);    
         
+            
             promise = this.model.execute(options);
             
             var $loader = this.ui.loader;

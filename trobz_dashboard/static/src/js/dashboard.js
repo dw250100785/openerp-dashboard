@@ -51,7 +51,7 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                 id: this.board_id
             });
             
-            var dashboard = this;
+            var self = this;
             board.update().done(function(){
    
                 var state = new State();
@@ -65,19 +65,20 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                          
                     widgets: new WidgetsView({
                         collection: board.widgets,
-                        period: board.period
+                        period: board.period,
+                        debug: self.session.debug
                     })    
                 };
                 
                 
                 //bind special event 
-                dashboard.bind(state, views.toolbar);
+                self.bind(state, views.toolbar);
                 
                 //setup the state 
                 state.set($.bbq.getState());
                 state.push();
        
-                var region = dashboard.region = new Marionette.Region({
+                var region = self.region = new Marionette.Region({
                     el: '#trobz_board'
                 });
                 

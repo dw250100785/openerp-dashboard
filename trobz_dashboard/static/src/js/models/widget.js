@@ -39,12 +39,32 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             
             var promise = this.sync('call', { model_name: this.model_name }, {
                 method: this.get('method'),
-                args: [[this.get('id')], options.period, options.domain, options.group, options.order, options.limit, options.offset]
+                args: [[this.get('id')], options.period, options.domain, options.group, options.order, options.limit, options.offset, options.debug]
             });      
             
             var metrics = this.metrics;
             promise.done(function(results){
+                    
                 _(results).each(function(metric_data, widget_id){
+                
+                    if(options.debug && 'debug' in metric_data){
+                        if('queries' in metric_data.debug){
+                            console.group(metric_data.debug.message);
+                            _.each(metric_data.debug.queries, function(query_info){
+                                console.groupCollapsed(query_info.message);
+                                console.debug('Query: ' + query_info.query);
+                                console.debug('Parameters: ' + query_info.params.join(', '));
+                                console.groupEnd();    
+                            });
+                            console.groupEnd();    
+                        }
+                        else {
+                            console.group(metric_data.debug.message);
+                            console.groupEnd();    
+                        }
+                        delete metric_data.debug;
+                    }
+                    
                     _(metric_data).each(function(result, metric_id){
                         var results = metrics.get(metric_id).results;
                         results.reset(results.parse(result));

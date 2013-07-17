@@ -10,12 +10,14 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         itemViewOptions: function(model, index) {
             return {
-                period: this.period
+                period: this.period,
+                debug: this.debug
             };
         },
         
         initialize: function(options){
             this.period = options.period;
+            this.debug = options.debug;
         },
         
         mode: function(type){

@@ -40,29 +40,34 @@ class metrics():
         
     }
     
-    def execute(self, cr, uid, ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, context=None):
+    def execute(self, cr, uid, ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, context=None):
         """
         Execute custom SQL queries to populate a trobz dashboard widget
         """
+        
+        print "ZAZA DEBUG: %s" % debug
 
         result = {}
         widgets = self.browse(cr, uid, ids, context=context)
         
         for widget in widgets:
-            result[widget.id] = self.exec_metrics(cr, uid, ids, widget.metric_ids, period=period, domain=domain, group_by=group_by, order_by=order_by, limit=limit, offset=offset, context=context) 
+            result[widget.id] = self.exec_metrics(cr, uid, ids, widget, period=period, domain=domain, group_by=group_by, order_by=order_by, limit=limit, offset=offset, debug=debug, context=context) 
             
         return result
     
     
-    def exec_metrics(self, cr, uid, ids, metrics, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, context=None):
+    def exec_metrics(self, cr, uid, ids, widget, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, context=None):
         """
         Execute metrics SQL queries
         """
+     
+        print "ZAZA DEBUG: %s" % debug
+
         stacks = {}
-        is_graph_metrics = self.is_graph_metrics(metrics)
+        is_graph_metrics = self.is_graph_metrics(widget.metric_ids)
         order_tmp = order_by
         
-        for metric in metrics:
+        for metric in widget.metric_ids:
             model = self.pool.get(metric.model.model)
             
             query, params, defaults = self.get_query(model, metric)
@@ -89,9 +94,10 @@ class metrics():
                 'params': params,
                 'args':  fields_args,
                 'output': self.extract_aggregate_field(metric, query),
+                'metric': metric
             }
         
-        return self.execute_stacks(cr, metrics, stacks, context)
+        return self.execute_stacks(cr, widget, stacks, debug=debug, context=context)
         
     
     
@@ -156,10 +162,11 @@ class metrics():
         
         return query, domain_params
     
-    def execute_stacks(self, cr, metrics, stacks, context=None):
+    def execute_stacks(self, cr, widget, stacks, debug=False, context=None):
         result = {}
-        is_graph_metrics = self.is_graph_metrics(metrics)
+        is_graph_metrics = self.is_graph_metrics(widget.metric_ids)
         
+
         # execute one query in UNION for all metrics
         if is_graph_metrics:
             
@@ -225,6 +232,7 @@ class metrics():
             for column in cr.description:
                 columns_index[column.name] = column
     
+            metric_names = []
             group_ref = group.reference
             for metric_id, stack in stacks.items():
                 output_ref = stack['output'].reference
@@ -241,14 +249,39 @@ class metrics():
                     res.append(data)
                 
                 result[metric_id] = {'columns': desc, 'results': res}
-        
+                metric_names.append(stack['metric'].name)
+            
+            if debug:     
+                result['debug'] = {
+                    'message': 'merge queries on widget %s' % (widget.name), 
+                    'queries': [
+                              { 'message': ', '.join(metric_names), 'query' : query, 'params': params }
+                    ]
+                }
+                 
+                
         # execute each metric separately
         else:
+            
+            if debug:
+                result['debug'] = {
+                    'message': 'merge queries on widget %s' % (widget.name),
+                    'queries': [] 
+                }
+            
             for metric_id, stack in stacks.items():
                 cr.execute(stack['query'], stack['params'])
              
                 result[metric_id] = {'columns': cr.description, 'results': cr.dictfetchall()}
-    
+                    
+                if debug:
+                    result['debug']['queries'].append({
+                        'message': stack['metric'].name,
+                        'query' : stack['query'], 
+                        'params': stack['params']
+                    })
+            
+            
     
         return result
     
