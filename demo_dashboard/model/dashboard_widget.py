@@ -1,14 +1,14 @@
 # -*- encoding: utf-8 -*-
 ##############################################################################
 
-from osv import osv, fields
+from osv import osv
 from os import path
 
 class dashboard_widget(osv.osv):
 
     _inherit = "dashboard.widget"
 
-    def custom_execute(self, cr, uid, ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, context=None):
+    def custom_execute(self, cr, uid, ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, context=None):
         """
         Demo: custom method to execute widget metrics.
         
@@ -31,10 +31,17 @@ class dashboard_widget(osv.osv):
         for widget in self.browse(cr, uid, ids, context=context):
             response[widget.id] = {}
             for metric in widget.metric_ids:
+                
                 response[widget.id][metric.id] = {
                     'columns': columns,
-                    'results': results
-                } 
+                    'results': results,
+                }
+            
+                if debug:
+                    response[widget.id]['debug'] = {
+                        'message': 'read text file %s with %s results for widget %s' % (source_file, len(data), widget.name)
+                    }
+                     
             
         return response
 
