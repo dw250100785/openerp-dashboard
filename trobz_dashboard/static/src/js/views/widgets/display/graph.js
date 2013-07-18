@@ -137,7 +137,18 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             var yaxis = add_y_axis ? 'y2axis' : 'yaxis';
             this.options.xaxis = _.extend({ title : x_axis.get('name'), min: 0 }, this.options.xaxis);
             if(!(yaxis in this.options)){
-                this.options[yaxis] = { title: y_axis.get('name'), min: 0 }; 
+                var self = this;
+                this.options[yaxis] = { 
+                    tickFormatter: function(val){ 
+                        return self.tickFormatter(val, this); 
+                    },
+                    title: y_axis.get('name'), 
+                    min: 0 
+                }; 
+                
+                if('format' in options){
+                    this.options[yaxis].format = options.format;
+                }
             }
         },
     
@@ -189,13 +200,18 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             return ticks;
         },
         
+        tickFormatter: function(val, options){
+            return 'format' in options ? numeral(val).format(options.format) : val;
+        },
+        
         trackFormatter: function(item){
+            
+            var axis_name = item.nearest.seriesIndex == 0 ? 'yaxis' : 'y2axis';
             
             var tick = this.getTick(item.x);
                 label = tick && tick.value ? tick.value : item.x;
             
-            
-            return label + ': ' + item.y;
+            return label + ': ' + this.tickFormatter(item.y, (axis_name in item.nearest ? item.nearest[axis_name].options : {}));
         },
         
         checkPreviousSeries: function(x_axis, y_axis){
