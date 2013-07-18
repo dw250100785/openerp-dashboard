@@ -16,6 +16,7 @@
                         <field name="sequence" />
                         <field name="reference" />
                         <field name="sql_name" />
+                        <field name="domain_field_path" />
                         <field name="field_id" />
                     </group>
                 </form>

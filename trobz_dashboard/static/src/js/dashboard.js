@@ -27,16 +27,13 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
         template: "TrobzDashboard",
         view_type: 'form',
         
-        options: {
-            'action_buttons': false,
-            'search_view': false,
-        },
-        
+       
    
         init: function(parent, dataset, view_id, options) {
             this.view_loaded = $.Deferred();
             this.board_id = dataset.ids[0] || null;
             this._super(parent, dataset, view_id, options);
+            this.context = dataset.get_context();
         },
    
         start: function(){
@@ -54,9 +51,9 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
             var self = this;
             board.fetch().done(function(){
    
-                var state = new State();
+                var state = self.state = new State();
                 
-                var views = {
+                var views = self.views = {
                     panel: new PanelLayout(),
                     
                     toolbar: new ToolBar({
@@ -72,7 +69,7 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                 
                 
                 //bind special event 
-                self.bind(state, views.toolbar);
+                self.bind();
                 
                 //setup the state 
                 state.set($.bbq.getState());
@@ -92,14 +89,20 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
             return this._super();
         },
              
-        bind: function(state, toolbar){
-            
-            
-            toolbar.on('fullscreen', this.fullscreen, this);
-            toolbar.on('mode', this.switchMode, this);
+        bind: function(){
+            dashboard.on('open:list',this.openList,this);
+            this.views.toolbar.on('fullscreen', this.fullscreen, this);
+            this.views.toolbar.on('mode', this.switchMode, this);
             
             //bind the state changes with the URL
-            state.on('change', this.stateChanged, this);
+            this.state.on('change', this.stateChanged, this);
+        },
+        
+        unbind: function(){
+            dashboard.off();
+            this.views.toolbar.off();
+            this.state.off();
+        	
         },
         
         
@@ -150,8 +153,47 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
             return this._super(data);
         },
         
+        openList: function(model_model,model_name, domain_orm,domain_display){
+        	
+        	var show = this.$el.show;
+        	
+        	this.$el.show = function(){
+        		$('.domain_search').remove();
+        		show.apply(this, arguments);
+        	};
+        	
+        	// We use this new ergonomy with a top bar instead of passing the domain in the context 
+        	// because we allow the search on fields which are not directly on the main model
+        	// For instance: order_id.partner_id.country_id.name
+        	$('.oe_view_manager').before(
+        		$('<div class="domain_search">').text(domain_display)
+        	)
+        	
+            this.do_action({
+                type: 'ir.actions.act_window',
+                res_model: model_model,
+                domain: domain_orm,
+                name:model_name,
+                flags : {
+                	new_window : true,
+                	search_view: true,
+                	display_title: true,
+                	pager: true,
+                	list: {selectable: true}
+                },
+                target: 'current',
+                view_mode: 'list,form',
+                views: [[false,'list', 'form']],
+                context: this.context.eval(),
+            });
+        },
+        on_show: function(){
+        	$('.domain_search').remove();
+        },
         destroy: function() {
             this.region.close();
+            this.unbind();
+            $('.domain_search').remove();
             this._super();
         }
     });     

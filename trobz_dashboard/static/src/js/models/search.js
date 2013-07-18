@@ -54,7 +54,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             for(var i=0 ; i< domain.length ; i++){
                 if(
                     _.size(domain[i]) == 3
-                    && domain[i].field.get('reference') == field.get('reference') 
+                    && domain[i].field.get('reference') == field.get('reference')
                     && domain[i].operator == operator
                     && domain[i].value == value  
                 )
@@ -65,7 +65,8 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             return null;
         },
         
-        domain: function(){
+        domain: function(returnType){
+        	returnType = returnType || 'reference'
             var domain = this.get('domain'),
                 object = [];
         
@@ -82,12 +83,17 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                     if(operator.not){
                         object.push(this.operators.byName('not').domain);
                     }
-                    object.push([
-                        operator.field(criterion.field.get('reference')),
+	                if (returnType =='reference'){
+	                    field = criterion.field.get('reference');
+                    } else {
+                    	field = criterion.field.get('domain_field_path');
+                    }
+                	object.push([
+                        operator.field(field),
                         operator.domain,
                         operator.value(criterion.value)
                     ]);
-                      
+                    
                 }, this);
                 
             }, this);

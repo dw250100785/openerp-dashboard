@@ -41,7 +41,7 @@
     <t t-name="TrobzDashboard.widget.status">
         <span class="metrics">
         <t t-foreach="metrics" t-as="metric">
-            <a t-attr-metric-id="metric.get('id')"><t t-esc="metric.get('name')" /></a>
+            <a t-att-metric-id="metric.get('id')" class="metric"><t t-esc="metric.get('name')" /></a>
         </t>
         </span>
     </t>

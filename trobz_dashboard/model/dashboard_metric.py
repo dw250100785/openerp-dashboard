@@ -21,6 +21,7 @@ class dashboard_metric(osv.osv):
                     'name': field.name,
                     'sequence': field.sequence,
                     'reference': field.reference,
+                    'domain_field_path': field.domain_field_path,
                     'sql_name': field.sql_name,
                     'type_names': field.type_names,
                     'field_description': field.field_description,
