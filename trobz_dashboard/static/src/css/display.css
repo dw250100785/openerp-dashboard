@@ -133,3 +133,20 @@
 #trobz_board .graph {
     margin: 20px auto;
 }
+
+#trobz_board .graph .flotr-mouse-value ul,
+#trobz_board .graph .flotr-mouse-value ul li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+#trobz_board .graph .flotr-mouse-value span {
+    display: inline-block;
+    min-width: 120px;
+}
+
+#trobz_board .graph .flotr-mouse-value b {
+    display: inline-block;
+    margin: 0 0 0 5px;
+}

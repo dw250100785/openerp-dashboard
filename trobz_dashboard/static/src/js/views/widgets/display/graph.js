@@ -206,12 +206,19 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         trackFormatter: function(item){
             
-            var axis_name = item.nearest.seriesIndex == 0 ? 'yaxis' : 'y2axis';
-            
             var tick = this.getTick(item.x);
-                label = tick && tick.value ? tick.value : item.x;
+                x_value = tick && tick.value ? tick.value : item.x;
             
-            return label + ': ' + this.tickFormatter(item.y, (axis_name in item.nearest ? item.nearest[axis_name].options : {}));
+            return _.template('<ul><li><span><%= x.label %></span>:<b><%= x.value %></b></li><li><span><%= y.label %></span>:<b><%= y.value %></b></li></ul>', {
+                x: {
+                    label: item.nearest.xaxis.options.title,
+                    value: x_value
+                },
+                y: {
+                    label: item.nearest.yaxis.options.title,
+                    value: this.tickFormatter(item.y, item.nearest.yaxis.options)
+                }
+            });
         },
         
         checkPreviousSeries: function(x_axis, y_axis){
