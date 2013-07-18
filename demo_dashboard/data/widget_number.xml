@@ -55,7 +55,7 @@
             <field name="sequence" eval="1" />
             
             <field eval="[(6,0,[ref('num_metric_1'),ref('num_metric_2')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain')])]" name="type_ids"/>
             <field name="field_name" ref="hr.field_hr_employee_name_related"/>
         </record>
         
@@ -66,7 +66,7 @@
             <field name="sequence" eval="2" />
             
             <field eval="[(6,0,[ref('num_metric_1'),ref('num_metric_2')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain'),ref('type_period')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_period')])]" name="type_ids"/>
             <field name="field_name" ref="field_hr_employee_write_date"/>
        </record>
          
@@ -79,7 +79,7 @@
             <field name="sequence" eval="3" />
             
             <field eval="[(6,0,[ref('num_metric_1')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_output')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_output')])]" name="type_ids"/>
         </record>
          
         <record id="num_metric_2_field_count" model="dashboard.field">
@@ -89,7 +89,7 @@
             <field name="sequence" eval="3" />
         
             <field eval="[(6,0,[ref('num_metric_2')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_output')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_output')])]" name="type_ids"/>
         </record>
            
     </data>

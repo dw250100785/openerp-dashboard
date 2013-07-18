@@ -88,7 +88,7 @@
             <field name="sql_name">he.name_related</field>
        
             <field eval="[(6,0,[ref('graph_metric_1'),ref('graph_metric_2')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" ref="hr.field_hr_employee_name_related"/>
             <field name="domain_field_path">order_id.name</field>
         </record>
@@ -99,7 +99,7 @@
             <field name="sql_name">rc.name</field>
        
             <field eval="[(6,0,[ref('graph_metric_1'),ref('graph_metric_2')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'res.country'), ('name', '=', 'name')]" />
         </record>
        
@@ -109,7 +109,7 @@
             <field name="sql_name">he.birthday</field>
        
             <field eval="[(6,0,[ref('graph_metric_1'),ref('graph_metric_2')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain')])]" name="type_ids"/>
             <field name="field_id" ref="hr.field_hr_employee_birthday"/>
         </record>
         
@@ -121,7 +121,7 @@
             <field name="sql_name">count</field>
             
             <field eval="[(6,0,[ref('graph_metric_1')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_output'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
         </record>
          
         <record id="graph_metric_1_field_period" model="dashboard.field">
@@ -130,7 +130,7 @@
             <field name="sql_name">ha.name</field>
        
             <field eval="[(6,0,[ref('graph_metric_1')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_period')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_period')])]" name="type_ids"/>
         </record>
         
         <!-- specific to metric 2 -->
@@ -141,7 +141,7 @@
             <field name="sql_name">booking_count</field>
             
             <field eval="[(6,0,[ref('graph_metric_2')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_output'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
         </record>
          
         <record id="graph_metric_2_field_period" model="dashboard.field">
@@ -150,7 +150,7 @@
             <field name="sql_name">br.date_start</field>
        
             <field eval="[(6,0,[ref('graph_metric_2')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_period')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_period')])]" name="type_ids"/>
         </record>
 
 
@@ -162,7 +162,7 @@
             <field name="sql_name">rco.name</field>
 
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'res.company'), ('name', '=', 'name')]" />
         </record>
         
@@ -172,7 +172,7 @@
             <field name="sql_name">ssh.name</field>
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.shop'), ('name', '=', 'name')]" />
         </record>
         
@@ -182,7 +182,7 @@
             <field name="sql_name">rpa.name</field>
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'res.partner'), ('name', '=', 'name')]" />
             <field name="domain_field_path">order_id.customer_id.name</field>
         </record>
@@ -193,7 +193,7 @@
             <field name="sql_name">hde.name</field>
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'hr.department'), ('name', '=', 'name')]" />
         </record>
        
@@ -203,7 +203,7 @@
             <field name="sql_name">rre.name</field>
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'resource.resource'), ('name', '=', 'name')]" />
         </record>
        
@@ -213,7 +213,7 @@
             <field name="sql_name">pca.name</field>
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'product.category'), ('name', '=', 'name')]" />
         </record>
             
@@ -223,7 +223,7 @@
             <field name="sql_name">pte.name</field>
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'product.template'), ('name', '=', 'name')]" />
         </record>
        
@@ -234,7 +234,7 @@
             <field name="sql_name">date_trunc('year', sor.date_order)</field>
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
        
@@ -244,7 +244,7 @@
             <field name="sql_name">date_trunc('month', sor.date_order)</field>
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
         
@@ -254,7 +254,7 @@
             <field name="sql_name">date_trunc('quarter', sor.date_order)</field>
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
         
@@ -264,7 +264,7 @@
             <field name="sql_name">date_trunc('week', sor.date_order)</field>
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
        
@@ -274,7 +274,7 @@
             <field name="sql_name">date_trunc('day', sor.date_order)</field>
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
          
@@ -285,7 +285,7 @@
             <field name="sql_name">sor.date_order</field>
        
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_period')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_period')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
         </record>
        
@@ -296,7 +296,7 @@
             <field name="sql_name">total_sales_amount</field>
       
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_output'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
         </record>
              
     </data>

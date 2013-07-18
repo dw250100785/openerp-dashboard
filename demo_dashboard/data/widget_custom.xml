@@ -35,14 +35,14 @@
             <field name="name">Name</field>
             <field name="reference">custom_name</field>
             <field eval="[(6,0,[ref('custom_metric_1')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_output')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_output')])]" name="type_ids"/>
         </record>
         
         <record id="custom_metric_1_custom_value" model="dashboard.field">
             <field name="name">Value</field>
             <field name="reference">custom_value</field>
             <field eval="[(6,0,[ref('custom_metric_1')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_output')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_output')])]" name="type_ids"/>
         </record>
                      
     </data>

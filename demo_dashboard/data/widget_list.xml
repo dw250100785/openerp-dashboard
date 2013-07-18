@@ -42,7 +42,7 @@
             <field name="sql_name">he.name_related</field>
        
             <field eval="[(6,0,[ref('list_metric_1')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_name" ref="hr.field_hr_employee_name_related"/>
         </record>
         
@@ -54,7 +54,7 @@
             <field name="sql_name">rc.name</field>
        
             <field eval="[(6,0,[ref('list_metric_1')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_name" model="ir.model.fields" search="[('model', '=', 'res.country'), ('name', '=', 'name')]" />
         </record>
         
@@ -65,7 +65,7 @@
             <field name="sql_name">he.work_email</field>
      
             <field eval="[(6,0,[ref('list_metric_1')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain'),ref('type_output')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output')])]" name="type_ids"/>
             <field name="field_name" ref="hr.field_hr_employee_work_email"/>
         </record>
        
@@ -76,7 +76,7 @@
             <field name="sql_name">he.birthday</field>
        
             <field eval="[(6,0,[ref('list_metric_1')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_name" ref="hr.field_hr_employee_birthday"/>
         </record>
          
@@ -87,7 +87,7 @@
             <field name="sql_name">he.manager</field>
        
             <field eval="[(6,0,[ref('list_metric_1')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_order')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_name" model="ir.model.fields" search="[('model', '=', 'hr.employee'), ('name', '=', 'manager')]" />
         </record>
         
@@ -99,7 +99,7 @@
             <field name="sql_name">he.write_date</field>
        
             <field eval="[(6,0,[ref('list_metric_1')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('type_period')])]" name="type_ids"/>
+            <field eval="[(6,0,[ref('trobz_dashboard.type_period')])]" name="type_ids"/>
             <field name="field_name" ref="field_hr_employee_write_date"/>
         </record>
          
