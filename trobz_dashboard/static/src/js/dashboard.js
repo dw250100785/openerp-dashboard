@@ -183,7 +183,7 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                 },
                 target: 'current',
                 view_mode: 'list,form',
-                views: [[false,'list', 'form']],
+                views: [[false,'list'], [false, 'form']],
                 context: this.context.eval(),
             });
         },
