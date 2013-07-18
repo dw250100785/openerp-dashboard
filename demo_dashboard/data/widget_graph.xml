@@ -90,6 +90,7 @@
             <field eval="[(6,0,[ref('graph_metric_1'),ref('graph_metric_2')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
             <field name="field_id" ref="hr.field_hr_employee_name_related"/>
+            <field name="domain_field_path">order_id.name</field>
         </record>
         
         <record id="graph_metric_1_field_country_id" model="dashboard.field">
@@ -183,6 +184,7 @@
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('type_domain'),ref('type_output'),ref('type_group'),ref('type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'res.partner'), ('name', '=', 'name')]" />
+            <field name="domain_field_path">order_id.customer_id.name</field>
         </record>
         
         <record id="graph_metric_3_field_department" model="dashboard.field">
