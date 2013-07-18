@@ -52,8 +52,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                             console.group(metric_data.debug.message);
                             _.each(metric_data.debug.queries, function(query_info){
                                 console.groupCollapsed(query_info.message);
-                                console.debug('Query: ' + query_info.query);
-                                console.debug('Parameters: ' + query_info.params.join(', '));
+                                console.debug(query_info.query);
                                 console.groupEnd();    
                             });
                             console.groupEnd();    

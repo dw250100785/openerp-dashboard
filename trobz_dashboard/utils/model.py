@@ -51,23 +51,28 @@ class metrics():
         widgets = self.browse(cr, uid, ids, context=context)
         
         for widget in widgets:
-            result[widget.id] = self.exec_metrics(cr, uid, ids, widget, period=period, domain=domain, group_by=group_by, order_by=order_by, limit=limit, offset=offset, debug=debug, context=context) 
+            res, res_debug = self.exec_metrics(cr, uid, ids, widget.metric_ids, period=period, domain=domain, group_by=group_by, order_by=order_by, limit=limit, offset=offset, debug=debug, context=context) 
+            result[widget.id] = res
+            if debug: 
+                result[widget.id]['debug'] = {
+                    'message': 'queries on widget %s' % (widget.name),
+                    'queries': res_debug 
+                }
+            
             
         return result
     
     
-    def exec_metrics(self, cr, uid, ids, widget, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, context=None):
+    def exec_metrics(self, cr, uid, ids, metric_ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, context=None):
         """
         Execute metrics SQL queries
         """
-     
-        print "ZAZA DEBUG: %s" % debug
-
+        
         stacks = {}
-        is_graph_metrics = self.is_graph_metrics(widget.metric_ids)
+        is_graph_metrics = self.is_graph_metrics(metric_ids)
         order_tmp = order_by
         
-        for metric in widget.metric_ids:
+        for metric in metric_ids:
             model = self.pool.get(metric.model.model)
             
             query, params, defaults = self.get_query(model, metric)
@@ -89,6 +94,27 @@ class metrics():
                 
             params = params + domain_params
         
+            # add support of accent, only on LIKE/ILIKE conditions
+            pattern = re.compile(r"""(?i)(?P<column>[-_a-z'"\.]+) (?P<operator>(not )?ilike|like) (?P<value>%s)""")            
+            replacement = "unaccent(\g<column>) \g<operator> unaccent(\g<value>)" 
+            
+            print """
+            
+            ZAZA before transform: 
+            %s
+            
+            """ % query
+            
+            query = pattern.sub(replacement, query)
+            
+            print """
+            
+            ZAZA after transform: 
+            %s
+            
+            """ % query
+            
+            
             stacks[metric.id] = {
                 'query': query,
                 'params': params,
@@ -97,7 +123,7 @@ class metrics():
                 'metric': metric
             }
         
-        return self.execute_stacks(cr, widget, stacks, debug=debug, context=context)
+        return self.execute_stacks(cr, metric_ids, stacks, debug=debug, context=context)
         
     
     
@@ -162,11 +188,12 @@ class metrics():
         
         return query, domain_params
     
-    def execute_stacks(self, cr, widget, stacks, debug=False, context=None):
+    def execute_stacks(self, cr, metric_ids, stacks, debug=False, context=None):
         result = {}
-        is_graph_metrics = self.is_graph_metrics(widget.metric_ids)
+        debug_result = []
         
-
+        is_graph_metrics = self.is_graph_metrics(metric_ids)
+        
         # execute one query in UNION for all metrics
         if is_graph_metrics:
             
@@ -255,38 +282,30 @@ class metrics():
                 metric_names.append(stack['metric'].name)
             
             if debug:     
-                result['debug'] = {
-                    'message': 'merge queries on widget %s' % (widget.name), 
-                    'queries': [
-                              { 'message': ', '.join(metric_names), 'query' : query, 'params': params }
-                    ]
-                }
+                debug_result.append({ 
+                    'message': ', '.join(metric_names), 
+                    'query' : cr.mogrify(query, params) 
+                })
+                
                  
                 
         # execute each metric separately
         else:
-            
-            if debug:
-                result['debug'] = {
-                    'message': 'merge queries on widget %s' % (widget.name),
-                    'queries': [] 
-                }
-            
+        
             for metric_id, stack in stacks.items():
                 cr.execute(stack['query'], stack['params'])
              
                 result[metric_id] = {'columns': cr.description, 'results': cr.dictfetchall()}
                     
                 if debug:
-                    result['debug']['queries'].append({
+                    debug_result.append({
                         'message': stack['metric'].name,
-                        'query' : stack['query'], 
-                        'params': stack['params']
+                        'query' : cr.mogrify(stack['query'], stack['params'])
                     })
             
             
     
-        return result
+        return result, debug_result
     
     def replace_outputs(self, query, outputs, metric_id):
         """

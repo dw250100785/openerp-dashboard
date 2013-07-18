@@ -39,8 +39,9 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 new Operator('lte', _t('is lower or equal to'), '<=' ),
                 
                 // string
-                new Operator('contains', _t('contains'), 'like'),
-                new Operator('n_contains', _t('doesn\'t contains'), 'like', { 
+                new Operator('contains', _t('contains'), 'ilike', {
+                }),
+                new Operator('n_contains', _t('doesn\'t contains'), 'ilike', { 
                     not: true 
                 }),
                 

@@ -12,13 +12,17 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
         'web',
         'trobz_base'
     ],
-    'data': [
+    
+    'update_xml': [
         'view/dashboard_board_view.xml',
         'view/dashboard_widget_view.xml',
         'view/dashboard_metric_view.xml',
         'view/dashboard_field_view.xml',
-        
         'menu/dashboard_menu.xml',
+    ],
+    
+    'data': [
+        'data/default_field_types.xml',
     ],
     
     'demo': [],

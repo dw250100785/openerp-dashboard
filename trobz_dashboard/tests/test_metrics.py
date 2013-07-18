@@ -58,13 +58,13 @@ class TestMetrics(TransactionCase):
         count = self.get_metric('Count')
         custom_count = self.get_metric('CustomCount')
         
-        result = self.widget.exec_metrics([count])
+        result, debug = self.widget.exec_metrics([count])
         self.assertEquals(result[count.id]['results'][0]['count'], 30)
       
-        result = self.widget.exec_metrics([custom_count])
+        result, debug = self.widget.exec_metrics([custom_count])
         self.assertEquals(result[custom_count.id]['results'][0]['count'], 1)
         
-        result = self.widget.exec_metrics([count], domain=[['category', '=', 'new']])
+        result, debug = self.widget.exec_metrics([count], domain=[['category', '=', 'new']])
         self.assertEquals(result[count.id]['results'][0]['count'], 5)
 
         period = {
@@ -72,10 +72,10 @@ class TestMetrics(TransactionCase):
             'end':   u'2010-03-01',
         }
 
-        result = self.widget.exec_metrics([count], period=period, domain=[['category', '=', 'new']])
+        result, debug = self.widget.exec_metrics([count], period=period, domain=[['category', '=', 'new']])
         self.assertEquals(result[count.id]['results'][0]['count'], 2)
         
-        result = self.widget.exec_metrics([count, custom_count])
+        result, debug = self.widget.exec_metrics([count, custom_count])
         self.assertEquals(result[count.id]['results'][0]['count'], 30)
         self.assertEquals(result[custom_count.id]['results'][0]['count'], 1)
         
@@ -87,21 +87,21 @@ class TestMetrics(TransactionCase):
         """
         graph_price = self.get_metric('GraphPrice')
         
-        result = self.widget.exec_metrics([graph_price])
+        result, debug = self.widget.exec_metrics([graph_price])
         self.assertDictEqual(result[graph_price.id]['results'][0], {'category': u'new', 'total_price': 150L})
         self.assertDictEqual(result[graph_price.id]['results'][1], {'category': u'second_hand', 'total_price': 300L}) 
         self.assertDictEqual(result[graph_price.id]['results'][2], {'category': u'third_hand', 'total_price': 450L})
         
-        result = self.widget.exec_metrics([graph_price],order_by=['category DESC'])
+        result, debug = self.widget.exec_metrics([graph_price],order_by=['category DESC'])
         self.assertDictEqual(result[graph_price.id]['results'][0], {'category': u'third_hand', 'total_price': 450L})
         self.assertDictEqual(result[graph_price.id]['results'][1], {'category': u'second_hand', 'total_price': 300L}) 
         self.assertDictEqual(result[graph_price.id]['results'][2], {'category': u'new', 'total_price': 150L})
         
-        result = self.widget.exec_metrics([graph_price],domain=[['price', '>', '30']], group_by=['price'], order_by=['price DESC'])
+        result, debug = self.widget.exec_metrics([graph_price],domain=[['price', '>', '30']], group_by=['price'], order_by=['price DESC'])
         self.assertDictEqual(result[graph_price.id]['results'][0], {'price': 50, 'total_price': 300L})
         self.assertDictEqual(result[graph_price.id]['results'][1], {'price': 40, 'total_price': 240L})
         
-        result = self.widget.exec_metrics([graph_price],order_by=['category DESC'], limit=2, offset=1)
+        result, debug = self.widget.exec_metrics([graph_price],order_by=['category DESC'], limit=2, offset=1)
         self.assertDictEqual(result[graph_price.id]['results'][0], {'category': u'second_hand', 'total_price': 300L}) 
         self.assertDictEqual(result[graph_price.id]['results'][1], {'category': u'new', 'total_price': 150L})
         
@@ -110,7 +110,7 @@ class TestMetrics(TransactionCase):
             'end':   u'2010-03-01',
         }
 
-        result = self.widget.exec_metrics([graph_price],period=period, order_by=['category DESC'], limit=2, offset=1)
+        result, debug = self.widget.exec_metrics([graph_price],period=period, order_by=['category DESC'], limit=2, offset=1)
         self.assertDictEqual(result[graph_price.id]['results'][0], {'category': u'second_hand', 'total_price': 120L}) 
         self.assertDictEqual(result[graph_price.id]['results'][1], {'category': u'new', 'total_price': 30L})
         
@@ -128,7 +128,7 @@ class TestMetrics(TransactionCase):
             'end':   u'2010-06-30',
         }
         
-        result = self.widget.exec_metrics([graph_price],period=period, group_by=['sale_month'], order_by=['sale_month DESC'])
+        result, debug = self.widget.exec_metrics([graph_price],period=period, group_by=['sale_month'], order_by=['sale_month DESC'])
         self.assertDictEqual(result[graph_price.id]['results'][0], {'sale_month': '2010-06-01 00:00:00', 'total_price': 150L}) 
         self.assertDictEqual(result[graph_price.id]['results'][1], {'sale_month': '2010-05-01 00:00:00', 'total_price': 150L}) 
         self.assertDictEqual(result[graph_price.id]['results'][2], {'sale_month': '2010-04-01 00:00:00', 'total_price': 150L})
@@ -136,7 +136,7 @@ class TestMetrics(TransactionCase):
         self.assertDictEqual(result[graph_price.id]['results'][4], {'sale_month': '2010-02-01 00:00:00', 'total_price': 150L})
         self.assertDictEqual(result[graph_price.id]['results'][5], {'sale_month': '2010-01-01 00:00:00', 'total_price': 150L})
         
-        result = self.widget.exec_metrics([graph_price],period=period, group_by=['sale_month'], order_by=['sale_month ASC'])
+        result, debug = self.widget.exec_metrics([graph_price],period=period, group_by=['sale_month'], order_by=['sale_month ASC'])
         self.assertDictEqual(result[graph_price.id]['results'][0], {'sale_month': '2010-01-01 00:00:00', 'total_price': 150L}) 
         self.assertDictEqual(result[graph_price.id]['results'][1], {'sale_month': '2010-02-01 00:00:00', 'total_price': 150L}) 
         self.assertDictEqual(result[graph_price.id]['results'][2], {'sale_month': '2010-03-01 00:00:00', 'total_price': 150L})
@@ -144,7 +144,7 @@ class TestMetrics(TransactionCase):
         self.assertDictEqual(result[graph_price.id]['results'][4], {'sale_month': '2010-05-01 00:00:00', 'total_price': 150L})
         self.assertDictEqual(result[graph_price.id]['results'][5], {'sale_month': '2010-06-01 00:00:00', 'total_price': 150L})
         
-        result = self.widget.exec_metrics([graph_price],period=period, domain=[['category', '=', 'second_hand']], group_by=['sale_month'], order_by=['total_price DESC'])
+        result, debug = self.widget.exec_metrics([graph_price],period=period, domain=[['category', '=', 'second_hand']], group_by=['sale_month'], order_by=['total_price DESC'])
         self.assertDictEqual(result[graph_price.id]['results'][0], {'sale_month': '2010-03-01 00:00:00', 'total_price': 90L})
         self.assertDictEqual(result[graph_price.id]['results'][1], {'sale_month': '2010-02-01 00:00:00', 'total_price': 70L})
         self.assertDictEqual(result[graph_price.id]['results'][2], {'sale_month': '2010-01-01 00:00:00', 'total_price': 50L})
@@ -157,13 +157,13 @@ class TestMetrics(TransactionCase):
             'end':   u'2010-02-28',
         }
         
-        result = self.widget.exec_metrics([graph_price],period=period, domain=[['category', '=', 'second_hand']], group_by=['sale_month'], order_by=['total_price DESC'])
+        result, debug = self.widget.exec_metrics([graph_price],period=period, domain=[['category', '=', 'second_hand']], group_by=['sale_month'], order_by=['total_price DESC'])
         self.assertDictEqual(result[graph_price.id]['results'][0], {'sale_month': '2010-02-01 00:00:00', 'total_price': 70L})
         self.assertDictEqual(result[graph_price.id]['results'][1], {'sale_month': '2010-01-01 00:00:00', 'total_price': 50L})
         self.assertDictEqual(result[graph_price.id]['results'][2], {'sale_month': '2009-11-01 00:00:00', 'total_price': None}) 
         self.assertDictEqual(result[graph_price.id]['results'][3], {'sale_month': '2009-12-01 00:00:00', 'total_price': None})
 
-        result = self.widget.exec_metrics([graph_price],period=period, domain=[['category', '=', 'second_hand']], group_by=['sale_month'], order_by=['total_price DESC'], limit=2, offset=2)
+        result, debug = self.widget.exec_metrics([graph_price],period=period, domain=[['category', '=', 'second_hand']], group_by=['sale_month'], order_by=['total_price DESC'], limit=2, offset=2)
         self.assertDictEqual(result[graph_price.id]['results'][0], {'sale_month': '2009-11-01 00:00:00', 'total_price': None}) 
         self.assertDictEqual(result[graph_price.id]['results'][1], {'sale_month': '2009-12-01 00:00:00', 'total_price': None})
 
@@ -177,7 +177,7 @@ class TestMetrics(TransactionCase):
         graph_quantity = self.get_metric('GraphQuantity')
         
         
-        result = self.widget.exec_metrics([graph_price, graph_quantity])
+        result, debug = self.widget.exec_metrics([graph_price, graph_quantity])
         self.assertDictEqual(result[graph_price.id]['results'][0], {'category': u'new', 'total_price': 150L})
         self.assertDictEqual(result[graph_price.id]['results'][1], {'category': u'second_hand', 'total_price': 300L})
         self.assertDictEqual(result[graph_price.id]['results'][2], {'category': u'third_hand', 'total_price': 450L})
@@ -185,19 +185,19 @@ class TestMetrics(TransactionCase):
         self.assertDictEqual(result[graph_quantity.id]['results'][1], {'category': u'second_hand', 'total_quantity': 10L})
         self.assertDictEqual(result[graph_quantity.id]['results'][2], {'category': u'third_hand', 'total_quantity': 15L})
     
-        result = self.widget.exec_metrics([graph_price, graph_quantity], domain=[['category', '=', 'third_hand']], group_by=['quantity'])
+        result, debug = self.widget.exec_metrics([graph_price, graph_quantity], domain=[['category', '=', 'third_hand']], group_by=['quantity'])
         self.assertDictEqual(result[graph_price.id]['results'][0], {'quantity': 1, 'total_price': 210L})
         self.assertDictEqual(result[graph_price.id]['results'][1], {'quantity': 5, 'total_price': 240L})
         self.assertDictEqual(result[graph_quantity.id]['results'][0], {'quantity': 1, 'total_quantity': 7L})
         self.assertDictEqual(result[graph_quantity.id]['results'][1], {'quantity': 5, 'total_quantity': 8L})
         
-        result = self.widget.exec_metrics([graph_price, graph_quantity], domain=[['category', '=', 'third_hand']], group_by=['quantity'], order_by=['quantity DESC'])
+        result, debug = self.widget.exec_metrics([graph_price, graph_quantity], domain=[['category', '=', 'third_hand']], group_by=['quantity'], order_by=['quantity DESC'])
         self.assertDictEqual(result[graph_price.id]['results'][0], {'quantity': 5, 'total_price': 240L})
         self.assertDictEqual(result[graph_price.id]['results'][1], {'quantity': 1, 'total_price': 210L})
         self.assertDictEqual(result[graph_quantity.id]['results'][0], {'quantity': 5, 'total_quantity': 8L})
         self.assertDictEqual(result[graph_quantity.id]['results'][1], {'quantity': 1, 'total_quantity': 7L})
         
-        result = self.widget.exec_metrics([graph_price, graph_quantity], group_by=['price'], order_by=['total_price DESC'])
+        result, debug = self.widget.exec_metrics([graph_price, graph_quantity], group_by=['price'], order_by=['total_price DESC'])
         self.assertDictEqual(result[graph_price.id]['results'][0], {'price': 50, 'total_price': 300L})
         self.assertDictEqual(result[graph_price.id]['results'][1], {'price': 40, 'total_price': 240L})
         self.assertDictEqual(result[graph_price.id]['results'][2], {'price': 30, 'total_price': 180L})
@@ -209,7 +209,7 @@ class TestMetrics(TransactionCase):
         self.assertDictEqual(result[graph_quantity.id]['results'][3], {'price': 20, 'total_quantity': 6L})
         self.assertDictEqual(result[graph_quantity.id]['results'][4], {'price': 10, 'total_quantity': 6L})
 
-        result = self.widget.exec_metrics([graph_price, graph_quantity], group_by=['price'], order_by=['total_price DESC'], limit=2, offset=2)
+        result, debug = self.widget.exec_metrics([graph_price, graph_quantity], group_by=['price'], order_by=['total_price DESC'], limit=2, offset=2)
         self.assertDictEqual(result[graph_price.id]['results'][0], {'price': 30, 'total_price': 180L})
         self.assertDictEqual(result[graph_price.id]['results'][1], {'price': 20, 'total_price': 120L})
         self.assertDictEqual(result[graph_quantity.id]['results'][0], {'price': 30, 'total_quantity': 6L})
@@ -220,7 +220,7 @@ class TestMetrics(TransactionCase):
             'end':   u'2010-03-01',
         }
 
-        result = self.widget.exec_metrics([graph_price, graph_quantity], period=period, group_by=['price'], order_by=['total_price DESC'], limit=2, offset=2)
+        result, debug = self.widget.exec_metrics([graph_price, graph_quantity], period=period, group_by=['price'], order_by=['total_price DESC'], limit=2, offset=2)
         self.assertDictEqual(result[graph_price.id]['results'][0], {'price': 30, 'total_price': 60L})
         self.assertDictEqual(result[graph_price.id]['results'][1], {'price': 20, 'total_price': 40L})
         self.assertDictEqual(result[graph_quantity.id]['results'][0], {'price': 30, 'total_quantity': 2L})
@@ -238,7 +238,7 @@ class TestMetrics(TransactionCase):
             'end':   u'2010-06-30',
         }
         
-        result = self.widget.exec_metrics([graph_price, graph_quantity], domain=[['category', '=', 'third_hand']], period=period, group_by=['sale_month'])
+        result, debug = self.widget.exec_metrics([graph_price, graph_quantity], domain=[['category', '=', 'third_hand']], period=period, group_by=['sale_month'])
         self.assertDictEqual(result[graph_price.id]['results'][0], {'sale_month': '2010-01-01 00:00:00', 'total_price': 90L})
         self.assertDictEqual(result[graph_price.id]['results'][1], {'sale_month': '2010-02-01 00:00:00', 'total_price': 60L})
         self.assertDictEqual(result[graph_price.id]['results'][2], {'sale_month': '2010-03-01 00:00:00', 'total_price': 30L})
@@ -252,7 +252,7 @@ class TestMetrics(TransactionCase):
         self.assertDictEqual(result[graph_quantity.id]['results'][4], {'sale_month': '2010-05-01 00:00:00', 'total_quantity': 3L})
         self.assertDictEqual(result[graph_quantity.id]['results'][5], {'sale_month': '2010-06-01 00:00:00', 'total_quantity': 3L})
         
-        result = self.widget.exec_metrics([graph_price, graph_quantity], domain=[['category', '=', 'third_hand']], period=period, group_by=['sale_month'], order_by=['sale_month DESC'])
+        result, debug = self.widget.exec_metrics([graph_price, graph_quantity], domain=[['category', '=', 'third_hand']], period=period, group_by=['sale_month'], order_by=['sale_month DESC'])
         self.assertDictEqual(result[graph_price.id]['results'][0], {'sale_month': '2010-06-01 00:00:00', 'total_price': 120L})
         self.assertDictEqual(result[graph_price.id]['results'][1], {'sale_month': '2010-05-01 00:00:00', 'total_price': 90L})
         self.assertDictEqual(result[graph_price.id]['results'][2], {'sale_month': '2010-04-01 00:00:00', 'total_price': 60L})
@@ -266,7 +266,7 @@ class TestMetrics(TransactionCase):
         self.assertDictEqual(result[graph_quantity.id]['results'][4], {'sale_month': '2010-02-01 00:00:00', 'total_quantity': 2L})
         self.assertDictEqual(result[graph_quantity.id]['results'][5], {'sale_month': '2010-01-01 00:00:00', 'total_quantity': 2L})
         
-        result = self.widget.exec_metrics([graph_price, graph_quantity], domain=[['category', '=', 'third_hand']], period=period, group_by=['sale_month'], order_by=['total_price DESC'])
+        result, debug = self.widget.exec_metrics([graph_price, graph_quantity], domain=[['category', '=', 'third_hand']], period=period, group_by=['sale_month'], order_by=['total_price DESC'])
         self.assertDictEqual(result[graph_price.id]['results'][0], {'sale_month': '2010-06-01 00:00:00', 'total_price': 120L})
         self.assertDictEqual(result[graph_price.id]['results'][1], {'sale_month': '2010-01-01 00:00:00', 'total_price': 90L})
         self.assertDictEqual(result[graph_price.id]['results'][2], {'sale_month': '2010-05-01 00:00:00', 'total_price': 90L})
@@ -280,7 +280,7 @@ class TestMetrics(TransactionCase):
         self.assertDictEqual(result[graph_quantity.id]['results'][4], {'sale_month': '2010-04-01 00:00:00', 'total_quantity': 3L})
         self.assertDictEqual(result[graph_quantity.id]['results'][5], {'sale_month': '2010-03-01 00:00:00', 'total_quantity': 2L})
         
-        result = self.widget.exec_metrics([graph_price, graph_quantity], domain=[['category', '=', 'third_hand']], period=period, group_by=['sale_month'], order_by=['total_price DESC'], limit=2, offset=2)
+        result, debug = self.widget.exec_metrics([graph_price, graph_quantity], domain=[['category', '=', 'third_hand']], period=period, group_by=['sale_month'], order_by=['total_price DESC'], limit=2, offset=2)
         self.assertDictEqual(result[graph_price.id]['results'][0], {'sale_month': '2010-05-01 00:00:00', 'total_price': 90L})
         self.assertDictEqual(result[graph_price.id]['results'][1], {'sale_month': '2010-02-01 00:00:00', 'total_price': 60L})
         self.assertDictEqual(result[graph_quantity.id]['results'][0], {'sale_month': '2010-05-01 00:00:00', 'total_quantity': 3L})
