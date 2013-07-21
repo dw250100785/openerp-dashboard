@@ -19,7 +19,7 @@ class hr_employee(osv.osv, metric_support):
         },
                     
         'list': """
-             SELECT he.name_related, he.work_email, he.birthday, he.manager, rc.name as "country"  
+             SELECT he.name_related, he.work_email, he.birthday, he.parent_id as manager, rc.name as "country"  
              FROM hr_employee AS he 
              LEFT JOIN res_country rc ON rc.id = he.country_id 
              WHERE TRUE {generated}
