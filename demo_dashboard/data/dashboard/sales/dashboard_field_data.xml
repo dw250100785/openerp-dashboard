@@ -24,7 +24,7 @@
             <field name="name">Customer</field>
             <field name="reference">customer</field>
             <field name="sql_name">rpa.name</field>
-            <field eval="[(6,0,[ref('graph_metric_sales_amount'),ref('graph_metric_sales_quantity'),ref('graph_metric_sales_kitchen'),ref('graph_metric_sales_amount_by_category')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('numeric_total_sales'),ref('numeric_number_customers'),ref('graph_metric_sales_amount'),ref('graph_metric_sales_quantity'),ref('graph_metric_sales_kitchen'),ref('graph_metric_sales_amount_by_category')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'res.partner'), ('name', '=', 'name')]" />
         </record>
@@ -174,14 +174,7 @@
             <field eval="[(6,0,[ref('trobz_dashboard.type_output')])]" name="type_ids"/>
         </record>
         
-        <record id="dashboard_field_average_sale_repetition_numeric" model="dashboard.field">
-            <field name="name">Average Sales Repetition</field>
-            <field name="reference">nb_repetition</field>
-            <field name="sql_name">nb_repetition</field>
-            <field name="sequence" eval="3" />
-            <field eval="[(6,0,[ref('numeric_average_sale_repetition')])]" name="metric_ids" />
-            <field eval="[(6,0,[ref('trobz_dashboard.type_output')])]" name="type_ids"/>
-        </record>
+        
         
     </data>
 </openerp>

@@ -69,18 +69,6 @@
             <field name="help">Help for numeric_number_customers.</field>
         </record>
         
-               
-        <record id="numeric_average_sale_repetition" model="dashboard.metric">
-            <field name="name">Average Sales Repetition</field>
-            <field name="type">numeric</field>
-            <field name="query_name">average_sale_repetition</field>
-            <field name="model" ref="sale.model_sale_order_line" />
-            <field name="widget_id" ref="sales_key_figures_widget" />
-            <field name="options" eval="{'format': '0.0'}" />
-            <field name="values" eval="{}"/>
-            <field name="help">Help for numeric_average_sale_repetition.</field>
-        </record>
-
 
     </data>
 </openerp>
