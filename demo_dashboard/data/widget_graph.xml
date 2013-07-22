@@ -61,7 +61,7 @@
             <field name="model" ref="hr.model_hr_employee" />
             <field name="widget_id" ref="graph_widget_1" />
        
-            <field name="options" eval="{'type': 'bar'}" />
+            <field name="options" eval="{'type': 'bar', 'format': '0,0.[00]' }" />
             <field name="values" eval="{}"/>
         </record>
     
@@ -76,7 +76,7 @@
             <field name="model" ref="sale.model_sale_order_line" />
             <field name="widget_id" ref="graph_widget_2" />
        
-            <field name="options" eval="{'type': 'line'}" />
+            <field name="options" eval="{'type': 'line', 'format': '$ 0,0 a'}" />
             <field name="values" eval="{}"/>
         </record>
     
@@ -90,7 +90,7 @@
             <field eval="[(6,0,[ref('graph_metric_1'),ref('graph_metric_2')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" ref="hr.field_hr_employee_name_related"/>
-            <field name="domain_field_path">order_id.name</field>
+            <field name="domain_field_path">name</field>
         </record>
         
         <record id="graph_metric_1_field_country_id" model="dashboard.field">
@@ -101,6 +101,7 @@
             <field eval="[(6,0,[ref('graph_metric_1'),ref('graph_metric_2')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'res.country'), ('name', '=', 'name')]" />
+            <field name="domain_field_path">country_id.name</field>
         </record>
        
         <record id="graph_metric_1_field_birthday" model="dashboard.field">
@@ -111,6 +112,7 @@
             <field eval="[(6,0,[ref('graph_metric_1'),ref('graph_metric_2')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_domain')])]" name="type_ids"/>
             <field name="field_id" ref="hr.field_hr_employee_birthday"/>
+            <field name="domain_field_path">birthday</field>
         </record>
         
         <!-- specific to metric 1 -->
@@ -131,6 +133,7 @@
        
             <field eval="[(6,0,[ref('graph_metric_1')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_period')])]" name="type_ids"/>
+            <field name="domain_field_path">employee_id.name</field>
         </record>
         
         <!-- specific to metric 2 -->
@@ -164,6 +167,7 @@
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'res.company'), ('name', '=', 'name')]" />
+            <field name="domain_field_path">order_id.company_id.name</field>
         </record>
         
         <record id="graph_metric_3_field_shop" model="dashboard.field">
@@ -174,6 +178,7 @@
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.shop'), ('name', '=', 'name')]" />
+            <field name="domain_field_path">order_id.shop_id.name</field>
         </record>
         
         <record id="graph_metric_3_field_customer" model="dashboard.field">
@@ -184,7 +189,7 @@
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'res.partner'), ('name', '=', 'name')]" />
-            <field name="domain_field_path">order_id.customer_id.name</field>
+            <field name="domain_field_path">order_id.partner_id.name</field>
         </record>
         
         <record id="graph_metric_3_field_department" model="dashboard.field">
@@ -195,6 +200,7 @@
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'hr.department'), ('name', '=', 'name')]" />
+            <field name="domain_field_path">order_id.user_id.resource_id.department_id.name</field>
         </record>
        
         <record id="graph_metric_3_field_salesman" model="dashboard.field">
@@ -205,6 +211,7 @@
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'resource.resource'), ('name', '=', 'name')]" />
+            <field name="domain_field_path">order_id.user_id.name</field>
         </record>
        
         <record id="graph_metric_3_field_product_category" model="dashboard.field">
@@ -215,6 +222,7 @@
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'product.category'), ('name', '=', 'name')]" />
+            <field name="domain_field_path">product_id.product_tmpl_id.categ_id.name</field>
         </record>
             
         <record id="graph_metric_3_field_product" model="dashboard.field">
@@ -225,6 +233,7 @@
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_output'),ref('trobz_dashboard.type_group'),ref('trobz_dashboard.type_order')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'product.template'), ('name', '=', 'name')]" />
+            <field name="domain_field_path">product_id.product_tmpl_id.name</field>
         </record>
        
        
@@ -287,6 +296,7 @@
             <field eval="[(6,0,[ref('graph_metric_3')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_period')])]" name="type_ids"/>
             <field name="field_id" model="ir.model.fields" search="[('model', '=', 'sale.order'), ('name', '=', 'date_order')]" />
+            <field name="domain_field_path">order_id.date_order</field>
         </record>
        
        
