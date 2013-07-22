@@ -19,9 +19,7 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
         'view/dashboard_metric_view.xml',
         'view/dashboard_field_view.xml',
         'menu/dashboard_menu.xml',
-    ],
     
-    'data': [
         'data/default_field_types.xml',
     ],
     
@@ -30,7 +28,7 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
     'sequence': -99,
     'installable': True,
     'active': False,
-    'post_objects': [],
+    'post_objects': ['post.object.dashboard'],
     
     'qweb' : [
         'static/src/templates/*.xml',
