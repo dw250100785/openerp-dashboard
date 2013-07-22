@@ -6,7 +6,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
     var SearchGroup = View.extend({
         
-        className: 'search_part',
+        className: 'metric_info',
     
         template: 'TrobzDashboard.widget.search.group',
         
@@ -27,16 +27,28 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         },
         
         renderForm: function(e){
-            e.preventDefault();
-            if(this.collection.length > 0){
-                var fields = Renderer.render(this.templates.form, {
-                    fields: this.collection.toArray()
-                });
-                
-                this.$el.empty();
-                this.$el.html(fields);    
+            if(this.$el.hasClass('edition')){
+                this.render();
+            }
+            else {
+                e.preventDefault();
+                if(this.collection.length > 0){
+                    var fields = Renderer.render(this.templates.form, {
+                        fields: this.collection.toArray()
+                    });
+                    
+                    this.$el.empty();
+                    this.$el.html(fields);    
+                    this.$el.addClass('edition');
+                }
             }
         },
+        
+        render: function(){
+            _super.render.apply(this, arguments);
+            this.$el.removeClass('edition');
+        },
+        
         
         addGroup: function(e){
             e.preventDefault();

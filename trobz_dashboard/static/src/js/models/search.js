@@ -88,12 +88,17 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                     } else {
                     	field = criterion.field.get('domain_field_path');
                     }
-                	object.push([
-                        operator.field(field),
-                        operator.domain,
-                        operator.value(criterion.value)
-                    ]);
-                    
+                    if(!field){
+                        console.warn('domain can not be correctly retrieved', returnType, 'not found in', criterion.field);
+                    }
+                    else {
+                        object.push([
+                            operator.field(field),
+                            operator.domain,
+                            operator.value(criterion.value)
+                        ]);
+                    }
+                	                   
                 }, this);
                 
             }, this);

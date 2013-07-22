@@ -7,7 +7,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
     var SearchDomain = View.extend({
     
-        className: 'search_part',
+        className: 'metric_info',
     
         template: 'TrobzDashboard.search.domain.view',
     
@@ -20,7 +20,10 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             'datetime': 'TrobzDashboard.search.domain.datetime',
             'boolean': 'TrobzDashboard.search.domain.boolean',
             'not_supported': 'TrobzDashboard.search.domain.not_supported'
-            
+        },
+        
+        ui: {
+            modify: '.current'
         },
     
         events: {
@@ -52,16 +55,28 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         renderForm: function(e){
             e.preventDefault();
-            if(this.collection.length > 0){
-                var fields = Renderer.render(this.templates.form, {
-                    fields: this.collection.toArray()
-                });
-                
-                this.$el.empty();
-                this.$el.html(fields);    
             
-                this.renderCondition(this.collection.at(0));
+            if(this.$el.hasClass('edition')){
+                this.render();
             }
+            else {
+                if(this.collection.length > 0){
+                    var fields = Renderer.render(this.templates.form, {
+                        fields: this.collection.toArray()
+                    });
+                    
+                    this.$el.empty();
+                    this.$el.html(fields);    
+                
+                    this.renderCondition(this.collection.at(0));
+                    this.$el.addClass('edition');
+                }    
+            }
+        },
+        
+        render: function(){
+            _super.render.apply(this, arguments);
+            this.$el.removeClass('edition');
         },
         
         renderFieldForm: function(e){

@@ -5,7 +5,9 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
     var _t = instance.web._t,
         _lt = instance.web._lt;
     
-    var //collections
+    var Renderer = Marionette.Renderer,
+    
+        //collections
         WidgetsCollection = dashboard.collections('Widgets'),
         
         //models
@@ -44,7 +46,7 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
    
             
             
-            var debug = board = new Board({
+            var debug = board = this.board = new Board({
                 id: this.board_id
             });
             
@@ -153,27 +155,56 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
             return this._super(data);
         },
         
-        openList: function(model_model,model_name, domain_orm,domain_display){
+        openList: function(metric, search){
+        	
+        	var domain = search.get('domain'),
+        	    has_domain = domain.length > 0,
+            	groups = _(domain).groupBy(function(criterion){ 
+                    return criterion.field.get('reference'); 
+                }),
+                period = this.board.period,
+                period_field = metric.fields.types('period').at(0),
+                period_path = period_field.get('domain_field_path');
         	
         	var show = this.$el.show;
-        	
         	this.$el.show = function(){
-        		$('.domain_search').remove();
+        		$('.search.outside').remove();
         		show.apply(this, arguments);
         	};
+        	
+        	
+        	// add period to the domain
+            if(period_path){
+               domain = domain.concat([[period_path, '>=', period.start('s')] , [period_path, '<', period.start('s')]])
+            }
+            else {
+                console.warn('period', period_field, 'does not have a', 'domain_field_path', 'attribute, the period will not be used in metric list view...');
+            }
+            
         	
         	// We use this new ergonomy with a top bar instead of passing the domain in the context 
         	// because we allow the search on fields which are not directly on the main model
         	// For instance: order_id.partner_id.country_id.name
         	$('.oe_view_manager').before(
-        		$('<div class="domain_search">').text(domain_display)
+        		$('<div class="search outside">').html(
+        		    Renderer.render('TrobzDashboard.metric_info', {
+                        operators: search.operators,
+                        group_size: _(groups).size(),
+                        groups: groups,
+                        has_domain: has_domain,
+                        period: period.values('LL'),
+                        period_field: period_field,
+                        has_period: !!period_path
+                    })
+        		)
         	)
+        	
         	
             this.do_action({
                 type: 'ir.actions.act_window',
-                res_model: model_model,
-                domain: domain_orm,
-                name:model_name,
+                res_model: metric.get('model_details').model,  
+                domain: search.domain('domain_field_path'),
+                name: metric.get('model_details').name,
                 flags : {
                 	new_window : true,
                 	search_view: true,
@@ -183,17 +214,17 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                 },
                 target: 'current',
                 view_mode: 'list,form',
-                views: [[false,'list'], [false, 'form']],
+                views: [[false /*view id, false if none*/,'list'/*view type*/], [false, 'form']],
                 context: this.context.eval(),
             });
         },
         on_show: function(){
-        	$('.domain_search').remove();
+        	$('.search.outside').remove();
         },
         destroy: function() {
             this.region.close();
             this.unbind();
-            $('.domain_search').remove();
+            $('.search.outside').remove();
             this._super();
         }
     });     

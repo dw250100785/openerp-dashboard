@@ -113,10 +113,11 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             return period;
         },
         
-        values: function(){
+        values: function(format){
+            format = format || 's';
             return {
-                start: this.start('s'),
-                end: this.end('s')
+                start: this.start(format),
+                end: this.end(format)
             };
         },
         

@@ -21,8 +21,10 @@
     <!-- search.domain -->
     
     <t t-name="TrobzDashboard.search.domain.view">
-        <a class="search_action">filter:</a> 
-        
+        <span class="domain_title search_action"  title="Filter">
+            <i class="icon-filter"></i>
+        </span>
+    
         <div class="current">
             <t t-if="has_domain">
                 <t t-call="TrobzDashboard.search.domain.string">
@@ -33,7 +35,7 @@
             </t>
             
             <t t-if="!(has_domain)">
-                <span class="search_string">no condition available</span>
+                <span class="search_string">no filter selected</span>
             </t>
             
             <t t-if="!(has_condition)">
@@ -79,6 +81,10 @@
     
     <t t-name="TrobzDashboard.search.domain.form">
         
+        <span class="domain_title search_action" title="Filter">
+            <i class="icon-filter"></i>
+        </span>
+    
         <t t-call="TrobzDashboard.search.field_list">
             <t t-set="fields" t-value="fields"/>
         </t>
@@ -86,7 +92,6 @@
         <div class="condition">
         </div>        
         
-        <span class="button cancel"><i class="icon-remove"></i></span>
         <span class="button add"><i class="icon-plus"></i></span>
     </t>
     
@@ -181,8 +186,10 @@
     
     
     <t t-name="TrobzDashboard.widget.search.group">
-        <a class="search_action">group:</a> 
-        
+        <span class="search_action domain_title" title="Group">
+            <i class="icon-reorder"></i>
+        </span>
+                
         <div class="current">
             <t t-if="has_group">
                 <t t-call="TrobzDashboard.search.group.string">
@@ -219,19 +226,23 @@
     
 
     <t t-name="TrobzDashboard.search.group.form">
+        <span class="search_action domain_title" title="Group">
+            <i class="icon-reorder"></i>
+        </span>
         
         <t t-call="TrobzDashboard.search.field_list">
             <t t-set="fields" t-value="fields"/>
         </t>
     
-        <span class="button cancel"><i class="icon-remove"></i></span>
         <span class="button add"><i class="icon-plus"></i></span>
     </t>
     
     <!-- search.order -->
     
     <t t-name="TrobzDashboard.widget.search.order">
-        <a class="search_action">order:</a> 
+        <span class="search_action domain_title" title="Order">
+            <i class="icon-sort"></i>
+        </span>
         
         <div class="current">
             <t t-if="has_order">
@@ -268,6 +279,9 @@
     </t>
 
     <t t-name="TrobzDashboard.search.order.form">
+        <span class="search_action domain_title" title="Order">
+            <i class="icon-sort"></i>
+        </span>
         
         <t t-call="TrobzDashboard.search.field_list">
             <t t-set="fields" t-value="fields"/>
@@ -278,7 +292,6 @@
             <option value="DESC">descending</option>
         </select>   
     
-        <span class="button cancel"><i class="icon-remove"></i></span>
         <span class="button add"><i class="icon-plus"></i></span>
     </t>
     

@@ -82,8 +82,9 @@
 
 #trobz_board .widget .head .icon-question-sign{
     position: absolute;
-    left: 10px;
+    left: 5px;
     top: 5px;
+    cursor: help;
 }
 
 #trobz_board .widget .widget_help {

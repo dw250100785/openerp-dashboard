@@ -23,3 +23,78 @@
 	overflow-y:auto;
 }
 
+
+/* special style for the domain display when we go to a metric openerp native list (domain info at the top of the list) */
+
+.search {
+    background: url(/web/static/src/img/form_sheetbg.png) repeat;
+}
+
+.search .metric_info {
+    border-bottom: 1px solid #cacaca;
+    overflow: auto;
+    
+}
+
+.search .current {
+    float: left;
+}
+
+.search .domain_title {
+    float: left;
+    padding: 7px;
+    display: inline-block;
+    background: #fefefe;
+    border-right: 1px solid #cacaca;
+    width: 20px;
+    font-size: 16px;
+    margin: 0 4px 0 0;
+    text-align: center;
+}
+
+.search .domain_title b {
+    margin: 0 10px 0 0;
+}
+
+.search .criterion {
+    display: inline-block;
+    background: #fefefe;
+    padding: 0 8px;
+    margin: 4px 0 0;
+    border-radius: 3px;
+    border: 1px solid #cacaca;
+}
+
+
+.search .search_string {
+    font-style: italic;
+    color: #999;
+    line-height: 30px;
+}
+
+.search .criterion .search_string {
+    line-height: 24px;
+}
+.search .criterion .search_value,
+.search .criterion .search_field {
+    font-weight: bolder;
+    line-height: 24px;
+}
+
+.search .search_string {
+    margin: 0;
+}
+
+.search .remove {
+    cursor: pointer;
+    margin: 0 2px;
+    color: #999;
+}
+
+.search .remove:hover {
+    color:  rgb(48, 132, 199);
+}
+
+.search.outside .remove {
+    display:none;
+}
