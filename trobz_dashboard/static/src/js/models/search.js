@@ -28,15 +28,18 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
          * Domain manipulation
          */
         
-        addDomain: function(field, operator, value){
+        addDomain: function(field, operator, value, options){
+            
             if(this.getCriterion(field, operator, value) == null && (value || _(['true', 'false']).contains(operator))){
                 var domain = this.get('domain').slice(0);    
                 domain.push({
                     field: field, 
                     operator: operator, 
-                    value: value
+                    value: value,
+                    options: options || {} 
                 });
                 this.set('domain', domain);
+                this.trigger('set:domain', field, operator, value);
             }
         },
         
@@ -46,6 +49,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 var domain = this.get('domain').slice(0);    
                 domain.splice(index, 1);
                 this.set('domain', domain);
+                this.trigger('remove:domain', field, operator, value);
             }
         },
         
@@ -53,7 +57,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             var domain = this.get('domain');
             for(var i=0 ; i< domain.length ; i++){
                 if(
-                    _.size(domain[i]) == 3
+                    _.size(domain[i]) >= 3
                     && domain[i].field.get('reference') == field.get('reference')
                     && domain[i].operator == operator
                     && domain[i].value == value  

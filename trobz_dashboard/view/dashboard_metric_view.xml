@@ -20,28 +20,7 @@
                             </group>
                         </page>
                         <page string="Fields">
-                            <field name="field_ids" widget="many2many">
-                                <form string="Field">
-                                    <group>
-                                        <field name="name"/>
-                                        <field name="type_ids" widget="many2many_tags" placeholder="Types..." />
-                                    </group>
-                                    <group>
-                                        <field name="sequence" />
-                                        <field name="reference" />
-                                        <field name="sql_name" />
-                                        <field name="field_id" />
-                                    </group>
-                                </form>
-                                 <tree string="Fields">
-                                    <field name="name" />
-                                    <field name="sequence" />
-                                    <field name="type_ids" />
-                                    <field name="reference" />
-                                    <field name="sql_name" />
-                                    <field name="field_id" />
-                                </tree>         
-                            </field>
+                            <field name="field_ids" widget="many2many" />
                         </page>
                                                 
                         <page string="Help">

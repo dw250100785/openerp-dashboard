@@ -2,7 +2,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
     var SearchModel = dashboard.models('Search');
 
-    var SearchView = dashboard.views('WidgetSearch'),
+    var SearchView = dashboard.views('Search'),
         Status = dashboard.views('WidgetStatus'),
         Display = dashboard.views('WidgetDisplay');
 
@@ -43,6 +43,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             
             this.resize();
             
+            this.global_search = options.global_search;
             this.debug = options.debug;
             this.type = this.model.get('type');
             
@@ -74,6 +75,10 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             
             this.listenTo(this.models.period, 'change', this.doSearch);
             
+            this.listenTo(this.global_search, 'set:domain', this.setGlobalDomain);
+            this.listenTo(this.global_search, 'remove:domain', this.removeGlobalDomain);
+            
+            
             // set search attribute listened by the widget
             this.listen = this.type in this.bindSearch ? this.bindSearch[this.type] : []; 
             _(this.listen).each(function(attr){
@@ -83,6 +88,14 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         resize: function(){
             this.$el.addClass('size' + this.model.get('width'));
+        },
+        
+        setGlobalDomain: function(field, operator, value){
+            this.models.search.addDomain(field, operator, value, {global: true});
+        },
+        
+        removeGlobalDomain: function(field, operator, value){
+            this.models.search.removeDomain(field, operator, value, {global: true});
         },
         
         doSearch: function(){
@@ -191,7 +204,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         serializeData: function(){                  	
             return {
               "name": this.model.get('name'),
-              'metrics': this.model.metrics.toArray()
+              'metrics': this.model.metrics.toArray(),
+              'has_help': this.model.metrics.some(function(metric){return metric.get('help'); })
             }
         }
     });

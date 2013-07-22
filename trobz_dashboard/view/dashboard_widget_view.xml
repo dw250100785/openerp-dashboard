@@ -16,44 +16,7 @@
                             </group>
                         </page>    
                         <page string="Metrics">
-                            <field name="metric_ids" widget="one2many_list">
-                                <form string="Metric">
-                                    <notebook>
-                                        <page string="General">
-                                            <group colspan="2">
-                                                <field name="name" />
-                                                <field name="model" />
-                                                <field name="options" widget="serialized" />
-                                                <field name="values" widget="serialized" />
-                                            </group>
-                                        </page>
-                                        <page string="Fields">
-                                            <field name="field_ids" widget="many2many">
-                                                <form string="Field">
-                                                    <group>
-                                                        <field name="name"/>
-                                                        <field name="type_ids" widget="many2many_tags" placeholder="Types..." />
-                                                    </group>
-                                                    <group>
-                                                        <field name="sequence" />
-                                                        <field name="reference" />
-                                                        <field name="sql_name" />
-                                                        <field name="field_id" />
-                                                    </group>
-                                                </form>
-                                                 <tree string="Fields">
-                                                    <field name="name" />
-                                                    <field name="sequence" />
-                                                    <field name="type_ids" />
-                                                    <field name="reference" />
-                                                    <field name="sql_name" />
-                                                    <field name="field_id" />
-                                                </tree>         
-                                            </field>
-                                        </page>
-                                    </notebook>
-                                </form>            
-                            </field>
+                            <field name="metric_ids" widget="one2many_list" />
                         </page>
                     </notebook>    
                 </form>

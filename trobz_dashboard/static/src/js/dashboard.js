@@ -59,12 +59,13 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                     panel: new PanelLayout(),
                     
                     toolbar: new ToolBar({
-                        model: board.period
+                        model: board
                     }),
                          
                     widgets: new WidgetsView({
                         collection: board.widgets,
                         period: board.period,
+                        global_search: board.global.search,
                         debug: self.session.debug
                     })    
                 };
@@ -93,8 +94,8 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
              
         bind: function(){
             dashboard.on('open:list',this.openList,this);
-            this.views.toolbar.on('fullscreen', this.fullscreen, this);
-            this.views.toolbar.on('mode', this.switchMode, this);
+            dashboard.on('fullscreen', this.fullscreen, this);
+            dashboard.on('mode', this.switchMode, this);
             
             //bind the state changes with the URL
             this.state.on('change', this.stateChanged, this);
@@ -102,11 +103,13 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
         
         unbind: function(){
             dashboard.off();
-            this.views.toolbar.off();
-            this.state.off();
-        	
+            if(this.views && this.views.toolbar){
+                this.views.toolbar.off();
+            }
+            if(this.state){
+                this.state.off();
+            }
         },
-        
         
         switchMode: function(type){
             this.region.currentView.widgets.currentView.mode(type);
@@ -164,7 +167,8 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                 }),
                 period = this.board.period,
                 period_field = metric.fields.types('period').at(0),
-                period_path = period_field.get('domain_field_path');
+                period_path = period_field.get('domain_field_path'),
+                orm_domain = search.domain('domain_field_path');
         	
         	var show = this.$el.show;
         	this.$el.show = function(){
@@ -175,7 +179,7 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
         	
         	// add period to the domain
             if(period_path){
-               domain = domain.concat([[period_path, '>=', period.start('s')] , [period_path, '<', period.start('s')]])
+               orm_domain = orm_domain.concat([[period_path, '>=', period.start('s')] , [period_path, '<', period.end('s')]])
             }
             else {
                 console.warn('period', period_field, 'does not have a', 'domain_field_path', 'attribute, the period will not be used in metric list view...');
@@ -203,7 +207,7 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
             this.do_action({
                 type: 'ir.actions.act_window',
                 res_model: metric.get('model_details').model,  
-                domain: search.domain('domain_field_path'),
+                domain: orm_domain,
                 name: metric.get('model_details').name,
                 flags : {
                 	new_window : true,
@@ -222,7 +226,9 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
         	$('.search.outside').remove();
         },
         destroy: function() {
-            this.region.close();
+            if(this.region){
+                this.region.close();
+            }
             this.unbind();
             $('.search.outside').remove();
             this._super();

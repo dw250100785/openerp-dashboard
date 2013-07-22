@@ -8,7 +8,6 @@
     width: 100%;
     overflow: auto;
     background: #f3f3f3;
-    border-bottom: 2px solid #cacaca;
 }
 
 #trobz_board .search .search_part {
@@ -60,4 +59,9 @@
 
 #trobz_board .search .edition span.search_action {
     color:  rgb(48, 132, 199);
+}
+
+#trobz_board .search .criterion.global {
+    border-color: rgb(48, 132, 199);
+    color: rgb(48, 132, 199);
 }

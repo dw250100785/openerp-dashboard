@@ -7,8 +7,11 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
     var Layout = Marionette.Layout,
         _super = Layout.prototype;
 
-    var WidgetSearch = Layout.extend({
-        template: 'TrobzDashboard.widget.search',
+    var Search = Layout.extend({
+    
+        className: 'search', 
+    
+        template: 'TrobzDashboard.search',
     
         regions: {
             domain: '.domain',
@@ -26,6 +29,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 order: this.collection.notTypes('group_by').types('order_by'),
             };
             
+            this.enabled_views = options.enabled || ['domain', 'group', 'order'];
+            
             this.views = {
                 domain: new Domain({
                     collection: this.fields.domain,
@@ -42,24 +47,44 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                     search: this.search
                 })
             };
-            
+        },
+        
+        show: function(){
+            this.$el.show();
+        },
+        
+        hide: function(){
+            this.$el.hide();
+        },
+        
+        toggle: function(){
+            if(this.$el.is(':visible')){
+                this.hide();
+            }
+            else {
+                this.show();
+            }
+        },
+        
+        enabled: function(name){
+            return _(this.enabled_views).contains(name);
         },
         
         onRender: function(){
-            if(this.fields.domain.length > 0){
+            if(this.enabled('domain') && this.fields.domain.length > 0){
                 this.domain.show(this.views.domain);
                 
                 this.listenTo(this.views.domain, 'search:add', this.addDomain, this);
                 this.listenTo(this.views.domain, 'search:remove', this.removeDomain, this);
             }
             
-            if(this.type != 'numeric' && this.fields.group.length > 0){
+            if(this.enabled('group') && this.type != 'numeric' && this.fields.group.length > 0){
                 this.group.show(this.views.group);
             
                 this.listenTo(this.views.group, 'search:add', this.addGroup, this);
                 this.listenTo(this.views.group, 'search:remove', this.removeGroup, this);
             }
-            if(this.type == 'graph' && this.fields.order.length > 0){
+            if(this.enabled('order') && this.type == 'graph' && this.fields.order.length > 0){
                 this.order.show(this.views.order);
                 
                 this.listenTo(this.views.order, 'search:add', this.addOrder, this);
@@ -104,6 +129,6 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
     });
 
-    dashboard.views('WidgetSearch', WidgetSearch);
+    dashboard.views('Search', Search);
 
 });

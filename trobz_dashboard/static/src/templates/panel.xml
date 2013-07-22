@@ -6,8 +6,37 @@
 </t>
 
 
-
 <t t-name="TrobzDashboard.toolbar">
+
+    <!-- timebar view -->
+    
+    <div id="timebar"></div>
+
+    <!-- general buttons -->
+    
+    
+    <div class="section board_action right">
+        <span class="button fullscreen_action"><i class="icon-resize-full"></i></span>
+    </div>
+    
+    <div class="section board_action right">
+        <span class="mode">
+            <t t-call="TrobzDashboard.toolbar.list" />
+        </span>
+    </div>    
+
+    <div class="section board_action right">
+        <span class="button search_action"><i class="icon-search"></i></span>
+    </div>
+    
+    <!-- search view -->
+    
+    <div id="searchbar"></div>
+</t>
+
+
+
+<t t-name="TrobzDashboard.timebar">
     <div class="section period_type">
         <span class="button rolling" data-type="rolling"><i class="icon-spinner"></i>Rolling</span>
         <span class="button calendar" data-type="calendar"><i class="icon-calendar"></i>Calendar</span>
@@ -32,16 +61,6 @@
         </div>
     </div>
 
-    <div class="section board_action right">
-        <span class="button fullscreen"><i class="icon-resize-full"></i></span>
-    </div>
-    
-    <div class="section board_action right">
-        <span class="mode">
-            <t t-call="TrobzDashboard.toolbar.list" />
-        </span>
-    </div>    
-
 </t>
 
 <t t-name="TrobzDashboard.toolbar.sliding">
@@ -51,19 +70,20 @@
         <option value="300">5 min.</option>
         <option value="900">15 min.</option>
     </select>
-    <span class="button list"><i class="icon-stop"></i></span>
+    <span class="button list_action"><i class="icon-stop"></i></span>
 </t>
 
 <t t-name="TrobzDashboard.toolbar.list">
-    <span class="button sliding"><i class="icon-play"></i></span>
+    <span class="button sliding_action"><i class="icon-play"></i></span>
 </t>
 
 
 
-<t t-name="TrobzDashboard.widgets">
-    <h3>my widgets here</h3>
-</t>
 
+
+<t t-name="TrobzDashboard.searchbar">
+    <span>search things here</span>    
+</t>
 
 
 </template>

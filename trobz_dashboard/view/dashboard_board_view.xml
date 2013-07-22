@@ -33,69 +33,12 @@
                         <field name="period_type" />
                         <field name="period_start_at" />
                         <field name="period_end_at" />
+                        
+                        <field name="global_field_refs" widget="serialized" />
                     </group>
                     <notebook>
                         <page string="Widgets">
-                            <field name="widget_ids" widget="many2many">
-                                
-                                <form string="Widget">
-                                    <notebook>
-                                        <page string="General">
-                                            <group>
-                                                <field name="name" />
-                                                <field name="type" />
-                                                <field name="method" />
-                                            </group>
-                                        </page>    
-                                        <page string="Metrics">
-                                            <field name="metric_ids" widget="many2many">
-                                                <form string="Metric">
-                                                    <notebook>
-                                                        <page string="General">
-                                                            <group colspan="2">
-                                                                <field name="name" />
-                                                                <field name="model" />
-                                                                <field name="options" widget="serialized" />
-                                                                <field name="values" widget="serialized" />
-                                                            </group>
-                                                        </page>
-                                                        <page string="Fields">
-                                                            <field name="field_ids" widget="one2many_list">
-                                                                <form string="Field">
-                                                                    <group>
-                                                                        <field name="name"/>
-                                                                        <field name="type_ids" widget="many2many_tags" placeholder="Types..." />
-                                                                    </group>
-                                                                    <group>
-                                                                        <field name="sequence" />
-                                                                        <field name="reference" />
-                                                                        <field name="sql_name" />
-                                                                        <field name="field_id" />
-                                                                    </group>
-                                                                </form>
-                                                                 <tree string="Fields">
-                                                                    <field name="name" />
-                                                                    <field name="sequence" />
-                                                                    <field name="type_ids" />
-                                                                    <field name="reference" />
-                                                                    <field name="sql_name" />
-                                                                    <field name="field_id" />
-                                                                </tree>         
-                                                            </field>
-                                                        </page>
-                                                    </notebook>
-                                                </form>            
-                                            </field>
-                                        </page>
-                                    </notebook>    
-                                </form>
-                                <tree string="Widgets">
-                                    <field name="name"/>
-                                    <field name="type"/>
-                                    <field name="method" />
-                                    <field name="metric_ids"/>
-                                </tree>
-                            </field>
+                            <field name="widget_ids" widget="many2many" />
                         </page>
                     </notebook>
                 

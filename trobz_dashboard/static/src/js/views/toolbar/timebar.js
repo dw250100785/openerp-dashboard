@@ -3,25 +3,20 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
     var ItemView = Marionette.ItemView,
         _super = ItemView.prototype;
 
-    var ToolBar = ItemView.extend({
+    var TimeBar = ItemView.extend({
         
-        template: 'TrobzDashboard.toolbar',
+        template: 'TrobzDashboard.timebar',
         
         ui: { 
             type: '.period_type span',
             name: '.period_name select',
             daterange: '.daterange',
-            mode: '.mode'
         }, 
         
         events: {
             'click .period_type span': 'changeType',
             'change .period_name select': 'changeName',
             'shown .daterange': 'openRangePicker',
-        
-            'click .board_action .fullscreen': 'switchFullscreen',
-            'click .board_action .sliding': 'slidingMode',
-            'click .board_action .list': 'listMode',
         },
         
         modelEvents: {
@@ -53,28 +48,6 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             this.ui.daterangepicker.updateCalendars();
         },
         
-        switchFullscreen: function(e){
-            e.preventDefault();
-            var $icon = $(e.currentTarget).find('i');
-        
-            this.fullscreen = !this.fullscreen;
-            this.trigger('fullscreen', this.fullscreen);        
-            $icon.attr('class', this.fullscreen ? 'icon-resize-small' : 'icon-resize-full');
-        },
-        
-        slidingMode: function(e){
-            e.preventDefault();
-            this.trigger('mode', 'sliding');        
-            var html = Marionette.Renderer.render('TrobzDashboard.toolbar.sliding');
-            this.ui.mode.empty().html(html);
-        },
-        
-        listMode: function(e){
-            e.preventDefault();
-            this.trigger('mode', 'list');        
-            var html = Marionette.Renderer.render('TrobzDashboard.toolbar.list');
-            this.ui.mode.empty().html(html);
-        },
         
         render: function(){
             _super.render.apply(this, arguments);
@@ -124,6 +97,6 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         }
     });
 
-    dashboard.views('ToolBar', ToolBar);
+    dashboard.views('TimeBar', TimeBar);
 
 });

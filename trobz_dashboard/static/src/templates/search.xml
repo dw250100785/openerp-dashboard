@@ -2,7 +2,7 @@
     
     <!-- search -->
     
-    <t t-name="TrobzDashboard.widget.search">
+    <t t-name="TrobzDashboard.search">
         <div class="domain" />
         <div class="order" />
         <div class="group" />
@@ -56,11 +56,14 @@
         
                 <t t-set="operator" t-value="operators.byName(criterion.operator)" />
                 
-                <div class="criterion">
+                <div t-att-class="'criterion' + (criterion.options.global ? ' global' : '')">
                     <span class="search_field" t-att-field-id="criterion.field.get('id')"><t t-esc="criterion.field.get('name')" /></span>
                     <span class="search_operator" t-att-operator="criterion.operator"><t t-esc="operator.text" /></span>
                     <span class="search_value" t-att-value="criterion.value"><t t-esc="operator.string(criterion.value)" /></span>
-                    <i class="icon-remove remove" />
+                    
+                    <t t-if="!criterion.options.global">
+                        <i class="icon-remove remove" />
+                    </t>
                 </div>
             
                 <t t-if="criterion_index lt criteria_value.length - 1">

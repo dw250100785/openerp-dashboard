@@ -54,6 +54,7 @@ class dashboard_field(osv.osv):
         'sql_name': fields.char('SQL Name', help="name use in a SQL query, depend on the metric method. If the domain has to be used by the ORM, keep this field empty"),
         'domain_field_path': fields.char('Domain Field Path', help="The fullname to access one object in a domain, for example: hr_employee.address_id.country_id.name. This is used for the link at the bottom of a widget"),
         
+        
         'field_id': fields.many2one('ir.model.fields','Field', help="field in the model"),
         'type_ids': fields.many2many('dashboard.field.type',id1='metric_field_id',id2='metric_field_type_id', string='Types', help='Defined the propose of the field: output, filter, group_by, order_by'),
         

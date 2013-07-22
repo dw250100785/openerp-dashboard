@@ -92,11 +92,21 @@
     left:30px;
     top:28px;
     z-index:2;
-    border:1px solid grey;
+    border:1px solid #cacaca;
     background:white;
     padding:5px;
+    border-radius: 5px;
+     -moz-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 9px rgba(0, 0, 0, 0.1);
+    -webkit-box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 9px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 9px rgba(0, 0, 0, 0.1);
 }
 
+#trobz_board .widget .widget_help ul,
+#trobz_board .widget .widget_help li{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
 
 #trobz_board .widget .body {
     width: 100%;    

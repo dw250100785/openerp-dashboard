@@ -65,11 +65,14 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
         'static/src/js/models/board.js',
         
         # views
-        'static/src/js/views/widgets/search/widgets.js',
-        'static/src/js/views/widgets/search/order.js',
-        'static/src/js/views/widgets/search/group.js',
-        'static/src/js/views/widgets/search/domain.js',
-        'static/src/js/views/widgets/search/search.js',
+        'static/src/js/views/search/widgets.js',
+        'static/src/js/views/search/order.js',
+        'static/src/js/views/search/group.js',
+        'static/src/js/views/search/domain.js',
+        'static/src/js/views/search/search.js',
+        
+        'static/src/js/views/toolbar/timebar.js',
+        'static/src/js/views/toolbar/toolbar.js',
         
         'static/src/js/views/widgets/display/numeric.js',
         'static/src/js/views/widgets/display/list.js',
@@ -81,7 +84,6 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
         'static/src/js/views/widgets/widget.js',
         'static/src/js/views/widgets/widgets.js',
         
-        'static/src/js/views/toolbar.js',
         'static/src/js/views/panel.js',
     
         'static/src/js/dashboard.js',

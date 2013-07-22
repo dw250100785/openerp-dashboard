@@ -1,6 +1,5 @@
 #trobz_board #toolbar {
     margin: 0;
-    padding: 3px;
     border-bottom: 2px solid #ddd;
     background: #efefef;
     overflow: auto;
@@ -12,7 +11,7 @@
     border-right: 1px solid #ddd;
     margin: 0;
     padding: 5px 10px;
-    height: 24px;
+    height: 28px;
 }
 
 #trobz_board #toolbar .section.right {
@@ -75,3 +74,10 @@
     text-align: center;
     color: #666;
 }
+
+
+#trobz_board #toolbar #searchbar {
+    clear: both;
+    border-top: 1px solid #cacaca;
+}
+
