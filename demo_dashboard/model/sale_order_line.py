@@ -63,7 +63,8 @@ class sale_order_line(osv.osv, metric_support):
                 """,
            'defaults': {
                 'group_by': ['order_date_month']
-           }
+           },
+           'no_result': 0
         },
         'graph_kitchen_sales': {
            'query': """

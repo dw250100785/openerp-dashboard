@@ -34,7 +34,8 @@ class dashboard_test(osv.osv):
             'defaults': {
                  'group_by': ['category'],
                  'limit': 10
-            }
+            },
+            'no_result': 'null::integer' # default
          },
                     
          'graph_quantity': {
@@ -46,7 +47,8 @@ class dashboard_test(osv.osv):
             'defaults': {
                  'group_by': ['category'],
                  'limit': 10
-            }
+            },
+            'no_result': 0
         }
     }
     
