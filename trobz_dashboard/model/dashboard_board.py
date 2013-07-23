@@ -44,7 +44,7 @@ class dashboard_board(osv.osv):
         
         'global_field_refs': fields.serialized(string='Global Field References'),
         
-        'widget_ids': fields.many2many('dashboard.widget', 'dashboard_board_to_widget_rel', id1='board_id',id2='widget_id', string='Widgets', ondelete='cascade', required=True),
+        'widget_ids': fields.many2many('dashboard.widget', 'dashboard_board_to_widget_rel', id1='board_id',id2='widget_id', string='Widgets', ondelete='cascade'),
         
         
         'widget_rel': fields.one2many('dashboard.board_to_widget_rel', 'board_id', 'widget relation'),

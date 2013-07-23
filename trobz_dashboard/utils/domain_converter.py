@@ -404,9 +404,6 @@ class expression(object):
         else:
             need_wildcard = operator in ('like', 'ilike', 'not like', 'not ilike')
             sql_operator = {'=like': 'like', '=ilike': 'ilike'}.get(operator, operator)
-
-            query = '(%s %s %s)' % (left, sql_operator, format)
-        
         
             add_null = False
             
@@ -419,12 +416,18 @@ class expression(object):
                     str_utf8 = str(right)
                 params = '%%%s%%' % str_utf8
                 add_null = not str_utf8
+                left = 'unaccent(%s)' % left
+                format = 'unaccent(%s)' % format
+                
             else:
                 params = right
-                
+            
+            query = '(%s %s %s)' % (left, sql_operator, format)
+            
             if add_null:
                 query = '(%s OR %s IS NULL)' % (query, left)
 
+            
 
         if isinstance(params, basestring):
             params = [params]

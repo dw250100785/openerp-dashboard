@@ -75,7 +75,7 @@ class metrics():
         for metric in metric_ids:
             model = self.pool.get(metric.model.model)
             
-            query, params, defaults = self.get_query(model, metric)
+            query, params, defaults, no_result = self.get_query(model, metric)
         
             if is_graph_metrics:
                 order_by = order_tmp
@@ -93,31 +93,11 @@ class metrics():
             query, domain_params = self.process_query(query, fields_domain, fields_args);
                 
             params = params + domain_params
-        
-            # add support of accent, only on LIKE/ILIKE conditions
-            pattern = re.compile(r"""(?i)(?P<column>[-_a-z'"\.]+) (?P<operator>(not )?ilike|like) (?P<value>%s)""")            
-            replacement = "unaccent(\g<column>) \g<operator> unaccent(\g<value>)" 
-            
-            print """
-            
-            ZAZA before transform: 
-            %s
-            
-            """ % query
-            
-            query = pattern.sub(replacement, query)
-            
-            print """
-            
-            ZAZA after transform: 
-            %s
-            
-            """ % query
-            
             
             stacks[metric.id] = {
                 'query': query,
                 'params': params,
+                'no_result': no_result,
                 'args':  fields_args,
                 'output': self.extract_aggregate_field(metric, query),
                 'metric': metric
@@ -212,16 +192,15 @@ class metrics():
             params = []
             
             for metric_id, stack in stacks.items():
+                no_result = stack['no_result']
                 output_ref = stack['output'].reference
-                outputs.append('max(result."%s") as "%s"' % (output_ref, output_ref))
-                query_outputs[metric_id] = 'NULL as "%s"' % (output_ref)
+                outputs.append('coalesce(max(result."%s"), %s) as "%s"' % (output_ref, no_result, output_ref))
+                query_outputs[metric_id] = 'NULL::integer as "%s"' % (output_ref)
             
             for metric_id, stack in stacks.items():
                 queries.append('\n(' + self.replace_outputs(stack['query'], query_outputs, metric_id) + '\n)')
                 params += stack['params']
             
-            if group and group.period:
-                print 'group.field_description: ', group.field_description
             
             if group and group.period and group.field_description['type'] in ['date', 'datetime']:
                 
@@ -445,8 +424,9 @@ class metrics():
         params = query['params'] if isinstance(query, dict) and 'params' in query else [] 
         defaults = query['defaults'] if isinstance(query, dict) and 'defaults' in query else {}
         sql_query = query['query'] if isinstance(query, dict) and 'query' in query else query
+        no_result = query['no_result'] if isinstance(query, dict) and 'no_result' in query else 'null::integer'
    
-        return sql_query, params, defaults
+        return sql_query, params, defaults, no_result
    
     
     def defaults_arguments(self, defaults, group_by, order_by, limit, offset):

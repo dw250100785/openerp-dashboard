@@ -1,4 +1,5 @@
 from tests.common import TransactionCase
+import re
 
 class TestMetrics(TransactionCase):
     
@@ -79,6 +80,18 @@ class TestMetrics(TransactionCase):
         self.assertEquals(result[count.id]['results'][0]['count'], 30)
         self.assertEquals(result[custom_count.id]['results'][0]['count'], 1)
         
+        # test if unaccent is applied with like operator
+        pattern = re.compile(r"""(?i)(unaccent\(.*?\) (not )?(?:like|ilike) unaccent\(.*?\))""")
+
+        result, debug = self.widget.exec_metrics([count], domain=[['category', 'like', 'new']], debug=True)
+        self.assertEquals(result[count.id]['results'][0]['count'], 5)
+        matches = pattern.search(debug[0]['query'])
+        self.assertIsNotNone(matches)
+
+        result, debug = self.widget.exec_metrics([count], domain=['!', ['category', 'ilike', 'new']], debug=True)
+        self.assertEquals(result[count.id]['results'][0]['count'], 25)
+        matches = pattern.search(debug[0]['query'])
+        self.assertIsNotNone(matches)
 
 
     def test_single_alphanumeric(self):
@@ -225,6 +238,8 @@ class TestMetrics(TransactionCase):
         self.assertDictEqual(result[graph_price.id]['results'][1], {'price': 20, 'total_price': 40L})
         self.assertDictEqual(result[graph_quantity.id]['results'][0], {'price': 30, 'total_quantity': 2L})
         self.assertDictEqual(result[graph_quantity.id]['results'][1], {'price': 20, 'total_quantity': 2L})
+        
+                
     
     def test_many_date(self):
         """
@@ -285,3 +300,23 @@ class TestMetrics(TransactionCase):
         self.assertDictEqual(result[graph_price.id]['results'][1], {'sale_month': '2010-02-01 00:00:00', 'total_price': 60L})
         self.assertDictEqual(result[graph_quantity.id]['results'][0], {'sale_month': '2010-05-01 00:00:00', 'total_quantity': 3L})
         self.assertDictEqual(result[graph_quantity.id]['results'][1], {'sale_month': '2010-02-01 00:00:00', 'total_quantity': 2L})
+
+
+        # test no_result option: total_price no_result=NULL / total_quantity no_result=0
+        period = {
+            'start': u'2009-11-01',
+            'end':   u'2010-03-01',
+        }
+
+        result, debug = self.widget.exec_metrics([graph_price, graph_quantity], period=period, group_by=['sale_month'])
+        self.assertDictEqual(result[graph_price.id]['results'][0], {u'total_price': None, u'sale_month': '2009-11-01 00:00:00'})
+        self.assertDictEqual(result[graph_price.id]['results'][1], {u'total_price': None, u'sale_month': '2009-12-01 00:00:00'})
+        self.assertDictEqual(result[graph_price.id]['results'][2], {u'total_price': 150L, u'sale_month': '2010-01-01 00:00:00'})
+        self.assertDictEqual(result[graph_price.id]['results'][3], {u'total_price': 150L, u'sale_month': '2010-02-01 00:00:00'})
+        self.assertDictEqual(result[graph_price.id]['results'][4], {u'total_price': None, u'sale_month': '2010-03-01 00:00:00'})
+        self.assertDictEqual(result[graph_quantity.id]['results'][0], {u'total_quantity': 0L, u'sale_month': '2009-11-01 00:00:00'})
+        self.assertDictEqual(result[graph_quantity.id]['results'][1], {u'total_quantity': 0L, u'sale_month': '2009-12-01 00:00:00'})
+        self.assertDictEqual(result[graph_quantity.id]['results'][2], {u'total_quantity': 5L, u'sale_month': '2010-01-01 00:00:00'})
+        self.assertDictEqual(result[graph_quantity.id]['results'][3], {u'total_quantity': 5L, u'sale_month': '2010-02-01 00:00:00'})
+        self.assertDictEqual(result[graph_quantity.id]['results'][4], {u'total_quantity': 0L, u'sale_month': '2010-03-01 00:00:00'})
+        
