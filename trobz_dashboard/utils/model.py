@@ -6,8 +6,15 @@ import copy
 import re
  
 import logging
-_logger = logging.getLogger('ZAZADEV')
 
+# import sql parser if module is available
+# sqlparse is used to have a nice debug SQL query, this module is optional
+try:
+    import sqlparse  
+    sqlparse_available = True
+except ImportError:
+    logging.warn("trobz_dashboard: 'sqlparse' module not available, install it (pip install sqlparse) to have a formatted SQL query in debug mode.")
+    sqlparse_available = False
  
 class metrics():
     
@@ -45,8 +52,6 @@ class metrics():
         Execute custom SQL queries to populate a trobz dashboard widget
         """
         
-        print "ZAZA DEBUG: %s" % debug
-
         result = {}
         widgets = self.browse(cr, uid, ids, context=context)
         
@@ -93,6 +98,8 @@ class metrics():
             query, domain_params = self.process_query(query, fields_domain, fields_args);
                 
             params = params + domain_params
+            
+            query = self.clean_query(query)
             
             stacks[metric.id] = {
                 'query': query,
@@ -261,9 +268,14 @@ class metrics():
                 metric_names.append(stack['metric'].name)
             
             if debug:     
+                sql = cr.mogrify(query, params)
+                
+                if sqlparse_available:
+                    sql = sqlparse.format(sql, reindent=True, keyword_case='upper')
+                    
                 debug_result.append({ 
                     'message': ', '.join(metric_names), 
-                    'query' : cr.mogrify(query, params) 
+                    'query' : sql 
                 })
                 
                  
@@ -277,14 +289,77 @@ class metrics():
                 result[metric_id] = {'columns': cr.description, 'results': cr.dictfetchall()}
                     
                 if debug:
+                    sql = cr.mogrify(stack['query'], stack['params'])
+                
+                    if sqlparse_available:
+                        sql = sqlparse.format(sql, reindent=True, keyword_case='upper')
+                
                     debug_result.append({
                         'message': stack['metric'].name,
-                        'query' : cr.mogrify(stack['query'], stack['params'])
+                        'query' : sql
                     })
-            
-            
     
         return result, debug_result
+    
+    
+    def clean_query(self, sql):
+        """
+        clean up a SQL query from useless joins, keep join dependencies
+        """
+        
+        def add_joins(add_join, joins, aliases):
+            """
+            add joins and their join dependencies    
+            """
+            aliases.append(add_join[3])    
+            dependency_pattern = re.compile('ON.*?[ =]+((?![ ]*' + add_join[3] + ').*?)\.')
+            dep = dependency_pattern.findall(add_join[0])
+    
+            if len(dep) > 0:
+                for join in joins:
+                    if join[3] == dep[0]:
+                        aliases = add_joins(join, joins, aliases)    
+            return list(set(aliases))
+    
+    
+        detail_pattern = re.compile(r"""(?is)
+        (
+            (?:[\ ]+inner|left|right[\ ]+)?(?:join)(?:[\ ]+)?(?P<except>required)?[\ ]+
+            (?P<table>[a-z0-9'"_\-\.]+)(?:[\ ]+as)?[\ ]+
+            (?P<alias>[a-z0-9'"_\-\.]+)[\ ]+on[\ ]+
+            (?:[a-z0-9'"_\-\.]+)(?:[\ =]+)(?:[a-z0-9'"_\-\.]+)
+            (?:\n)?
+        )""", re.X)            
+        joins_pattern = re.compile(r"""(?is)^(?P<start>.*?from.*?)(?P<joins>(?:inner |left |right )?(?:join).*?)(?P<end>where.*?)$""")
+    
+        extract_joins = joins_pattern.search(sql)
+        if extract_joins:
+            
+            parts = extract_joins.groups()
+            query_start = parts[0]
+            query_end = parts[2]
+            query_without_joins = query_start + query_end
+        
+            joins = detail_pattern.findall(sql)
+            required_aliases = []
+        
+            for join in joins:
+                alias_pattern = re.compile(join[3] + '\.')
+                alias_found = alias_pattern.search(query_without_joins)
+                if alias_found or len(join[1]):
+                    required_aliases = add_joins(join, joins, required_aliases)
+        
+            clean_pattern = re.compile(r"""(?i)(required )""")
+            cleaned_joins = []
+            for join in joins:
+                if any(join[3] in a for a in required_aliases):
+                    cleaned_joins.append(clean_pattern.sub('',join[0]))
+                    
+            sql = query_start + "\n" +  ''.join(cleaned_joins) + "\n" + query_end
+        
+        return sql
+    
+
     
     def replace_outputs(self, query, outputs, metric_id):
         """
