@@ -52,6 +52,8 @@ class metrics():
         Execute custom SQL queries to populate a trobz dashboard widget
         """
         
+        logging.info("ZAZABE: domain: %s", domain)
+        
         result = {}
         widgets = self.browse(cr, uid, ids, context=context)
         
@@ -96,6 +98,9 @@ class metrics():
             fields_domain, fields_args = self.convert_fields(metric, domain, args) 
             fields_domain = self.add_period(period, fields_domain, metric)
             query, domain_params = self.process_query(query, fields_domain, fields_args);
+            
+            logging.info("ZAZABE: QUERY: %s", query)
+        
                 
             params = params + domain_params
             
@@ -312,7 +317,7 @@ class metrics():
             add joins and their join dependencies    
             """
             aliases.append(add_join[3])    
-            dependency_pattern = re.compile('ON.*?[ =]+((?![ ]*' + add_join[3] + ').*?)\.')
+            dependency_pattern = re.compile('(?i)ON.*?[ =]+((?![ ]*' + add_join[3] + ').*?)\.')
             dep = dependency_pattern.findall(add_join[0])
     
             if len(dep) > 0:
@@ -323,15 +328,25 @@ class metrics():
     
     
         detail_pattern = re.compile(r"""(?is)
-        (
-            (?:[\ ]+inner|left|right[\ ]+)?(?:join)(?:[\ ]+)?(?P<except>required)?[\ ]+
+        (?P<join>
+            (?:natural[ ]+)?(?:inner[ ]+)?(?:left|right|full)?(?:[ ]+outer)?[ ]*
+            (?:join)[\ ]*(?P<except>required)?[\ ]+
             (?P<table>[a-z0-9'"_\-\.]+)(?:[\ ]+as)?[\ ]+
             (?P<alias>[a-z0-9'"_\-\.]+)[\ ]+on[\ ]+
             (?:[a-z0-9'"_\-\.]+)(?:[\ =]+)(?:[a-z0-9'"_\-\.]+)
             (?:\n)?
         )""", re.X)            
-        joins_pattern = re.compile(r"""(?is)^(?P<start>.*?from.*?)(?P<joins>(?:inner |left |right )?(?:join).*?)(?P<end>where.*?)$""")
-    
+        joins_pattern = re.compile(r"""(?is)
+        ^
+         (?P<start>.*?from.*?)
+         (?P<joins>
+            (?:natural[ ]+)?(?:inner[ ]+)?(?:left|right|full)?(?:[ ]+outer)?[ ]*
+            (?:join).*?
+         )
+         (?P<end>where.*?)
+        $
+        """, re.X)
+
         extract_joins = joins_pattern.search(sql)
         if extract_joins:
             

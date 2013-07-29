@@ -75,6 +75,10 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 def.resolve();
             });
             
+            promise.fail(function(){
+                def.reject.apply(def, _.toArray(arguments));
+            });
+            
             return def.promise();
         }        
         

@@ -45,5 +45,17 @@
         <menuitem action="action_view_dashboard_field" id="menu_view_dashboard_field" sequence="4" parent="menu_dashboard_main"/>
 
 
+        <!-- should be disabled in production -->
+        
+        <record id="action_view_dashboard_tester" model="ir.actions.act_window">
+            <field name="name">Board Tester</field>
+            <field name="view_mode">dashboard_tester</field>
+            <field name="res_model">dashboard.board</field>
+            <field name="target">inline</field>
+        </record>
+        
+        <menuitem action="action_view_dashboard_tester" id="menu_dashboard_tester" sequence="100" parent="menu_dashboard_main" />
+        
+
     </data>
 </openerp>

@@ -97,6 +97,12 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
             dashboard.on('fullscreen', this.fullscreen, this);
             dashboard.on('mode', this.switchMode, this);
             
+            
+            dashboard.on('animate:start', this.startAnim, this);
+            dashboard.on('animate:stop', this.stopAnim, this);
+            
+            this.$el.parent().bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', $.proxy(this.refreshMode, this));
+            
             //bind the state changes with the URL
             this.state.on('change', this.stateChanged, this);
         },
@@ -112,10 +118,31 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
         },
         
         switchMode: function(type){
-            this.region.currentView.widgets.currentView.mode(type);
+            this.views.widgets.mode(type);
+        },
+        
+        
+        refreshMode: function(){
+            var widgets = this.views.widgets;
+            if(widgets.type == 'sliding'){
+                console.log('fullscreen changed');
+                //force refresh 
+                widgets.mode('sliding');                
+                this.startAnim(this.anim_duration || 10000);
+            }
+        },
+        
+        startAnim: function(duration){
+            this.anim_duration = duration;
+            this.views.widgets.animate(duration);
+        },
+        
+        stopAnim: function(){
+            this.views.widgets.stopAnimate();
         },
         
         fullscreen: function(enter){
+            this.stopAnim();
             if(enter){
                 this.enterFullscreen();
             }
@@ -125,6 +152,7 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
         },
         
         enterFullscreen: function(){
+            this.stopAnim();
             var element = this.$el.parent().get(0);
             if (element.requestFullScreen) {
                 element.requestFullScreen();

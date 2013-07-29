@@ -63,7 +63,7 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
         'static/src/js/collections/widgets.js',
     
         'static/src/js/models/board.js',
-        
+    
         # views
         'static/src/js/views/search/widgets.js',
         'static/src/js/views/search/order.js',
@@ -87,6 +87,24 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
         'static/src/js/views/panel.js',
     
         'static/src/js/dashboard.js',
+        
+        
+        # debug mode, test metric integrity
+        'static/src/js/tester/tester.js',
+        
+        'static/src/js/tester/models/test.base.js',
+        'static/src/js/tester/models/test.attrs.js',
+        'static/src/js/tester/models/test.base.fields.js',
+        'static/src/js/tester/models/test.order.js',
+        'static/src/js/tester/models/test.group.js',
+        'static/src/js/tester/models/test.domain.js',
+    
+        'static/src/js/tester/collections/tests.js',
+    
+        'static/src/js/tester/views/widgets.js',
+        'static/src/js/tester/views/results.js',
+        
+        'static/src/js/tester/tester.js',
     ],
     'css': [
         # libs
@@ -100,6 +118,8 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
         'static/src/css/widget.css',
         'static/src/css/search.css',
         'static/src/css/display.css',
+        
+        'static/src/css/tester.css',
     ],
     
     'test': [

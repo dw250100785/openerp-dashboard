@@ -18,8 +18,10 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         events: {
             'click .board_action .fullscreen_action': 'switchFullscreen',
             'click .board_action .sliding_action': 'slidingMode',
+            'click .board_action .pause_sliding': 'pauseSliding',
             'click .board_action .list_action': 'listMode',
             'click .board_action .search_action': 'toggleSearch',
+            'change .sliding_timeout': 'changeSliding'
         },
         
         ui: { 
@@ -59,16 +61,42 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             $icon.attr('class', this.fullscreen ? 'icon-resize-small' : 'icon-resize-full');
         },
         
+        changeSliding: function(e){
+            var $time = $(e.currentTarget);
+            dashboard.trigger('animate:start', $time.find('option:selected').val());        
+        },
+        
         slidingMode: function(e){
             e.preventDefault();
-            this.trigger('mode', 'sliding');        
             var html = Marionette.Renderer.render('TrobzDashboard.toolbar.sliding');
             this.ui.mode.empty().html(html);
+        
+            var $time = this.$el.find('.sliding_timeout');
+            dashboard.trigger('mode', 'sliding');        
+            dashboard.trigger('animate:start', $time.find('option:first-child').val());        
+        },
+        
+        pauseSliding: function(e){
+            e.preventDefault();
+            var $button = $(e.currentTarget),
+                $time = $button.prevAll('select'),
+                $icon = $button.find('i');
+            
+            if($icon.is('.icon-pause')){
+                $icon.attr('class', 'icon-play');
+                dashboard.trigger('animate:stop');        
+            }
+            else {
+                $icon.attr('class', 'icon-pause');
+                dashboard.trigger('animate:start', $time.find('option:selected').val());        
+            }
         },
         
         listMode: function(e){
             e.preventDefault();
-            this.trigger('mode', 'list');        
+            dashboard.trigger('mode', 'list');
+            dashboard.trigger('animate:stop');        
+            
             var html = Marionette.Renderer.render('TrobzDashboard.toolbar.list');
             this.ui.mode.empty().html(html);
         },

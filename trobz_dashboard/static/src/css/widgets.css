@@ -1,5 +1,6 @@
 #trobz_board #widgets {
-    overflow: auto;
+    overflow: hidden;
+    position: relative;
 }
 
 #trobz_board .hidden {
