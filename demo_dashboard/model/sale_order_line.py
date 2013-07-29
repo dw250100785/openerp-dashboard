@@ -38,7 +38,7 @@ class sale_order_line(osv.osv, metric_support):
                 LEFT JOIN hr_department hde ON hde.id = hem.department_id
                 JOIN product_product ppr ON ppr.id = sol.product_id
                 JOIN product_template pte ON pte.id = ppr.product_tmpl_id
-                JOIN product_category pca ON pca.id = pte.categ_id
+                JOIN REQUIRED product_category pca ON pca.id = pte.categ_id
                 where TRUE {generated}
                 """,
            'defaults': {

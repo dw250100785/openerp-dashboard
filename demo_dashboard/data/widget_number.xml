@@ -56,7 +56,7 @@
             
             <field eval="[(6,0,[ref('num_metric_1'),ref('num_metric_2')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_domain')])]" name="type_ids"/>
-            <field name="field_name" ref="hr.field_hr_employee_name_related"/>
+            <field name="field_id" ref="hr.field_hr_employee_name_related"/>
         </record>
         
        <record id="num_metric_1_field_period" model="dashboard.field">
@@ -67,7 +67,7 @@
             
             <field eval="[(6,0,[ref('num_metric_1'),ref('num_metric_2')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_domain'),ref('trobz_dashboard.type_period')])]" name="type_ids"/>
-            <field name="field_name" ref="field_hr_employee_write_date"/>
+            <field name="field_id" ref="field_hr_employee_write_date"/>
        </record>
          
        <!-- specific for each metric -->
