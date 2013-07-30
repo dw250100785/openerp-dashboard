@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import ir_rule
 import dashboard_field_type
 import dashboard_field
 import dashboard_metric

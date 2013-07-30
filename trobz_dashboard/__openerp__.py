@@ -9,11 +9,13 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
     'author': 'trobz',
     'website': 'http://trobz.com',
     'depends': [
+        'base',
         'web',
         'trobz_base'
     ],
     
     'update_xml': [
+        'view/ir_rule_view.xml',
         'view/dashboard_board_view.xml',
         'view/dashboard_widget_view.xml',
         'view/dashboard_metric_view.xml',
