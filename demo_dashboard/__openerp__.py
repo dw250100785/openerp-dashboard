@@ -11,6 +11,7 @@ Demo data for Trobz Dashboard module
     'depends': [
         'trobz_dashboard',
         'hr',
+        'hr_contract',
         'sale'
     ],
     'data': [
@@ -19,8 +20,7 @@ Demo data for Trobz Dashboard module
         'data/widget_list.xml',
         'data/widget_graph.xml',
         'data/widget_custom.xml',
-        'data/dashboard_unit_test_data.xml',
-        'data/dashboard.test-unit_test.csv',
+    
         #Sales Dashboard
         'data/dashboard/sales/dashboard_board_data.xml',
         'data/dashboard/sales/dashboard_widget_data.xml',

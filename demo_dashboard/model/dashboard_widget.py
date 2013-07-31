@@ -1,5 +1,4 @@
-# -*- encoding: utf-8 -*-
-##############################################################################
+# -*- coding: utf-8 -*-
 
 from osv import osv
 from os import path
@@ -8,7 +7,7 @@ class dashboard_widget(osv.osv):
 
     _inherit = "dashboard.widget"
 
-    def custom_execute(self, cr, uid, ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, context=None):
+    def custom_execute(self, cr, uid, ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, security_test=False, context=None):
         """
         Demo: custom method to execute widget metrics.
         

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from osv import osv
+from openerp.osv import osv
 from trobz_dashboard.utils.model import metric_support 
 
 class sale_order_line(osv.osv, metric_support):
@@ -43,6 +43,12 @@ class sale_order_line(osv.osv, metric_support):
                 """,
            'defaults': {
                 'group_by': ['order_date_month']
+           },
+           'security': {
+                'base.res_company_rule': 'rco.id in (%user.company_id.child%)',
+                'product.product_comp_rule': 'pte.company_id in (%user.company_id.child%) OR pte.company_id = NULL',
+                'sale.sale_order_personal_rule': 'sor.user_id = %user.id% OR sor.user_id = NULL',
+                'portal_sale.portal_sale_order_user_rule': 'sol.order_partner_id in (%user.partner_id.id%)'
            }
         },
         'graph_total_sales_quantity': {
