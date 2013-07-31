@@ -9,20 +9,22 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
          
         label: 'test fields execution (base)', 
         
+        type: 'domain',
+        
         execute: function(field){
             throw new Error('abstract object, please extend it...');
         },
         
         run: function(){
             var defs = [],
-                fields = this.model.metrics.fields.types('domain');
+                fields = this.model.metrics.fields.types(this.type);
             
             fields.each(function(field){
                 var def = $.Deferred();
                 
                 var promise = this.execute(field); 
                 
-                promise.done(function(){
+                promise.done(function(a, b, c, d){
                     var args = _.toArray(arguments);
                     def.resolve.apply(def, ['success', field].concat(args));
                 });

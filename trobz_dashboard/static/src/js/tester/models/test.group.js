@@ -9,6 +9,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
          
         label: 'test metric fields: group', 
         
+        type: 'group_by',
+        
         execute: function(field){
             return this.model.execute({
                 group: [ field.get('reference') ],

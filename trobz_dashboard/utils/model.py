@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from openerp import SUPERUSER_ID
 from domain_converter import expression  
 import copy
 import re
- 
+
 import logging
 
 # import sql parser if module is available
@@ -25,7 +26,7 @@ class metrics():
             (
                 {query}
             ) AS result 
-            right outer join ( 
+            right outer join (
                 SELECT * FROM generate_series ( '{start}'::timestamp, '{end}', '{period_inc}') as gtime
             ) AS gdate ON result."{reference}" = date_trunc('{period}', gdate.gtime)
             group by date_trunc('{period}', gdate.gtime)
@@ -47,18 +48,17 @@ class metrics():
         
     }
     
-    def execute(self, cr, uid, ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, context=None):
+    def execute(self, cr, uid, ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, security_test=False, context=None):
         """
         Execute custom SQL queries to populate a trobz dashboard widget
         """
         
-        logging.info("ZAZABE: domain: %s", domain)
         
         result = {}
         widgets = self.browse(cr, uid, ids, context=context)
         
         for widget in widgets:
-            res, res_debug = self.exec_metrics(cr, uid, ids, widget.metric_ids, period=period, domain=domain, group_by=group_by, order_by=order_by, limit=limit, offset=offset, debug=debug, context=context) 
+            res, res_debug = self.exec_metrics(cr, uid, ids, widget.metric_ids, period=period, domain=domain, group_by=group_by, order_by=order_by, limit=limit, offset=offset, debug=debug, security_test=security_test, context=context) 
             result[widget.id] = res
             if debug: 
                 result[widget.id]['debug'] = {
@@ -70,7 +70,7 @@ class metrics():
         return result
     
     
-    def exec_metrics(self, cr, uid, ids, metric_ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, context=None):
+    def exec_metrics(self, cr, uid, ids, metric_ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, security_test=False, context=None):
         """
         Execute metrics SQL queries
         """
@@ -98,13 +98,8 @@ class metrics():
             fields_domain, fields_args = self.convert_fields(metric, domain, args) 
             fields_domain = self.add_period(period, fields_domain, metric)
             query, domain_params = self.process_query(query, fields_domain, fields_args);
-            
-            logging.info("ZAZABE: QUERY: %s", query)
-        
-                
+                    
             params = params + domain_params
-            
-            query = self.clean_query(query)
             
             stacks[metric.id] = {
                 'query': query,
@@ -114,8 +109,9 @@ class metrics():
                 'output': self.extract_aggregate_field(metric, query),
                 'metric': metric
             }
+            
         
-        return self.execute_stacks(cr, metric_ids, stacks, debug=debug, context=context)
+        return self.execute_stacks(cr, uid, metric_ids, stacks, debug=debug, security_test=security_test, context=context)
         
     
     
@@ -180,15 +176,26 @@ class metrics():
         
         return query, domain_params
     
-    def execute_stacks(self, cr, metric_ids, stacks, debug=False, context=None):
+    def execute_stacks(self, cr, uid, metric_ids, stacks, debug=False, security_test=False, context=None):
         result = {}
         debug_result = []
+        warning = []
         
         is_graph_metrics = self.is_graph_metrics(metric_ids)
-        
+            
+        # add security rules
+        for metric_id, stack in stacks.items():
+            if metric_id != 'global':
+                # security_test can not be enabled if debug mode is not True too
+                security_test = security_test if debug else False
+                if uid != SUPERUSER_ID or security_test:
+                    stack['query'], warning = self.add_security_rule(cr, uid, stack['query'], stack['metric'], warning, security_test)
+                stack['query'] = self.clean_query(stack['query'])
+                    
         # execute one query in UNION for all metrics
         if is_graph_metrics:
-            
+        
+                
             global_args = stacks['global']
             order = global_args['order']
             group = global_args['group']
@@ -208,6 +215,7 @@ class metrics():
                 output_ref = stack['output'].reference
                 outputs.append('coalesce(max(result."%s"), %s) as "%s"' % (output_ref, no_result, output_ref))
                 query_outputs[metric_id] = 'NULL::integer as "%s"' % (output_ref)
+            
             
             for metric_id, stack in stacks.items():
                 queries.append('\n(' + self.replace_outputs(stack['query'], query_outputs, metric_id) + '\n)')
@@ -233,6 +241,7 @@ class metrics():
                   "offset": "OFFSET %s" % (offset), 
                   "query": '\nUNION ALL\n'.join(queries)
                 })
+                
             else:
                 
                 query = self.envelopes['query_string'].format(** {
@@ -280,6 +289,7 @@ class metrics():
                     
                 debug_result.append({ 
                     'message': ', '.join(metric_names), 
+                    'warning': warning,
                     'query' : sql 
                 })
                 
@@ -289,6 +299,7 @@ class metrics():
         else:
         
             for metric_id, stack in stacks.items():
+                
                 cr.execute(stack['query'], stack['params'])
              
                 result[metric_id] = {'columns': cr.description, 'results': cr.dictfetchall()}
@@ -301,6 +312,7 @@ class metrics():
                 
                     debug_result.append({
                         'message': stack['metric'].name,
+                        'warning': warning,
                         'query' : sql
                     })
     
@@ -317,7 +329,7 @@ class metrics():
             add joins and their join dependencies    
             """
             aliases.append(add_join[3])    
-            dependency_pattern = re.compile('(?i)ON.*?[ =]+((?![ ]*' + add_join[3] + ').*?)\.')
+            dependency_pattern = re.compile('(?ui)ON.*?[ =]+((?![ ]*' + add_join[3] + ').*?)\.')
             dep = dependency_pattern.findall(add_join[0])
     
             if len(dep) > 0:
@@ -327,7 +339,7 @@ class metrics():
             return list(set(aliases))
     
     
-        detail_pattern = re.compile(r"""(?is)
+        detail_pattern = re.compile(r"""(?uis)
         (?P<join>
             (?:natural[ ]+)?(?:inner[ ]+)?(?:left|right|full)?(?:[ ]+outer)?[ ]*
             (?:join)[\ ]*(?P<except>required)?[\ ]+
@@ -335,8 +347,8 @@ class metrics():
             (?P<alias>[a-z0-9'"_\-\.]+)[\ ]+on[\ ]+
             (?:[a-z0-9'"_\-\.]+)(?:[\ =]+)(?:[a-z0-9'"_\-\.]+)
             (?:\n)?
-        )""", re.X)            
-        joins_pattern = re.compile(r"""(?is)
+        )""", re.X|re.U)            
+        joins_pattern = re.compile(r"""(?uis)
         ^
          (?P<start>.*?from.*?)
          (?P<joins>
@@ -345,7 +357,7 @@ class metrics():
          )
          (?P<end>where.*?)
         $
-        """, re.X)
+        """, re.X|re.U)
 
         extract_joins = joins_pattern.search(sql)
         if extract_joins:
@@ -364,11 +376,11 @@ class metrics():
                 if alias_found or len(join[1]):
                     required_aliases = add_joins(join, joins, required_aliases)
         
-            clean_pattern = re.compile(r"""(?i)(required )""")
+            clean_pattern = re.compile(r"""(?ui)(required )""")
             cleaned_joins = []
             for join in joins:
                 if any(join[3] in a for a in required_aliases):
-                    cleaned_joins.append(clean_pattern.sub('',join[0]))
+                    cleaned_joins.append(clean_pattern.sub(u'',join[0]))
                     
             sql = query_start + "\n" +  ''.join(cleaned_joins) + "\n" + query_end
         
@@ -381,7 +393,7 @@ class metrics():
         rebuild query with parameters slot for other queries, required for UNION
         """
         
-        pattern = re.compile(r"""(?is)^(.*select .* as [^,]+),(.* as [a-z0-9_'"]+)(.*from.*)""")
+        pattern = re.compile(r"""(?uis)^(.*select .* as [^,]+),(.* as [a-z0-9_'"]+)(.*from.*)""")
         matches = pattern.match(query)
         
         fields = []
@@ -391,7 +403,7 @@ class metrics():
             else:
                 fields.append(output)
         
-        return pattern.sub('\\1,' + ','.join(fields) + '\\3', query)
+        return pattern.sub(u'\\1,' + ','.join(fields) + '\\3', query)
      
         
     def extract_aggregate_field(self, metric, query):
@@ -399,7 +411,7 @@ class metrics():
         extract the last output field, used for graph metrics
         """
         
-        pattern = re.compile(r"""(?is)^.*select .* as (?:['"])?([a-z0-9_]+)(?:['"])?.*from""")
+        pattern = re.compile(r"""(?uis)^.*select .* as (?:['"])?([a-z0-9_]+)(?:['"])?.*from""")
         matches = pattern.match(query)
         
         if not matches or  matches.lastindex < 1:
@@ -475,7 +487,7 @@ class metrics():
         return self.get_field(metric, group_by)
      
     def convert_order(self, metric, order_by):
-        pattern = re.compile(r"""(?i)^([a-z0-9_-]+) (ASC|DESC)$""")
+        pattern = re.compile(r"""(?ui)^([a-z0-9_-]+) (ASC|DESC)$""")
         matches = pattern.match(order_by)
         if not matches or matches.lastindex < 2:
             raise Exception('can not get field reference from order "%s"' % (order_by))
@@ -538,14 +550,14 @@ class metrics():
         validate fields and prevent SQL Injection...
         """
         
-        pattern = re.compile(r"""(?i)^(
+        pattern = re.compile(r"""(?ui)^(
                                     (?:
                                         (?:date_trunc\([\ ]*[a-z'"]+[\ ]*,[\ ]*[a-z0-9_'"\.]+[\ ]*\)){1} # extract on value
                                         (?:\ asc|\ desc)? # required for order
                                     )        
                                     |
                                     (?:[^\s]+(?:\ asc|\ desc)?)  # any groups, space not allowed
-                                 )$""", re.X)
+                                 )$""", re.X|re.U)
         
         for group in arguments['group']:
             if pattern.match(group) is None and pattern.match(group) is None:
@@ -574,6 +586,171 @@ class metrics():
                 return False
         
         return True
+    
+    
+    
+    def add_security_rule(self, cr, uid, query, metric, warning, security_test=False):
+        
+        # get models used by the query
+        models = self.extract_models(query)
+        model_ids = self.get_model_ids(cr, models)
+        
+        if len(model_ids) > 0:
+            # get global security rules
+            cr.execute("""
+                SELECT DISTINCT identifier 
+                FROM ir_rule
+                WHERE identifier != ''
+                AND global = %s
+                AND model_id IN %s 
+            """, (True, model_ids))
+            global_rules = cr.fetchall()
+            
+            if security_test:
+                # get rules in groups without user restriction
+                cr.execute("""
+                    SELECT DISTINCT ir.identifier 
+                    FROM ir_rule as ir
+                    JOIN rule_group_rel as rgr on rgr.rule_group_id = ir.id
+                    WHERE ir.identifier != '' 
+                    AND ir.model_id IN %s
+                """, (model_ids, ))
+                  
+            else:
+                # get user security rules
+                cr.execute("""
+                    SELECT DISTINCT ir.identifier 
+                    FROM ir_rule as ir
+                    JOIN rule_group_rel as rgr on rgr.rule_group_id = ir.id
+                    JOIN res_groups as g on rgr.group_id = g.id
+                    JOIN res_groups_users_rel as gur on gur.gid = g.id
+                    JOIN res_users as u on gur.uid = u.id
+                    WHERE ir.identifier != '' 
+                    AND ir.model_id IN %s
+                    AND u.id = %s
+                """, (model_ids, uid))
+                
+            
+            local_rules = cr.fetchall()
+            
+            # get sql rules from identifiers
+            base_model = self.pool.get(metric.model.model)
+            if not hasattr(base_model, '_metrics_sql') or not metric.query_name in base_model._metrics_sql:
+                raise Exception('"%s" is not defined in model._metrics_sql' % (metric.query_name,))
+            
+            sql_rules = base_model._metrics_sql[metric.query_name]['security'] if 'security' in base_model._metrics_sql[metric.query_name] else []
+            
+            and_clauses = []
+            or_clauses = []
+        
+            
+            for rule in global_rules:
+                rule = rule[0]
+                if rule in sql_rules:
+                    and_clauses.append(sql_rules[rule])
+                else:
+                    warning.append('global security rule "%s" not implemented on model: "%s", query_name: "%s"' % (rule, metric.model.model, metric.query_name))
+            
+            for rule in local_rules:
+                rule = rule[0]
+                if rule in sql_rules:
+                    or_clauses.append(sql_rules[rule])
+                else:
+                    warning.append('user security rule "%s" not implemented on model: "%s", query_name: "%s"' % (rule, metric.model.model, metric.query_name))
+            
+            and_sql = " AND ".join(and_clauses) if len(and_clauses) > 0 else '1 = 1'
+            or_sql = " OR ".join(or_clauses) if len(or_clauses) > 0 else '1 = 1'
+            rules =  """/*[rules: */ ( %s AND ( %s) ) /*]*/ AND""" % (and_sql, or_sql)
+            
+            # replace dynamic parameters
+            rules = self.replace_rules_parameters(cr, uid, rules)
+            
+            inject_pattern = re.compile(r"""(?ui)(where)""")
+            query = inject_pattern.sub("""\\1 %s """ % rules, query)
+        
+        return query, warning
+    
+    def replace_rules_parameters(self, cr, uid, rules):
+        """
+        replace dynamic parameters in rules sql clauses
+        """
+        
+        #TOTO: for now, we explicitly list all available parameters, because some of them require special queries (ie. child_of category)
+        data_params = self.get_dynamic_parameters(cr, uid)
+        
+        pattern = re.compile(r"""(?iu)%(.*?)%""")
+        sql_params = pattern.findall(rules)
+        
+        for sql_param in sql_params:
+            if sql_param not in data_params:
+                raise Exception('dynamic parameter "%s" is not available' % (sql_param, ))
+            replace = re.compile("(?iu)%" + sql_param + "%")
+            rules = replace.sub(data_params[sql_param], rules)
+       
+        return rules
+    
+    def get_dynamic_parameters(self, cr, uid):
+        params = {}
+        
+        user_model = self.pool.get('res.users')
+        
+        # user superuser to bypass security rules
+        users = user_model.browse(cr, SUPERUSER_ID, [uid])
+        if len(users) != 1:
+            raise Exception('can not retrieve user based on user id "%s"' % (uid, ))
+        user = users[0]
+        
+        # user children companies
+        company_model = self.pool.get('res.company')
+        ids = company_model.search(cr, uid, [('id', 'child_of', user.company_id.id)]) 
+        params['user.company_id.child'] = ', '.join(str(id) for id in ids)
+        
+        # user partners  
+        params['user.partner_id.id'] = str(user.partner_id.id) 
+        
+        # user properties
+        #TODO: get all user simple columns has potential parameters
+        columns = ['id', 'name', 'login', 'active']
+        for column in columns:
+            params['user.' + column] = str(user[column])
+        
+        return params
+        
+    def get_model_ids(self, cr, models):
+        names = tuple(models.keys())
+        res = []
+        if len(names) > 0:
+            cr.execute("""SELECT id FROM ir_model WHERE model IN %s;""", (names, ))
+            res = cr.fetchall()
+            
+        return tuple(res)
+        
+    def extract_models(self, query):
+        """
+        get all models used in the query
+        """
+        pattern = re.compile(r"""(?iu)(?:from|join){1}(?:[ ]+required)?[ ]+([a-z0-9_\-\.]+)[ ]+""")
+        tables = pattern.findall(query)
+        
+        models = {}
+        
+        for table in tables:
+            name, model = self.get_model(table)
+            if name and model:
+                models[name] = model
+        return models
+        
+    
+    def get_model(self, table):
+        """
+        get a model from a table name
+        """
+        search = None
+        models = self.pool.models
+        for name, model in models.items():
+            if model._table == table:
+                search = (name, model)
+        return search
     
 metric_support = metrics
 

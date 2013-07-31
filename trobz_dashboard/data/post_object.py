@@ -1,8 +1,8 @@
 # -*- encoding: utf-8 -*-
 ##############################################################################
 
-from osv import osv
-from psycopg2 import Error, ProgrammingError
+from openerp.osv import osv
+from openerp.modules.db import has_unaccent
 
 
 class post_object(osv.osv_memory):
@@ -25,7 +25,7 @@ class post_object(osv.osv_memory):
         """
         
         # get rules
-        cr.execute('SELECT id FROM ir_rule;')
+        cr.execute("SELECT id FROM ir_rule WHERE identifier = '';")
         rules = cr.fetchall()
          
         update = {
@@ -36,13 +36,15 @@ class post_object(osv.osv_memory):
         for rule in rules:
             cr.execute("SELECT module, name FROM ir_model_data WHERE model = %s AND res_id = %s", ['ir.rule', rule])
             info = cr.fetchone()
-            if len(info) == 2:
+            if info and len(info) == 2:
                 update['query'].append("UPDATE ir_rule SET identifier = %s WHERE id = %s;")  
                 update['params'] = update['params'] + [ info[0] + '.' + info[1], rule ]   
          
+        
         # update all rules
-        cr.execute("".join(update['query']), update['params'])
-        cr.commit()
+        if len(update['query']) > 0:
+            cr.execute("".join(update['query']), update['params'])
+            cr.commit()
         
         
     
@@ -50,24 +52,11 @@ class post_object(osv.osv_memory):
         """
         lazy load unaccent extension
         """
-        ok = False
-        
         try:
-            cr.execute('CREATE EXTENSION "unaccent";')
-        
-        except ProgrammingError as e:
-            if e.pgcode == "42710":
-                # extension already installed
-                ok = True
-            else:
-                raise e
-        
-        else:
-            ok = True
+            if not has_unaccent(cr):
+                cr.execute('CREATE EXTENSION "unaccent";')
+        except:
+            cr.rollback()     
+            raise Exception('Ooops, postgesql unaccent module can not be loaded, check your postgresql version and if this module is installed. To install it on ubuntu, execute: sudo apt-get install postgresql-contrib-9.1')
             
-        finally:
-            cr.rollback() 
-            if not ok:
-                raise Exception('Ooops, postgesql unaccent module can not be loaded, check your postgresql version and if this module is installed. To install it on ubuntu, execute: sudo apt-get install postgresql-contrib-9.1')
-        
 post_object()

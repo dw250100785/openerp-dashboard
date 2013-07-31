@@ -68,7 +68,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         },
         
         hasMessage: function(){
-            return !!this.get('message');
+            
+            return this.arrayMessage() ? this.get('message').length > 0 : !!this.get('message');
         },
     });      
 

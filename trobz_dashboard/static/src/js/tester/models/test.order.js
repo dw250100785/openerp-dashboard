@@ -9,6 +9,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
          
         label: 'test metric fields: order', 
         
+        type: 'order_by',
+        
         execute: function(field){
             var params = {
                 order: [ field.get('reference') + ' ASC' ],
@@ -19,7 +21,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 debug: true
             };
             
-            if(this.model.get('type') == 'graph'){
+            if(this.model.get('type') == 'graph' && field.has_type('group_by')){
                 params.group = [ field.get('reference') ];
             }
             

@@ -11,7 +11,7 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
     'depends': [
         'base',
         'web',
-        'trobz_base'
+        'trobz_base_web'
     ],
     
     'update_xml': [
@@ -100,6 +100,7 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
         'static/src/js/tester/models/test.order.js',
         'static/src/js/tester/models/test.group.js',
         'static/src/js/tester/models/test.domain.js',
+        'static/src/js/tester/models/test.security.js',
     
         'static/src/js/tester/collections/tests.js',
     

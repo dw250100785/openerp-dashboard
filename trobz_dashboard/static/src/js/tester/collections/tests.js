@@ -7,7 +7,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
     var TestAttributes = dashboard.models('TestAttributes'),
         TestOrders = dashboard.models('TestOrders'),
         TestGroups = dashboard.models('TestGroups'),
-        TestDomains = dashboard.models('TestDomains');
+        TestDomains = dashboard.models('TestDomains'),
+        TestSecurity = dashboard.models('TestSecurity');
 
     var Collection = Backbone.Collection,
         _superCollection = Collection.prototype;
@@ -21,6 +22,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             var data = [
                 new TestAttributes({}, options),
                 new TestDomains({}, options),
+                new TestSecurity({}, options)
             ];
             
             if(options.model.get('type') == 'graph'){
@@ -30,7 +32,6 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             if(_(['graph', 'list']).contains(options.model.get('type'))){
                 data.push(new TestOrders({}, options));
             }
-            
             
             Collection.apply(this, [data, options]);
         },

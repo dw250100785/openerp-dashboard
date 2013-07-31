@@ -9,6 +9,10 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             return this.has('reference') && this.get('reference') == field.get('reference');
         },
         
+        has_type: function(type){
+            return _(this.get('type_names')).contains(type);
+        },
+        
         format: function(name){
             var _t = dashboard.web()._t;
             var formatted = name, date = moment(name);
