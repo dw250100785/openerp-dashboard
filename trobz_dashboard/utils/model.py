@@ -705,6 +705,11 @@ class metrics():
         ids = company_model.search(cr, uid, [('id', 'child_of', user.company_id.id)]) 
         params['user.company_id.child'] = ', '.join(str(id) for id in ids)
         
+        # user groups
+        group_model = self.pool.get('res.groups')
+        ids = group_model.search(cr, uid, [('users', '=', user.id)])
+        params['user.groups_id'] = ', '.join(str(id) for id in ids)
+        
         # user partners  
         params['user.partner_id.id'] = str(user.partner_id.id) 
         
@@ -713,6 +718,10 @@ class metrics():
         columns = ['id', 'name', 'login', 'active']
         for column in columns:
             params['user.' + column] = str(user[column])
+        
+        
+        import pdb
+        pdb.set_trace()
         
         return params
         
