@@ -5,44 +5,64 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
     var graph = null, call = 0;
     
-    var defaults = {
-        general: {
-            group: false,
-            HtmlText : false,
-            mouse: {
-                sensibility: 30,
-                track: true,
-                position: 'ne',
-                lineColor: '#333333',
+    var getDefaults = function(){
+        return {
+            general: {
+                group: false,
+                HtmlText : false,
+                mouse: {
+                    sensibility: 30,
+                    track: true,
+                    position: 'ne',
+                    lineColor: '#333333',
+                },
+                legend : {
+                  backgroundColor : '#ffffff',
+                  labelBoxBorderColor: '#ffffff',
+                  customBoxBorderColor: '#cacaca'
+                },
+                xaxis: {
+                    labelsAngle : 45
+                },
+                grid: {
+                    labelMargin: 5
+                }    
             },
-            legend : {
-              backgroundColor : '#ffffff',
-              labelBoxBorderColor: '#ffffff',
-              customBoxBorderColor: '#cacaca'
+            
+            bar: {
+                fid: 'bars',
+                bars: {
+                    show : true,
+                    horizontal : false,
+                    shadowSize : 0,
+                    centered: true, 
+                }
             },
-            xaxis: {
-                labelsAngle : 45
+            
+            line: {
+                fid: 'lines',
+                lines: { show : true }
             },
-            grid: {
-                labelMargin: 5
-            }    
-        },
-        
-        bar: {
-            bars: {
-                show : true,
-                horizontal : false,
-                shadowSize : 0,
-                centered: true, 
+            
+            pie: {
+                fid: 'pie',
+                grid: {
+                    verticalLines: false,
+                    horizontalLines: false
+                },
+                xaxis: {
+                    showLabels: false
+                },
+                yaxis: {
+                    showLabels: false
+                },
+                pie: { 
+                    show : true, 
+                    explode: 6,
+                    nb_limit: 20, 
+                    val_limit: 10
+                }
             }
-        },
-        
-        line: {
-            lines: { show : true }
-        },
-        
-        pie: {
-            pie: { show : true }
         }
     };
 
@@ -57,7 +77,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             this.rendered = false;
             
             this.metrics = options.metrics;
-            this.options = _.extend(options.general, defaults.general);
+            this.options = _.deepExtend({}, getDefaults().general, options.general);
             this.search = options.search;
             this.total = options.metrics.length;
             this.call = 0;
@@ -96,12 +116,17 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         addData: function(metric, x_axis, y_axis, options){
             if(x_axis && y_axis && this.series.length < this.total){
-                this.convert(metric, x_axis, y_axis, options);    
+                if(options.type == 'pie'){
+                    this.convertPie(metric, x_axis, y_axis, options);    
+                }
+                else {
+                    this.convert(metric, x_axis, y_axis, options);    
+                }
             }
             else if(metric.results.length == 0){
                 //add empty data for metric without results
                 this.data.push({
-                    data: [],
+                    data: [[0,0]],
                     label: metric.get('name')
                 })
             }
@@ -110,8 +135,47 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             }
         },
         
+        convertPie: function(metric, x_axis, y_axis, options){
+            var data = [], remains = null, serie_options = this.serieOptions(options);
+            
+            // only one metric allowed, so one graph serie...
+            if(this.series.length > 0){
+                throw new Error('pie graph accept only one metric !');
+            }
+            this.series.push({ x_axis: x_axis, y_axis: y_axis });
+        
+            
+            metric.results.each(function(result, index){
+                var name = result.get(x_axis.get('reference')) || dashboard.web()._t('undefined'),
+                    y = parseInt(result.get(y_axis.get('reference')));
+        
+                y = _.isNaN(y) ? null : y;
+                
+                if(index > serie_options.nb_limit || serie_options.val_limit > y){
+                    remains += y;
+                }
+                else {
+                    this.data.push(
+                        _.extend({
+                            data: [[0, y]], 
+                            label: name, 
+                       }, serie_options)
+                    );    
+                }
+            }, this);
+            
+            if(remains){
+                this.data.push(
+                    _.extend({
+                        data: [[0, remains]], 
+                        label: dashboard.web()._t('Remaining values'), 
+                   }, serie_options)
+                );    
+            }
+        },
+        
         convert: function(metric, x_axis, y_axis, options){
-            var add_y_axis = this.checkPreviousSeries(x_axis, y_axis),
+            var last_y_axis = this.checkPreviousSeries(x_axis, y_axis),
                 data = [];
             
             this.series.push({ x_axis: x_axis, y_axis: y_axis });
@@ -130,11 +194,11 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 _.extend({ 
                     data: data, 
                     label: metric.get('name'), 
-                    yaxis : (add_y_axis ? 2 : 1) 
+                    yaxis : (last_y_axis ? 2 : 1) 
                }, this.serieOptions(options))
             );
             
-            var yaxis = add_y_axis ? 'y2axis' : 'yaxis';
+            var yaxis = last_y_axis ? 'y2axis' : 'yaxis';
             this.options.xaxis = _.extend({ title : x_axis.get('name'), min: 0 }, this.options.xaxis);
             if(!(yaxis in this.options)){
                 var self = this;
@@ -153,8 +217,16 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         },
     
         serieOptions: function(options){
-            var type = 'type' in options ? options.type : 'bar';
-            return _.extend(options, defaults[type]);
+            var type = 'type' in options ? options.type : 'bar',
+                def = getDefaults(),
+                flotr_type =def[type].fid,
+                // dirty trick to clone sub object but it's work...
+                base_options = JSON.parse(JSON.stringify(options));
+            
+            this.options = _.deepExtend(def[type], base_options.general, this.options);
+            
+            delete base_options.general;
+            return _.deepExtend(this.options[flotr_type], base_options);
         },
         
         getTickIndex: function(name, x_axis){
@@ -206,19 +278,30 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         trackFormatter: function(item){
             
-            var tick = this.getTick(item.x);
-                x_value = tick && tick.value ? tick.value : item.x;
+            if(item.nearest.series.type == 'pie'){
+                return _.template('<ul><li><span><%= x.label %></span>:<b><%= x.value %></b></li></ul>', {
+                    x: {
+                        label: item.nearest.series.label,
+                        value: this.tickFormatter(item.y, item.nearest.series)
+                    }
+                });
+            }
+            else {
+                var tick = this.getTick(item.x);
+                    x_value = tick && tick.value ? tick.value : item.x;
+                
+                return _.template('<ul><li><span><%= x.label %></span>:<b><%= x.value %></b></li><li><span><%= y.label %></span>:<b><%= y.value %></b></li></ul>', {
+                    x: {
+                        label: item.nearest.xaxis.options.title,
+                        value: x_value
+                    },
+                    y: {
+                        label: item.nearest.yaxis.options.title,
+                        value: this.tickFormatter(item.y, item.nearest.yaxis.options)
+                    }
+                });    
+            }
             
-            return _.template('<ul><li><span><%= x.label %></span>:<b><%= x.value %></b></li><li><span><%= y.label %></span>:<b><%= y.value %></b></li></ul>', {
-                x: {
-                    label: item.nearest.xaxis.options.title,
-                    value: x_value
-                },
-                y: {
-                    label: item.nearest.yaxis.options.title,
-                    value: this.tickFormatter(item.y, item.nearest.yaxis.options)
-                }
-            });
         },
         
         checkPreviousSeries: function(x_axis, y_axis){
@@ -269,14 +352,15 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
         initialize: function(options){
             this.model = options.model;
-
+            
             //create the graph object, at the first metric init
             if(!graph || graph.rendered){
+                var model_options = options.model.get('options');
                 graph = new GraphRenderer({
                     search: options.search,
                     metrics: options.model.collection,
                     $el: options.collectionView.$el,
-                    general: {}
+                    general: 'general' in model_options ? model_options.general : {}
                 });
             }            
         },

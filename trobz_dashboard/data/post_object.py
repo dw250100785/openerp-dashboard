@@ -25,7 +25,7 @@ class post_object(osv.osv_memory):
         """
         
         # get rules
-        cr.execute("SELECT id FROM ir_rule WHERE identifier = '';")
+        cr.execute("SELECT id FROM ir_rule WHERE identifier IS NULL;")
         rules = cr.fetchall()
          
         update = {

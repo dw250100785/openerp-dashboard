@@ -32,9 +32,6 @@ class dashboard_field(osv.osv):
                 description[field.field_id.name]['name'] = field.field_id.name
                 desc = description[field.field_id.name]
             except: 
-                logging.info('The field description could not be set.')
-                logging.info('Field Name: %s' % field.name)
-                logging.info('Field ID: %s' % field.id)
                 desc = 'not found'
             
             result[field.id] = {

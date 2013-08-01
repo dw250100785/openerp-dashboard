@@ -52,6 +52,8 @@
     Flotr.plugins.titles.drawTitles = function() {
         this.plotWidth += 15;
         drawTitles.apply(this, arguments);
+        this.plotWidth -= 15;
+        
     };
 
     // make the label a little bit nicer
@@ -122,5 +124,5 @@
         drawMouseTrackMethod.apply(this, arguments);
         this.plotOffset.right = right;
     };
-
+    
 })(Flotr)

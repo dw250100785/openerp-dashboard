@@ -58,11 +58,14 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                             })    
                         });
                     }
-                    else {
-                        info.push({
-                            message: metric.message +  ': all security rules applied',
-                        })    
+                    if('security_info' in metric && metric.security_info.length > 0){
+                        _(metric.security_info).each(function(msg){
+                            info.push({
+                                message: msg,
+                            })    
+                        });
                     }
+                    
                 });
             }
             

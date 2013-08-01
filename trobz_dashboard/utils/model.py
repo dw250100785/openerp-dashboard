@@ -180,6 +180,7 @@ class metrics():
         result = {}
         debug_result = []
         warning = []
+        security_info = []
         
         is_graph_metrics = self.is_graph_metrics(metric_ids)
             
@@ -189,7 +190,7 @@ class metrics():
                 # security_test can not be enabled if debug mode is not True too
                 security_test = security_test if debug else False
                 if uid != SUPERUSER_ID or security_test:
-                    stack['query'], warning = self.add_security_rule(cr, uid, stack['query'], stack['metric'], warning, security_test)
+                    stack['query'], warning, security_info = self.add_security_rule(cr, uid, stack['query'], stack['metric'], warning, security_info, security_test)
                 stack['query'] = self.clean_query(stack['query'])
                     
         # execute one query in UNION for all metrics
@@ -290,6 +291,7 @@ class metrics():
                 debug_result.append({ 
                     'message': ', '.join(metric_names), 
                     'warning': warning,
+                    'security_info': security_info,
                     'query' : sql 
                 })
                 
@@ -313,6 +315,7 @@ class metrics():
                     debug_result.append({
                         'message': stack['metric'].name,
                         'warning': warning,
+                        'security_info': security_info,
                         'query' : sql
                     })
     
@@ -589,30 +592,44 @@ class metrics():
     
     
     
-    def add_security_rule(self, cr, uid, query, metric, warning, security_test=False):
+    def add_security_rule(self, cr, uid, query, metric, warning, security_info, security_test=False):
         
         # get models used by the query
         models = self.extract_models(query)
         model_ids = self.get_model_ids(cr, models)
         
         if len(model_ids) > 0:
+            
             # get global security rules
             cr.execute("""
                 SELECT DISTINCT identifier 
                 FROM ir_rule
-                WHERE identifier != ''
+                WHERE identifier IS NOT NULL
                 AND global = %s
                 AND model_id IN %s 
             """, (True, model_ids))
             global_rules = cr.fetchall()
             
             if security_test:
+                # check if some potential required rules have no identifier
+                cr.execute("""
+                    SELECT DISTINCT ir.id, ir.name 
+                    FROM ir_rule as ir
+                    WHERE ir.identifier IS NULL 
+                    AND ir.model_id IN %s
+                """, (model_ids, ))
+                
+                no_identifier = cr.fetchall()
+                for no_id_rule in no_identifier:
+                    warning.append('rule "%s" with id "%s" should be used but has no identifier' % (no_id_rule[1], no_id_rule[0]))
+                
+                
                 # get rules in groups without user restriction
                 cr.execute("""
                     SELECT DISTINCT ir.identifier 
                     FROM ir_rule as ir
                     JOIN rule_group_rel as rgr on rgr.rule_group_id = ir.id
-                    WHERE ir.identifier != '' 
+                    WHERE ir.identifier IS NOT NULL 
                     AND ir.model_id IN %s
                 """, (model_ids, ))
                   
@@ -625,13 +642,15 @@ class metrics():
                     JOIN res_groups as g on rgr.group_id = g.id
                     JOIN res_groups_users_rel as gur on gur.gid = g.id
                     JOIN res_users as u on gur.uid = u.id
-                    WHERE ir.identifier != '' 
+                    WHERE ir.identifier IS NOT NULL
                     AND ir.model_id IN %s
                     AND u.id = %s
                 """, (model_ids, uid))
-                
             
             local_rules = cr.fetchall()
+            
+            
+            logging.critical('global rules: %s, local rules: %s', global_rules, local_rules)    
             
             # get sql rules from identifiers
             base_model = self.pool.get(metric.model.model)
@@ -647,6 +666,7 @@ class metrics():
             for rule in global_rules:
                 rule = rule[0]
                 if rule in sql_rules:
+                    security_info.append('global security rule "%s" tested on model: "%s", query_name: "%s"' % (rule, metric.model.model, metric.query_name))
                     and_clauses.append(sql_rules[rule])
                 else:
                     warning.append('global security rule "%s" not implemented on model: "%s", query_name: "%s"' % (rule, metric.model.model, metric.query_name))
@@ -654,6 +674,7 @@ class metrics():
             for rule in local_rules:
                 rule = rule[0]
                 if rule in sql_rules:
+                    security_info.append('local security rule "%s" tested on model: "%s", query_name: "%s"' % (rule, metric.model.model, metric.query_name))
                     or_clauses.append(sql_rules[rule])
                 else:
                     warning.append('user security rule "%s" not implemented on model: "%s", query_name: "%s"' % (rule, metric.model.model, metric.query_name))
@@ -668,7 +689,7 @@ class metrics():
             inject_pattern = re.compile(r"""(?ui)(where)""")
             query = inject_pattern.sub("""\\1 %s """ % rules, query)
         
-        return query, warning
+        return query, warning, security_info
     
     def replace_rules_parameters(self, cr, uid, rules):
         """
