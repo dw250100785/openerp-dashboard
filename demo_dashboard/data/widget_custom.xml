@@ -44,6 +44,46 @@
             <field eval="[(6,0,[ref('custom_metric_1')])]" name="metric_ids" />
             <field eval="[(6,0,[ref('trobz_dashboard.type_output')])]" name="type_ids"/>
         </record>
+    
+    
+    <!-- widget 1 -->
+        
+        <record id="custom_widget_2" model="dashboard.widget">
+            <field name="name">Free space</field>
+            <field name="method">metric_free_space</field>
+            <field name="type">graph</field>
+        </record>
+        
+        <record id="custom_board_to_widget_custom_2" model="dashboard.board_to_widget_rel">
+            <field name="board_id" ref="demo_dashboard_board" />
+            <field name="widget_id" ref="custom_widget_2" />
+            <field name="sequence">19</field>
+            <field name="width">3</field>
+            <field name="height">10</field>
+        </record>
+        
+        <record id="custom_metric_space" model="dashboard.metric">
+            <field name="name">Disk usage</field>
+            <field name="type">graph</field>
+            <field name="widget_id" ref="custom_widget_2" />
+       
+            <field name="options" eval="{'type':'pie','format':'0.000 b'}" />
+            <field name="values" eval="{}"/>
+        </record>
+        
+        <record id="custom_metric_space_type" model="dashboard.field">
+            <field name="name">Type</field>
+            <field name="reference">type</field>
+            <field eval="[(6,0,[ref('custom_metric_space')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('trobz_dashboard.type_output')])]" name="type_ids"/>
+        </record>
+        
+        <record id="custom_metric_space_space" model="dashboard.field">
+            <field name="name">Space</field>
+            <field name="reference">space</field>
+            <field eval="[(6,0,[ref('custom_metric_space')])]" name="metric_ids" />
+            <field eval="[(6,0,[ref('trobz_dashboard.type_output')])]" name="type_ids"/>
+        </record>
                      
     </data>
 </openerp>

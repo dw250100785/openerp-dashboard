@@ -44,9 +44,51 @@ class dashboard_widget(osv.osv):
             
         return response
 
+    def metric_free_space(self, cr, uid, ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, security_test=False, context=None):
+        """
+        Demo: custom method to execute widget metrics.
+        
+        Get info about server hard disk usage 
+        """
+        response = {}
+        columns = [{'name': 'type'}, {'name': 'space'}]
+        
+        try:
+            import psutil
+            partitions = psutil.disk_partitions()
+            if len(partitions) > 0:
+                usage = psutil.disk_usage(psutil.disk_partitions()[0][1])
+                results = [
+                    { 'type': 'used space (%s)' % psutil.disk_partitions()[0][0], 'space': usage[1]},
+                    { 'type': 'free space (%s)' % psutil.disk_partitions()[0][0], 'space': usage[2]},
+                ]
+        
+        except:
+            # fake result, because it's a demo... but it's cool to have the real value, please install psutil ;)
+            results = [
+                { 'type': 'used', 'space': 100000000},
+                { 'type': 'free', 'space': 1000000000},
+            ]
+            
+        for widget in self.browse(cr, uid, ids, context=context):
+            response[widget.id] = {}
+            for metric in widget.metric_ids:
+                
+                response[widget.id][metric.id] = {
+                    'columns': columns,
+                    'results': results,
+                }
+                if debug:
+                    response[widget.id]['debug'] = {
+                        'message': 'get disk usage for widget %s' % widget.name
+                    }
+                     
+            
+        return response
 
 
 dashboard_widget()
+
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
 

@@ -4,6 +4,31 @@ from openerp.osv import osv
 from trobz_dashboard.utils.model import metric_support 
 
 class sale_order_line(osv.osv, metric_support):
+    
+    graph_total_sales = {
+       'query': """
+            SELECT {group_sql} AS "{group_ref}", sum(price_unit * product_uom_qty) as total_sales_amount
+            FROM sale_order_line sol
+            JOIN sale_order sor ON sor.id = sol.order_id
+            JOIN res_company rco ON rco.id=sor.company_id
+            JOIN sale_shop ssh ON ssh.id=sor.shop_id
+            JOIN res_partner rpa ON rpa.id=sor.partner_id
+            JOIN resource_resource rre ON rre.user_id = sor.user_id
+            JOIN hr_employee hem ON hem.resource_id = rre.id
+            LEFT JOIN hr_department hde ON hde.id = hem.department_id
+            JOIN product_product ppr ON ppr.id = sol.product_id
+            JOIN product_template pte ON pte.id = ppr.product_tmpl_id
+            JOIN REQUIRED product_category pca ON pca.id = pte.categ_id
+            where TRUE {generated}
+            """,
+       'security': {
+            'base.res_company_rule': 'rco.id in (%user.company_id.child%)',
+            'product.product_comp_rule': 'pte.company_id in (%user.company_id.child%) OR pte.company_id = NULL',
+            'sale.sale_order_personal_rule': 'sor.user_id = %user.id% OR sor.user_id = NULL',
+            'portal_sale.portal_sale_order_user_rule': 'sol.order_partner_id in (%user.partner_id.id%)'
+       }
+    } 
+    
     _inherit = 'sale.order.line'
     
     _metrics_sql = {
@@ -26,30 +51,19 @@ class sale_order_line(osv.osv, metric_support):
             WHERE TRUE {generated}
         """,
         'graph_total_sales': {
-           'query': """
-                SELECT {group_sql} AS "{group_ref}", sum(price_unit * product_uom_qty)/1000000000 as total_sales_amount
-                FROM sale_order_line sol
-                JOIN sale_order sor ON sor.id = sol.order_id
-                JOIN res_company rco ON rco.id=sor.company_id
-                JOIN sale_shop ssh ON ssh.id=sor.shop_id
-                JOIN res_partner rpa ON rpa.id=sor.partner_id
-                JOIN resource_resource rre ON rre.user_id = sor.user_id
-                JOIN hr_employee hem ON hem.resource_id = rre.id
-                LEFT JOIN hr_department hde ON hde.id = hem.department_id
-                JOIN product_product ppr ON ppr.id = sol.product_id
-                JOIN product_template pte ON pte.id = ppr.product_tmpl_id
-                JOIN REQUIRED product_category pca ON pca.id = pte.categ_id
-                where TRUE {generated}
-                """,
-           'defaults': {
+            'query': graph_total_sales['query'],
+            'security': graph_total_sales['security'],
+            'defaults': {
                 'group_by': ['order_date_month']
-           },
-           'security': {
-                'base.res_company_rule': 'rco.id in (%user.company_id.child%)',
-                'product.product_comp_rule': 'pte.company_id in (%user.company_id.child%) OR pte.company_id = NULL',
-                'sale.sale_order_personal_rule': 'sor.user_id = %user.id% OR sor.user_id = NULL',
-                'portal_sale.portal_sale_order_user_rule': 'sol.order_partner_id in (%user.partner_id.id%)'
-           }
+            }
+        },
+        'graph_total_sales_pie': {
+            'query': graph_total_sales['query'],
+            'security': graph_total_sales['security'],
+            'defaults': {
+                'group_by': ['customer'],
+                'order_by': ['total_sales_amount DESC']
+            }
         },
         'graph_total_sales_quantity': {
            'query': """
