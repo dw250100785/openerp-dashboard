@@ -66,8 +66,8 @@ class dashboard_widget(osv.osv):
         except:
             # fake result, because it's a demo... but it's cool to have the real value, please install psutil ;)
             results = [
-                { 'type': 'used', 'space': 100000000},
-                { 'type': 'free', 'space': 1000000000},
+                { 'type': 'used (fake, please, install psutil)', 'space': 100000000},
+                { 'type': 'free (fake, please, install psutil)', 'space': 1000000000},
             ]
             
         for widget in self.browse(cr, uid, ids, context=context):
