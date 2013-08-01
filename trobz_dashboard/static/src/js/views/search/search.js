@@ -111,20 +111,39 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         addGroup: function(field){
             var order_fields = this.fields.order,
-                current_groups = order_fields.types('group_by').models;
+                current_groups = order_fields.types('group_by').models,
+                current_order_field = this.search.currentOrderField();
             
             order_fields.remove(current_groups);
             order_fields.add(field);
             
-            this.search.resetOrder({silent: true});
+            if(!(current_order_field && _.isString(current_order_field.get('field_description')))){
+                this.search.resetOrder({silent: true});    
+            }
+            
             this.views.order.render();
             this.search.addGroup(field);
         },
         
         removeGroup: function(field){
-            this.search.resetOrder({silent: true});
-            this.views.order.render();
+            var order_fields = this.fields.order,
+                current_order_field = this.search.currentOrderField();
+            
+            
             this.search.removeGroup(field);
+            
+            var current_group_field = this.search.currentGroupField();
+            
+            order_fields.remove(field);
+            if(current_group_field){
+                order_fields.add(current_group_field);   
+            }
+            
+            if(!(current_order_field && _.isString(current_order_field.get('field_description')))){
+                this.search.resetOrder({silent: true});
+            }
+            this.views.order.render();
+            
         }
         
     });

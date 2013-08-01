@@ -58,9 +58,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 },
                 pie: { 
                     show : true, 
-                    explode: 6,
-                    nb_limit: 20, 
-                    val_limit: 10
+                    explode: 6
                 }
             }
         }
@@ -151,7 +149,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
                 y = _.isNaN(y) ? null : y;
                 
-                if(index > serie_options.nb_limit || serie_options.val_limit > y){
+                if(('nb_limit' in serie_options && index > serie_options.nb_limit) 
+                || ('val_limit' in serie_options && serie_options.val_limit > y)){
                     remains += y;
                 }
                 else {

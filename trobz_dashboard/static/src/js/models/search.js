@@ -168,6 +168,10 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             return order;
         },
         
+        currentOrderField: function(){
+            return this.get('order').length > 0 ? this.get('order')[0].field : null;
+        },
+        
         /*
          * Group manipulation
          */
@@ -213,6 +217,11 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             });
             return group;
         },
+        
+        currentGroupField: function(){
+            return this.get('group').length > 0 ? this.get('group')[0] : null;
+        },
+        
         
         /* others */
        

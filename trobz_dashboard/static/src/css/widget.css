@@ -8,6 +8,7 @@
 
 #trobz_board .list .widget {
     float: left;
+    position: relative;
 }
 #trobz_board .sliding .widget {
     position: absolute;
