@@ -719,10 +719,6 @@ class metrics():
         for column in columns:
             params['user.' + column] = str(user[column])
         
-        
-        import pdb
-        pdb.set_trace()
-        
         return params
         
     def get_model_ids(self, cr, models):
