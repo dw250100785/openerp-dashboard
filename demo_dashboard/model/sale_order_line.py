@@ -27,6 +27,7 @@ class sale_order_line(osv.osv, metric_support):
             'sale.sale_order_personal_rule': 'sor.user_id = %user.id% OR sor.user_id = NULL',
             'portal_sale.portal_sale_order_user_rule': 'sol.order_partner_id in (%user.partner_id.id%)'
        }
+                         
     } 
     
     _inherit = 'sale.order.line'
@@ -55,7 +56,8 @@ class sale_order_line(osv.osv, metric_support):
             'security': graph_total_sales['security'],
             'defaults': {
                 'group_by': ['order_date_month']
-            }
+            },
+           'no_result': 0
         },
         'graph_total_sales_pie': {
             'query': graph_total_sales['query'],

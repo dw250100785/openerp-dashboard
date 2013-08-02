@@ -8,6 +8,7 @@
             <field name="name">Employee</field>
             <field name="method">execute</field>
             <field name="type">graph</field>
+            <field name="limit">5</field>
         </record>
         
         <record id="graph_board_to_widget_graph_1" model="dashboard.board_to_widget_rel">
@@ -24,6 +25,7 @@
             <field name="name">Total Sales</field>
             <field name="method">execute</field>
             <field name="type">graph</field>
+            <field name="limit">5</field>
         </record>
         
         <record id="graph_board_to_widget_graph_2" model="dashboard.board_to_widget_rel">
@@ -41,6 +43,7 @@
             <field name="name">Total Sales (Pie)</field>
             <field name="method">execute</field>
             <field name="type">graph</field>
+            <field name="limit">10</field>
         </record>
         
         <record id="graph_board_to_widget_graph_3" model="dashboard.board_to_widget_rel">
