@@ -43,7 +43,7 @@
             <field name="name">Total Sales (Pie)</field>
             <field name="method">execute</field>
             <field name="type">graph</field>
-            <field name="limit">10</field>
+            <field name="limit">30</field>
         </record>
         
         <record id="graph_board_to_widget_graph_3" model="dashboard.board_to_widget_rel">
