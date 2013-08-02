@@ -1,0 +1,45 @@
+@media print {
+    
+#trobz_board * {
+    border-top: none !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    background: none  !important;
+    box-shadow: none  !important;
+    -webkit-box-shadow: none  !important;
+    overflow: visible !important;
+}
+
+
+#trobz_board .widget {
+    width: 511pt !important;
+    float: none !important;
+    page-break-after: always !important;
+}
+
+#trobz_board .widget .head h2 {
+    text-align: left !important;
+    font-size: 16pt !important;
+    text-decoration: underline !important;
+}
+
+
+#trobz_board .widget .graph {
+    -webkit-transform: rotate(90deg) translateX(120pt);
+}
+#trobz_board .widget .graph,
+#trobz_board .widget canvas {
+    width: 650pt !important;
+    height: 365pt !important;
+}
+
+
+#trobz_board i,
+#trobz_board .foot,
+#trobz_board .widget .head .button,
+#trobz_board #toolbar {
+    display: none !important;
+}
+    
+}

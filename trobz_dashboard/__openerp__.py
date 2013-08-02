@@ -114,6 +114,8 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
         'static/lib/bootstrap-daterangepicker/daterangepicker.css',
         'static/src/css/datepicker_bootstrap.css',
      
+        'static/src/css/print.css',
+     
         'static/src/css/dashboard.css',
         'static/src/css/toolbar.css',
  
