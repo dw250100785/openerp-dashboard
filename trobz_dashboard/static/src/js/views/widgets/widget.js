@@ -4,7 +4,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
     var SearchView = dashboard.views('Search'),
         Status = dashboard.views('WidgetStatus'),
-        Display = dashboard.views('WidgetDisplay');
+        Display = dashboard.views('WidgetDisplay'),
+        Pager = base.views('Pager');
 
     var Layout = Marionette.Layout,
         _super = Layout.prototype;
@@ -55,6 +56,9 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             };
             
             this.views = {
+                pager: new Pager({
+                    model: this.model
+                }),
                 status: new Status({
                     collection: this.model.metrics,
                     search: this.models.search
@@ -134,6 +138,10 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             this.status.show(this.views.status);
             this.search.show(this.views.search);
             this.display.show(this.views.display);
+            
+            if(this.model.hasPager()){
+                this.pager.show(this.views.pager);
+            }
             
             this.doSearch();
         },

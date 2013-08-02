@@ -48,6 +48,82 @@ class metrics():
         
     }
     
+    def count(self, cr, uid, ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, security_test=False, context=None):
+        """
+        Execute custom SQL queries to count results
+        """
+        
+        result = { 'count': 0 }
+        widgets = self.browse(cr, uid, ids, context=context)
+        
+        for widget in widgets:
+            result = { 
+                'count': self.count_metrics(cr, uid, ids, widget.metric_ids, period=period, domain=domain, group_by=group_by, order_by=order_by, context=context) 
+            }
+            
+        return result
+    
+    
+    def count_metrics(self, cr, uid, ids, metric_ids, period={}, domain=[], group_by=[], order_by=[], context=None):
+        """
+        get metric results count
+        """
+        count = 0
+        
+        if len(metric_ids) > 0:
+            
+            metric = metric_ids[0]
+            is_graph_metrics = self.is_graph_metrics(metric_ids)
+            
+            is_date_group = False
+            group = None
+            if len(group_by) > 0:
+                group = self.get_field(metric_ids[0], group_by[0])
+                is_date_group = self.is_date_group(group)
+            
+            # for graph date, count == nb range in the period
+            if is_graph_metrics and is_date_group:
+                query = """SELECT count(date) FROM generate_series ( '%s'::timestamp, '%s', '%s') as date""" % (period['start'], period['end'], ("1 " + group.period if group.period != 'quarter' else "3 %s" % "month"))
+                cr.execute(query)
+                res = cr.fetchone()
+                count = res[0]
+            
+            # for other graph, the full query has to be executed, not very nice for the perf...
+            elif is_graph_metrics: 
+                res, debug = self.exec_metrics(cr, uid, ids, metric_ids, period, domain, group_by, order_by, debug=False, security_test=False, context=context)
+                for i,r in res.items():
+                    count = len(r['results'])
+                
+            # for list, execute with select count(id) on the first metric (list widgets should never have more than 1 metric)
+            elif metric.type == 'list':
+                stacks = self.get_stacks(cr, uid, ids, [metric], period, domain, group_by, order_by)
+                stack = stacks[metric.id]
+                query = stack['query'] 
+                if uid != SUPERUSER_ID:
+                    query, warning, security_info = self.add_security_rule(cr, uid, stack, metric)
+                    query = self.clean_query(query)
+                
+                
+                count_pattern = re.compile(r"""(?uisx)^
+                    (.*select).*
+                    (
+                        from
+                        [ \n]+
+                        [a-z0-9_\-\.]+
+                        (?:\ as)?
+                        [ \n]+
+                        ([a-z0-9_\-\.]+)
+                        [ \n]+.*
+                    )$""")
+                
+                query = count_pattern.sub('\\1 count(\\3.id) \\2', query)
+                cr.execute(query)
+                res = cr.fetchone()
+                count = res[0]
+         
+        return count
+    
+    
     def execute(self, cr, uid, ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, security_test=False, context=None):
         """
         Execute custom SQL queries to populate a trobz dashboard widget
@@ -58,7 +134,8 @@ class metrics():
         widgets = self.browse(cr, uid, ids, context=context)
         
         for widget in widgets:
-            res, res_debug = self.exec_metrics(cr, uid, ids, widget.metric_ids, period=period, domain=domain, group_by=group_by, order_by=order_by, limit=limit, offset=offset, debug=debug, security_test=security_test, context=context) 
+            stacks = self.get_stacks(cr, uid, ids, widget.metric_ids, period=period, domain=domain, group_by=group_by, order_by=order_by, limit=limit, offset=offset, debug=debug, security_test=security_test, context=context) 
+            res, res_debug = self.execute_stacks(cr, uid, widget.metric_ids, stacks, debug=debug, security_test=security_test, context=context)
             result[widget.id] = res
             if debug: 
                 result[widget.id]['debug'] = {
@@ -69,8 +146,9 @@ class metrics():
             
         return result
     
+                 
     
-    def exec_metrics(self, cr, uid, ids, metric_ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, security_test=False, context=None):
+    def get_stacks(self, cr, uid, ids, metric_ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, security_test=False, context=None):
         """
         Execute metrics SQL queries
         """
@@ -110,9 +188,7 @@ class metrics():
                 'metric': metric
             }
             
-        
-        return self.execute_stacks(cr, uid, metric_ids, stacks, debug=debug, security_test=security_test, context=context)
-        
+        return stacks
     
     
     def set_stack_globals(self, metric, defaults, stacks, period, group_by, order_by, limit, offset):
@@ -228,7 +304,6 @@ class metrics():
                 order_by = ''
                 if order:
                     order_by = "ORDER BY date_trunc('%s', gdate.gtime) %s" % (order[0].period, order[1]) if order[0].period else 'ORDER BY max(result."%s") %s NULLS LAST' % (order[0].reference, order[1]) 
-                    
                     
                 query = self.envelopes['query_date'].format(** {
                   "start": period['start'],
@@ -590,9 +665,15 @@ class metrics():
         
         return True
     
+    def is_date_group(self, field):
+        """
+        check if the group by is by date
+        """
+        
+        return field.period and field.field_description['type'] in ['date', 'datetime']
     
     
-    def add_security_rule(self, cr, uid, query, metric, warning, security_info, security_test=False):
+    def add_security_rule(self, cr, uid, query, metric, warning=[], security_info=[], security_test=False):
         
         # get models used by the query
         models = self.extract_models(query)
@@ -649,8 +730,6 @@ class metrics():
             
             local_rules = cr.fetchall()
             
-            
-            logging.critical('global rules: %s, local rules: %s', global_rules, local_rules)    
             
             # get sql rules from identifiers
             base_model = self.pool.get(metric.model.model)
@@ -777,6 +856,14 @@ class metrics():
             if model._table == table:
                 search = (name, model)
         return search
+    
+    
+    def exec_metrics(self, cr, uid, ids, metric_ids, period={}, domain=[], group_by=[], order_by=[], limit="ALL", offset=0, debug=False, security_test=False, context=None):
+        """
+        method used to test get_stacks + execute_stacks methods...
+        """
+        stacks = self.get_stacks(cr, uid, ids, metric_ids, period=period, domain=domain, group_by=group_by, order_by=order_by, limit=limit, offset=offset, debug=debug, security_test=security_test, context=context) 
+        return self.execute_stacks(cr, uid, metric_ids, stacks, debug=debug, security_test=security_test, context=context)
     
 metric_support = metrics
 

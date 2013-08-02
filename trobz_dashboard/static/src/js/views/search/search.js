@@ -78,13 +78,12 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 this.listenTo(this.views.domain, 'search:remove', this.removeDomain, this);
             }
             
-            if(this.enabled('group') && this.type != 'numeric' && this.fields.group.length > 0){
+            if(this.enabled('order') && this.type == 'graph' && this.fields.order.length > 0){
                 this.group.show(this.views.group);
             
                 this.listenTo(this.views.group, 'search:add', this.addGroup, this);
                 this.listenTo(this.views.group, 'search:remove', this.removeGroup, this);
-            }
-            if(this.enabled('order') && this.type == 'graph' && this.fields.order.length > 0){
+            
                 this.order.show(this.views.order);
                 
                 this.listenTo(this.views.order, 'search:add', this.addOrder, this);

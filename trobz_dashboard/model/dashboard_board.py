@@ -28,6 +28,7 @@ class dashboard_board(osv.osv):
                     'name': widget.name,
                     'type': widget.type,
                     'method': widget.method,
+                    'limit': widget.limit,
                     'sequence': sequence,
                     'width': width,
                     'metrics': widget.metrics,

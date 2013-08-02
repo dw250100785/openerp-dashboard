@@ -13,6 +13,7 @@
                                 <field name="name" />
                                 <field name="type" />
                                 <field name="method" />
+                                <field name="limit" />
                             </group>
                         </page>    
                         <page string="Metrics">

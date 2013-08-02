@@ -16,6 +16,9 @@
                     
                 <h2><t t-esc="name"/></h2>
                 
+                <span class="pager">
+                </span>
+                
                 <span class="button toggle_search">
                     <i class="icon-search"></i>
                 </span>

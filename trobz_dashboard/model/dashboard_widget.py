@@ -40,6 +40,9 @@ class dashboard_widget(osv.osv, metric_support):
         'name': fields.char('Name'),
         'type': fields.selection((('numeric','Numeric'), ('list','List'), ('graph','Graph')), 'Widget type'),
         
+        
+        'limit': fields.selection((('all','All'), ('5','5'), ('10','10'), ('80','80'),('100','100'),('200','200')), 'Pager limit'),
+        
         'method': fields.char('Model Method', help="Widget model method to execute related metrics"),
         
         'board_ids': fields.many2many('dashboard.board', 'dashboard_board_to_widget_rel', id1='widget_id',id2='board_id', string='Boards', ondelete='cascade', required=True),
@@ -51,6 +54,7 @@ class dashboard_widget(osv.osv, metric_support):
     
     _defaults = {
         'method': 'execute',
+        'limit': 'all',
    }
 
 
