@@ -92,44 +92,43 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 security_test: false
             });
             
-            
-            
             // force security_test to false if not in debug mode !
             options.security_test = !options.debug ? false : options.security_test; 
+            
+            var metrics = this.metrics, self = this, count = null, method = this.get('method'), option_method = options.method;
             
             var promise = this.sync('call', { model_name: this.model_name }, {
                 method: options.method,
                 args: [[this.get('id')], options.period, options.domain, options.group, options.order, options.limit, options.offset, options.debug, options.security_test]
             });      
             
-            this.previousOptions = options;
-            
-            delete this.previousOptions.limit;
-            delete this.previousOptions.offset;
-            delete this.previousOptions.method;
-            
-            var metrics = this.metrics, self = this, count = null;
             promise.done(function(results){
                 var debug = {};    
+                if(option_method == method){
+                    _(results).each(function(metric_data, widget_id){
                     
-                _(results).each(function(metric_data, widget_id){
-                
-                    debug = self.resultDebug(options, widget_id, metric_data);
-                    
-                    _(metric_data).each(function(result, metric_id){
-                        var results = metrics.get(metric_id).results;
-                        results.reset(results.parse(result));
-                        count = result['results'].length;
+                        debug = self.resultDebug(options, widget_id, metric_data);
+                        
+                        _(metric_data).each(function(result, metric_id){
+                            var results = metrics.get(metric_id).results;
+                            results.reset(results.parse(result));
+                            count = result['results'].length;
+                        });
                     });
-                });
-                
-                metrics.trigger('results:updated', this);
+                    
+                    metrics.trigger('results:updated', this);
+                }
                 def.resolve(results, debug);
             });
             
             promise.fail(function(){
                 def.reject.apply(def, _.toArray(arguments));
             });
+            
+            this.previousOptions = options;
+            delete this.previousOptions.limit;
+            delete this.previousOptions.offset;
+            delete this.previousOptions.method;
             
             return def.promise();
         },

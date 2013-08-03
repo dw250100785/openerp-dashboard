@@ -144,3 +144,31 @@
     display: inline-block;
     margin: 0 0 0 5px;
 }
+
+#trobz_board .graph .noresult {
+    display: block;
+    margin: 0px auto 0px;
+    font-size: 5em;
+    width: 250px;
+    color: #ddd;
+    padding: 18% 0;
+}
+
+#trobz_board .graph h4 {
+    font-size: 2em;
+}
+
+#trobz_board .graph ul,
+#trobz_board .graph li {
+    list-style: none;
+    font-size: 1.2em;
+}
+
+#trobz_board .graph .label {
+    font-weight: bold;
+}
+
+#trobz_board .graph .value {
+    font-style: italic;
+    margin: 0 0 0 1em;
+}

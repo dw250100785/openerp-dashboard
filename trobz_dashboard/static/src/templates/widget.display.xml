@@ -72,7 +72,27 @@
     
     
     <t t-name="TrobzDashboard.widget.display.graph">
-        <span>graph</span>
+    </t>
+    
+    <t t-name="TrobzDashboard.widget.display.graph.no_result">
+        <span class="noresult">no result</span>
+    </t>
+    
+    <t t-name="TrobzDashboard.widget.display.graph.one_result">
+        
+        <t t-foreach="series" t-as="serie">
+            <h4><t t-esc="serie.label" /></h4>
+            <t t-if="serie.data.length > 0">
+            <ul>
+                <t t-esc="console.log('tmpl', serie.data)" />
+                <t t-foreach="serie.data" t-as="item">
+                <t t-esc="console.log('tmpl item', item, format, ticks)" />
+                <li><span class="label"><t t-esc="ticks[item[0]]" /></span>:<span class="value"><t t-esc="format ? numeral(item[1]).format(format) : item[1]" /></span></li>
+                </t>
+            </ul>
+            </t>
+        </t>
+        
     </t>
     
 </template>

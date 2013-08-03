@@ -1,5 +1,7 @@
 openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
+    var Renderer = Marionette.Renderer;
+
     var Controller = Marionette.Controller,
         _super = Controller.prototype;
 
@@ -106,7 +108,34 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 
                 console.log('RenderGraph', 'render', this.data, this.options);
                 if(this.$el.is(':visible')){
-                    Flotr.draw(this.$el.get(0), this.data, this.options);    
+                    
+                    //no result
+                    if(_(this.data).every(function(serie){return serie.data.length <= 0; })){
+                        this.$el.empty().html(
+                            Renderer.render('TrobzDashboard.widget.display.graph.no_result')
+                        );
+                        console.log('no result !', this.data);    
+                    }
+                    //not more than 1 result
+                    else if(this.options.fid != 'pie' && _(this.data).every(function(serie){return serie.data.length == 1; })){
+                        console.log('one result...', this.data, this.options);    
+                        
+                        var ticks = {};
+                        _(this.options.xaxis.ticks).each(function(item){ticks[item[0]] = item[1];});
+                        
+                        this.$el.empty().html(
+                            Renderer.render('TrobzDashboard.widget.display.graph.one_result', {
+                                series: this.data,
+                                ticks: ticks,
+                                format: this.options.yaxis.format || false,
+                                numeral: numeral
+                            })
+                        );        
+                        
+                    }
+                    else {
+                        Flotr.draw(this.$el.get(0), this.data, this.options);    
+                    }
                 }
             }
             this.rendered = true;
@@ -124,12 +153,13 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             else if(metric.results.length == 0){
                 //add empty data for metric without results
                 this.data.push({
-                    data: [[0,0]],
+                    data: [],
                     label: metric.get('name')
                 })
             }
             if(++this.call == this.total){
                 this.render();
+                this.call = 0;
             }
         },
         
