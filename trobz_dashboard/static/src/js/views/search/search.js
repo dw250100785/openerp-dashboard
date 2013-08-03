@@ -128,20 +128,19 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             var order_fields = this.fields.order,
                 current_order_field = this.search.currentOrderField();
             
-            
-            this.search.removeGroup(field);
-            
-            var current_group_field = this.search.currentGroupField();
-            
             order_fields.remove(field);
-            if(current_group_field){
-                order_fields.add(current_group_field);   
-            }
-            
             if(!(current_order_field && _.isString(current_order_field.get('field_description')))){
                 this.search.resetOrder({silent: true});
             }
             this.views.order.render();
+            
+            this.search.removeGroup(field);
+            
+            var current_group_field = this.search.currentGroupField();
+            if(current_group_field){
+                order_fields.add(current_group_field);   
+            }
+            
             
         }
         

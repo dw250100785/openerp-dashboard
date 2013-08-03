@@ -144,7 +144,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         
         resetOrder: function(options){
             this.set('order', [], options);
-            if(this.defaults.order.length > 0){
+            if(_.size(this.defaults.order) > 0){
                 this.addOrder(this.defaults.order.field, this.defaults.order.type, options);
             }
             
