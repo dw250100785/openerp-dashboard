@@ -1,7 +1,5 @@
 openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
-    var SearchModel = dashboard.models('Search');
-
     var SearchView = dashboard.views('Search'),
         Status = dashboard.views('WidgetStatus'),
         Display = dashboard.views('WidgetDisplay'),
@@ -18,13 +16,15 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         events: {
             'click .toggle_search': 'toggleSearch',
+            'click .remove_widget': 'hide',
             'mouseenter .icon-question-sign': 'toggleHelp',
-            'mouseout .icon-question-sign': 'toggleHelp'
+            'mouseout .icon-question-sign': 'toggleHelp',
         },
         
         ui: {
             loader: '.loader',
-            helper: '.widget_help'
+            helper: '.widget_help',
+            remove: '.remove_widget',
         },
         
         regions: {
@@ -44,15 +44,14 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             
             this.resize();
             
-            this.global_search = options.global_search;
+            this.is_removable = options.removable;
+            this.is_printable = options.printable;
             this.debug = options.debug;
             this.type = this.model.get('type');
             
+            
             this.models = {
-                period: options.period,
-                search: new SearchModel({}, {
-                    fields: this.model.metrics.fields
-                })
+                period: options.period 
             };
             
             this.views = {
@@ -61,17 +60,19 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 }),
                 status: new Status({
                     collection: this.model.metrics,
-                    search: this.models.search
+                    search: this.model.searchModel,
+                    model: this.model
                 }),
                 search: new SearchView({
                     collection: this.model.metrics.fields,
                     type: this.model.get('type'),
-                    search: this.models.search
+                    search: this.model.searchModel
                 }),
                 display: new Display({
                     collection: this.model.metrics,
                     type: this.model.get('type'),
-                    search: this.models.search
+                    search: this.model.searchModel,
+                    printable: this.is_printable
                 })
             };
         
@@ -79,31 +80,39 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             
             this.listenTo(this.models.period, 'change', this.doSearch);
             
-            this.listenTo(this.global_search, 'set:domain', this.setGlobalDomain);
-            this.listenTo(this.global_search, 'remove:domain', this.removeGlobalDomain);
-            
-            
             // set search attribute listened by the widget
             this.listen = this.type in this.bindSearch ? this.bindSearch[this.type] : []; 
             _(this.listen).each(function(attr){
-                this.listenTo(this.models.search, 'change:' + attr, this.doSearch);
+                this.listenTo(this.model.searchModel, 'change:' + attr, this.doSearch);
             }, this);    
+        },
+        
+        
+        printable: function(state){
+            this.is_printable = state;
+            this.views.display.printable(state);
+        },
+        
+        removable: function(state){
+            this.is_removable = state;
+            if(this.is_removable){
+                this.ui.remove.show();
+            }
+            else {
+                this.ui.remove.hide();
+            }
+        },
+        
+        hide: function(){
+            this.$el.hide();    
         },
         
         resize: function(){
             this.$el.addClass('size' + this.model.get('width'));
         },
         
-        setGlobalDomain: function(field, operator, value){
-            this.models.search.addDomain(field, operator, value, {global: true});
-        },
-        
-        removeGlobalDomain: function(field, operator, value){
-            this.models.search.removeDomain(field, operator, value, {global: true});
-        },
-        
         doSearch: function(){
-            var search = this.models.search, 
+            var search = this.model.searchModel, 
                 options = { debug: this.debug, period: this.models.period.values(), domain: [], order: [], group: [] };
        
             //pass only search attributes that the widget is listening to     
@@ -155,7 +164,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         },
         
         addDefaultsSearch: function(){
-            var search_model = this.models.search,
+            var search_model = this.model.searchModel,
                 search_view = this.views.search;
             
             this.model.metrics.each(function(metric){
@@ -211,6 +220,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         serializeData: function(){                  	
             return {
+              "removable": this.is_removable,
               "name": this.model.get('name'),
               'metrics': this.model.metrics.toArray(),
               'has_help': this.model.metrics.some(function(metric){return metric.get('help'); })

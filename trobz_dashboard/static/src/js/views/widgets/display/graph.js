@@ -69,6 +69,9 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
     var GraphRenderer = Controller.extend({
         
         initialize: function(options){
+            
+            this.is_printable = options.printable;
+            
             this.series = [];
             this.data = [];
             this.ticks = [];
@@ -103,23 +106,21 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             if(this.data.length > 0){
                 this.options.xaxis.ticks = this.getTicks(); 
                 
-                this.appendHtml();
+                if(this.$dest.find('.graph').length <= 0){
+                    this.appendHtml();
+                }
                 this.resize();
                 
-                console.log('RenderGraph', 'render', this.data, this.options);
+                
                 if(this.$el.is(':visible')){
-                    
                     //no result
                     if(_(this.data).every(function(serie){return serie.data.length <= 0; })){
                         this.$el.empty().html(
                             Renderer.render('TrobzDashboard.widget.display.graph.no_result')
                         );
-                        console.log('no result !', this.data);    
                     }
                     //not more than 1 result
                     else if(this.options.fid != 'pie' && _(this.data).every(function(serie){return serie.data.length == 1; })){
-                        console.log('one result...', this.data, this.options);    
-                        
                         var ticks = {};
                         _(this.options.xaxis.ticks).each(function(item){ticks[item[0]] = item[1];});
                         
@@ -135,10 +136,49 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                     }
                     else {
                         Flotr.draw(this.$el.get(0), this.data, this.options);    
+                        if(this.is_printable){
+                            this.convertToImage();
+                        }
                     }
                 }
             }
             this.rendered = true;
+        },
+        
+        printable: function(state){
+            this.is_printable = state;
+            if(this.is_printable){
+                this.convertToImage();
+            }
+        },
+        
+        convertToImage: function(){
+            var data = this.getDataURL();
+            
+            if(data){
+                var $img = $('<img>').attr({src: data});
+            
+                this.$el.find('canvas').hide();
+                this.$el.find('canvas.flotr-canvas').replaceWith($img);
+            }
+        },
+        
+        getDataURL: function(){
+            var data, 
+                $canvas = this.$el.find('canvas.flotr-canvas');
+                
+            if($canvas.length > 0){
+                var canvas = $canvas.get(0),
+                    context = canvas.getContext('2d'),
+                    w = canvas.width,
+                    h = canvas.height;
+                
+                context.globalCompositeOperation = "destination-over";
+                context.fillStyle = '#ffffff';
+                context.fillRect(0,0,w,h);
+                data = canvas.toDataURL("image/jpeg");    
+            }
+            return data;
         },
         
         addData: function(metric, x_axis, y_axis, options){
@@ -355,7 +395,10 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         setElement: function($el){
             this.$dest = $el;
-            this.$el = $('<div class="graph">');
+            var $graph = this.$dest.find('.graph');
+            
+            $graph = $graph.length > 0 ? $graph : $('<div class="graph">');
+            this.$el = $graph;
         },
         
         appendHtml: function(){
@@ -380,6 +423,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
     var DisplayGraph = Controller.extend({
 
         initialize: function(options){
+            this.is_printable = options.printable;
+            
             this.model = options.model;
             
             //create the graph object, at the first metric init
@@ -389,9 +434,16 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                     search: options.search,
                     metrics: options.model.collection,
                     $el: options.collectionView.$el,
-                    general: 'general' in model_options ? model_options.general : {}
+                    general: 'general' in model_options ? model_options.general : {},
+                    printable: this.is_printable
                 });
             }            
+        },
+        
+        printable: function(state){
+            if(graph){
+                graph.printable(state);
+            }
         },
 
         render: function(){
@@ -399,9 +451,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 x_axis = results.columns[0] || null,
                 y_axis = results.columns[1] || null,
                 options = _(this.model.get('options')).clone();
-            
-            console.log('DisplayGraph render', options);
-            
+        
             graph.addData(this.model, x_axis, y_axis, options);
         }
     });

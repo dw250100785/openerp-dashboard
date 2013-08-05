@@ -1,5 +1,7 @@
 openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
     
+    var SearchModel = dashboard.models('Search');
+
     var Metrics = dashboard.collections('Metrics');
             
     var BaseModel = base.models('BaseModel'),
@@ -28,6 +30,11 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
          
             this.metrics.reset(metrics);
         
+            
+            this.searchModel = new SearchModel({}, {
+                fields: this.metrics.fields
+            });
+            
             _superPager.initialize.apply(this, [options]);
             
             this.pager.limit = data.limit ? parseInt(data.limit) : 'all';
@@ -118,6 +125,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                     
                     metrics.trigger('results:updated', this);
                 }
+                self.set('updated_at', moment());
                 def.resolve(results, debug);
             });
             

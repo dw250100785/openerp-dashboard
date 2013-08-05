@@ -5,6 +5,8 @@
     background: url(/web/static/src/img/form_sheetbg.png) repeat;
 }
 
+
+#print-dashboard .button,
 #trobz_board .button {
     display: inline-block;
     padding: 4px 6px;
@@ -15,15 +17,19 @@
     cursor: pointer;
 }
 
+#print-dashboard .button,
 #trobz_board .button:hover {
     background: #fdfdfd;
     color:  rgb(48, 132, 199);
 }
 
-.fullscreen{
+.fullscreen {
 	overflow-y:auto;
 }
 
+.sliding {
+    overflow:hidden;
+}
 
 /* special style for the domain display when we go to a metric openerp native list (domain info at the top of the list) */
 

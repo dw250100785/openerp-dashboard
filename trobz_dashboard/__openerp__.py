@@ -78,6 +78,7 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
         
         'static/src/js/views/toolbar/timebar.js',
         'static/src/js/views/toolbar/toolbar.js',
+        'static/src/js/views/toolbar/print.js',
         
         'static/src/js/views/widgets/display/numeric.js',
         'static/src/js/views/widgets/display/list.js',

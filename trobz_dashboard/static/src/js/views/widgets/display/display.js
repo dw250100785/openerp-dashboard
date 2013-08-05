@@ -28,7 +28,17 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         },
         
         initialize: function(options){
+            this.is_printable = options.printable;
             this.search = options.search;
+        },
+        
+        printable: function(state){
+            this.is_printable = state;
+            this.children.each(function(child){
+                if(child.printable){
+                    child.printable(state);    
+                }
+            });
         },
         
         getItemView: function(model){
@@ -42,7 +52,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         itemViewOptions: function(model, index){
             return {
                 search: this.search,
-                collectionView: this
+                collectionView: this,
+                printable: this.is_printable
             };
         }
     });

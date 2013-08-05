@@ -1,4 +1,4 @@
-#trobz_board #toolbar {
+#toolbar {
     margin: 0;
     border-bottom: 2px solid #ddd;
     background: #efefef;
@@ -6,7 +6,7 @@
     
 }
 
-#trobz_board #toolbar .section {
+#toolbar .section {
     float: left;
     border-right: 1px solid #ddd;
     margin: 0;
@@ -14,31 +14,31 @@
     height: 28px;
 }
 
-#trobz_board #toolbar .section.right {
+#toolbar .section.right {
     float: right;
     border-left: 1px solid #ddd;
     border-right: none;
 }
 
-#trobz_board #toolbar .current_period span {
+#toolbar .current_period span {
     font-size: 18px;
     vertical-align: middle;
     display: inline-block;
     padding: 3px 0 0 0;
 }
 
-#trobz_board #toolbar .button.rolling {
+#toolbar .button.rolling {
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
 }
 
-#trobz_board #toolbar .button.calendar {
+#toolbar .button.calendar {
     margin: 0 0 0 -5px;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
 
-#trobz_board #toolbar .button.selected {
+#toolbar .button.selected {
     color: rgb(48, 132, 199);
     border-color: rgba(82, 168, 236, 0.8);
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 4px rgba(82, 168, 236, 0.6);
@@ -49,20 +49,20 @@
 }
 
 
-#trobz_board #toolbar .button i {
+#toolbar .button i {
     font-size: 14px;
 }
 
 
-#trobz_board #toolbar .period_type .button i {
+#toolbar .period_type .button i {
     margin: 0 4px 0 2px;
 }    
 
-#trobz_board #toolbar .period_name select {
+#toolbar .period_name select {
     cursor: pointer;
 }
 
-#trobz_board #toolbar .period_dates {
+#toolbar .period_dates {
     border: 1px solid #ddd;
     background: #fefefe;
     padding: 3px 4px;
@@ -70,14 +70,17 @@
     cursor: pointer;
 }
 
-#trobz_board #toolbar .daterange {
+#toolbar .daterange {
     text-align: center;
     color: #666;
 }
 
 
-#trobz_board #toolbar #searchbar {
+#toolbar #searchbar {
     clear: both;
     border-top: 1px solid #cacaca;
 }
 
+#toolbar .oe_pager_group {
+    margin: 0 5px;
+}

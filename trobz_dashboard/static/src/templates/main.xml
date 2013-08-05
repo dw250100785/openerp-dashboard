@@ -4,6 +4,10 @@
     <div id="trobz_board"></div>
 </t>
 
+<t t-name="TrobzDashboard.print">
+    <div id="print-dashboard" class="print"></div>
+</t>
+
 <t t-name="TrobzDashboard.metric_info">
     <t t-if="has_period">
         <div class="period_info metric_info">

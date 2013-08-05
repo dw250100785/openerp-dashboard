@@ -3,7 +3,22 @@
     position: relative;
 }
 
+.sliding #widgets {
+    overflow: hidden;
+    height: 100%;
+}
+
+#trobz_board,
+#trobz_board >  div {
+    height: 100%;
+}
+
 #trobz_board .hidden {
     display: none;    
 }
 
+
+
+#trobz_board #widgets h1 {
+    display: none;
+}

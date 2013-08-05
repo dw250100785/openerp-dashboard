@@ -6,7 +6,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
     var Layout = Marionette.Layout,
         _super = Layout.prototype;
 
-    var ToolBar = Layout.extend({
+    var Toolbar = Layout.extend({
         
         regions: {
             timebar: '#timebar',
@@ -16,11 +16,16 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         template: 'TrobzDashboard.toolbar',
         
         events: {
+            'click .board_action .print_action': 'print',
             'click .board_action .fullscreen_action': 'switchFullscreen',
             'click .board_action .sliding_action': 'slidingMode',
             'click .board_action .pause_sliding': 'pauseSliding',
             'click .board_action .list_action': 'listMode',
             'click .board_action .search_action': 'toggleSearch',
+            
+            'click .prev-widget': 'prevWidget',
+            'click .next-widget': 'nextWidget',
+            
             'change .sliding_timeout': 'changeSliding'
         },
         
@@ -47,13 +52,32 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             this.searchbar.show(this.views.searchbar);
         },
         
+        print: function(e){
+            if(e) e.preventDefault();
+            
+            dashboard.trigger('print');        
+        },
+        
+        
+        prevWidget: function(e){
+            if(e) e.preventDefault();
+            dashboard.trigger('widgets:go', 'previous');
+        },
+        
+        nextWidget: function(e){
+            if(e) e.preventDefault();
+            dashboard.trigger('widgets:go', 'next');
+        },
+        
         toggleSearch: function(e){
-            e.preventDefault();
+            if(e) e.preventDefault();
+            
             this.views.searchbar.toggle();
         },
         
         switchFullscreen: function(e){
-            e.preventDefault();
+            if(e) e.preventDefault();
+            
             var $icon = $(e.currentTarget).find('i');
         
             this.fullscreen = !this.fullscreen;
@@ -67,7 +91,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         },
         
         slidingMode: function(e){
-            e.preventDefault();
+            if(e) e.preventDefault();
+            
             var html = Marionette.Renderer.render('TrobzDashboard.toolbar.sliding');
             this.ui.mode.empty().html(html);
         
@@ -77,23 +102,40 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         },
         
         pauseSliding: function(e){
-            e.preventDefault();
+            if(e) e.preventDefault();
+            
             var $button = $(e.currentTarget),
-                $time = $button.prevAll('select'),
                 $icon = $button.find('i');
             
             if($icon.is('.icon-pause')){
-                $icon.attr('class', 'icon-play');
-                dashboard.trigger('animate:stop');        
+                this.stopSliding();
             }
             else {
-                $icon.attr('class', 'icon-pause');
-                dashboard.trigger('animate:start', $time.find('option:selected').val());        
+                this.startSliding();
             }
         },
         
+        stopSliding: function(){
+            var $button = this.$el.find('.pause_sliding'),
+                $icon = $button.find('i');
+            
+            $icon.attr('class', 'icon-play');
+            dashboard.trigger('animate:stop');        
+        
+        },
+        
+        startSliding: function(){
+            var $button = this.$el.find('.pause_sliding'),
+                $time = $button.prevAll('select'),
+                $icon = $button.find('i');
+            
+            $icon.attr('class', 'icon-pause');
+            dashboard.trigger('animate:start', $time.find('option:selected').val());        
+        },
+        
         listMode: function(e){
-            e.preventDefault();
+            if(e) e.preventDefault();
+            
             dashboard.trigger('mode', 'list');
             dashboard.trigger('animate:stop');        
             
@@ -103,6 +145,6 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
     });
 
-    dashboard.views('ToolBar', ToolBar);
+    dashboard.views('Toolbar', Toolbar);
 
 });

@@ -2,6 +2,7 @@
 
 
     <t t-name="TrobzDashboard.widgets">
+        <h1><t t-esc="name" /></h1>
         <div class="widgets"></div>
     </t>
     
@@ -22,6 +23,12 @@
                 <span class="button toggle_search">
                     <i class="icon-search"></i>
                 </span>
+                
+                <t t-if="removable">
+                <span class="button remove_widget">
+                    <i class="icon-remove"></i>
+                </span>
+                </t>
             </div>
         
             <div class="body loading">
@@ -35,6 +42,7 @@
         
         <t t-if="has_help">
         <div class="widget_help hidden">
+            <h3 class="help_title">Notes:</h3>
             <ul>
         	<t t-foreach="metrics" t-as="metric">
         	   <t t-if="metric.get('help')">
@@ -56,6 +64,9 @@
         <t t-foreach="metrics" t-as="metric">
             <a t-att-metric-id="metric.get('id')" class="metric"><t t-esc="metric.get('name')" /></a>
         </t>
+        </span>
+        <span class="updated_at">
+            <t t-esc="updated_at" />
         </span>
     </t>
 

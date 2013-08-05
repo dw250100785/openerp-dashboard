@@ -16,7 +16,8 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
         
         //views
         WidgetsView = dashboard.views('Widgets'),
-        ToolBar = dashboard.views('ToolBar'),
+        Toolbar = dashboard.views('Toolbar'),
+        PrintToolbar = dashboard.views('PrintToolbar'),
         
         //layout
         PanelLayout = dashboard.views('PanelLayout');
@@ -32,6 +33,7 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
        
    
         init: function(parent, dataset, view_id, options) {
+            this.previousMode = 'list';
             this.view_loaded = $.Deferred();
             this.board_id = dataset.ids[0] || null;
             this._super(parent, dataset, view_id, options);
@@ -58,11 +60,12 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                 var views = self.views = {
                     panel: new PanelLayout(),
                     
-                    toolbar: new ToolBar({
+                    toolbar: new Toolbar({
                         model: board
                     }),
                          
                     widgets: new WidgetsView({
+                        model: board,
                         collection: board.widgets,
                         period: board.period,
                         global_search: board.global.search,
@@ -96,15 +99,35 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
             dashboard.on('open:list',this.openList,this);
             dashboard.on('fullscreen', this.fullscreen, this);
             dashboard.on('mode', this.switchMode, this);
-            
+            dashboard.on('print', this.print, this);
+            dashboard.on('print:close', this.closePrint, this);
             
             dashboard.on('animate:start', this.startAnim, this);
             dashboard.on('animate:stop', this.stopAnim, this);
+            
+            
+            dashboard.on('widgets:go', this.goToWidget, this);
             
             this.$el.parent().bind('webkitfullscreenchange mozfullscreenchange fullscreenchange', $.proxy(this.refreshMode, this));
             
             //bind the state changes with the URL
             this.state.on('change', this.stateChanged, this);
+            
+            //global search changes
+            this.board.global.search.on('set:domain', this.setGlobalDomain, this);
+            this.board.global.search.on('remove:domain', this.removeGlobalDomain, this);
+        },
+        
+        setGlobalDomain: function(field, operator, value){
+            board.widgets.each(function(widget){
+                widget.searchModel.addDomain(field, operator, value, {global: true});
+            });
+        },
+        
+        removeGlobalDomain: function(field, operator, value){
+            board.widgets.each(function(widget){
+                widget.searchModel.removeDomain(field, operator, value, {global: true});
+            });
         },
         
         unbind: function(){
@@ -118,6 +141,9 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
         },
         
         switchMode: function(type){
+            var $el = this.$el.parent();
+            $el.removeClass('list').removeClass('sliding');
+            $el.addClass(type);
             this.views.widgets.mode(type);
         },
         
@@ -127,8 +153,22 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
             if(widgets.type == 'sliding'){
                 console.log('fullscreen changed');
                 //force refresh 
-                widgets.mode('sliding');                
                 this.startAnim(this.anim_duration || 10000);
+            }
+            widgets.mode(this.previousMode);                
+                
+        },
+        
+        goToWidget: function(direction){
+            var widgets = this.views.widgets;
+            if(widgets.type == 'sliding'){
+                this.views.toolbar.stopSliding();
+                if(direction == 'next'){
+                    widgets.next();
+                }
+                else {
+                    widgets.previous();
+                }
             }
         },
         
@@ -141,8 +181,62 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
             this.views.widgets.stopAnimate();
         },
         
+        print: function(){
+            var $openerp = $('.openerp'),
+                html = Renderer.render('TrobzDashboard.print');
+            
+            this.views.toolbar.stopSliding();
+            this.views.widgets.resetSliding();
+            
+                
+            var printToolbar = new PrintToolbar();
+            var panel = new PanelLayout();
+            
+            
+            $openerp.find('table.oe_webclient').hide();
+            $openerp.append(html);
+            
+            var print_region = this.printRegion = new Marionette.Region({
+                el: '#print-dashboard'
+            });
+            
+            
+            print_region.show(panel);    
+            panel.toolbar.show(printToolbar);
+            panel.widgets.show(this.views.widgets);
+            
+            this.previousMode = this.views.widgets.type;
+            this.views.widgets.mode('list');
+            this.views.widgets.removable(true);
+            this.views.widgets.printable(true);
+            
+            /*
+            window.print();
+            */
+        },
+        
+        closePrint: function(){
+            var $openerp = $('.openerp');
+        
+            if(this.printRegion){
+                this.printRegion.close();
+                this.printRegion.$el.remove();
+                $openerp.find('table.oe_webclient').show();    
+                
+                this.views.panel.widgets.show(this.views.widgets);
+            
+                this.views.widgets.mode(this.previousMode);
+                this.views.widgets.removable(false);
+                this.views.widgets.printable(false);
+            }
+        },
+        
         fullscreen: function(enter){
             this.stopAnim();
+            this.views.widgets.resetSliding();
+            this.previousMode = this.views.widgets.type;
+            
+            
             if(enter){
                 this.enterFullscreen();
             }
@@ -152,7 +246,6 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
         },
         
         enterFullscreen: function(){
-            this.stopAnim();
             var element = this.$el.parent().get(0);
             if (element.requestFullScreen) {
                 element.requestFullScreen();

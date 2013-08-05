@@ -13,13 +13,19 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             'click .metric': 'openMetric'
         },
         
+        modelEvents: {
+            'change:updated_at': 'render'
+        },
+        
         initialize: function(options){
             this.search = options.search;
         },
         
         render: function(){
+            var updated_at = this.model.get('updated_at');
             var html = Renderer.render(this.template, {
-                metrics: this.collection.toArray()
+                metrics: this.collection.toArray(),
+                updated_at: updated_at ? updated_at.format('LT') : dashboard.web()._t('not updated yet')
             });
             
             this.$el.empty();

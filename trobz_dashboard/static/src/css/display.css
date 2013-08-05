@@ -3,9 +3,9 @@
  */
 
 #trobz_board .display {
-    width: 100%;    
     overflow: auto;
 }
+
 
 /*
  * display.numeric
@@ -65,7 +65,7 @@
     color: rgb(76, 76, 76); 
     cursor: pointer;
 }
-#trobz_board .widget .pager li a:hover {
+#trobz_board .pager li a:hover {
     background: #fdfdfd;
     color:  rgb(48, 132, 199);
 }

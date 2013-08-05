@@ -3,9 +3,9 @@
     <!-- search -->
     
     <t t-name="TrobzDashboard.search">
-        <div class="domain" />
-        <div class="order" />
-        <div class="group" />
+        <div class="domain search-subject" />
+        <div class="order search-subject" />
+        <div class="group search-subject" />
     </t>
     
     <!-- search.global -->
@@ -22,6 +22,7 @@
     
     <t t-name="TrobzDashboard.search.domain.view">
         <span class="domain_title search_action"  title="Filter">
+            <span class="search-type">Filter:</span>
             <i class="icon-filter"></i>
         </span>
     
@@ -85,6 +86,7 @@
     <t t-name="TrobzDashboard.search.domain.form">
         
         <span class="domain_title search_action" title="Filter">
+            <span class="search-type">Filter:</span>
             <i class="icon-filter"></i>
         </span>
     
@@ -190,6 +192,7 @@
     
     <t t-name="TrobzDashboard.widget.search.group">
         <span class="search_action domain_title" title="Group">
+            <span class="search-type">Group:</span>
             <i class="icon-reorder"></i>
         </span>
                 
@@ -230,6 +233,7 @@
 
     <t t-name="TrobzDashboard.search.group.form">
         <span class="search_action domain_title" title="Group">
+            <span class="search-type">Group:</span>
             <i class="icon-reorder"></i>
         </span>
         
@@ -244,6 +248,7 @@
     
     <t t-name="TrobzDashboard.widget.search.order">
         <span class="search_action domain_title" title="Order">
+            <span class="search-type">Order:</span>
             <i class="icon-sort"></i>
         </span>
         
@@ -283,6 +288,7 @@
 
     <t t-name="TrobzDashboard.search.order.form">
         <span class="search_action domain_title" title="Order">
+            <span class="search-type">Order:</span>
             <i class="icon-sort"></i>
         </span>
         

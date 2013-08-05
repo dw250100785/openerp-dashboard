@@ -1,36 +1,55 @@
 openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
  
     var Widget = dashboard.views('Widget'),
-        View = Marionette.CollectionView,
+        View = Marionette.CompositeView,
         _super = View.prototype;
 
     var WidgetsView = View.extend({
         
         type: 'list',
-        
         className: 'list',
         
-        itemView: Widget,
+        template: 'TrobzDashboard.widgets',
         
+        itemViewContainer: '.widgets',
+        itemView: Widget,
         itemViewOptions: function(model, index) {
             return {
                 period: this.period,
                 debug: this.debug,
-                global_search: this.global_search
+                removable: this.is_removable,
+                printable: this.is_printable
             };
         },
         
         initialize: function(options){
+            this.is_removable = !!options.removable, 
+            this.is_printable = !!options.printable, 
             this.period = options.period;
             this.debug = options.debug;
-            this.global_search = options.global_search;
+            this.previousAnim = $.Deferred();
+            this.previousAnim.resolve();
+        },
+        
+        removable: function(state){
+            this.is_removable = state;
+            this.children.each(function(child){
+              child.removable(state);
+            });
+        },
+        
+        printable: function(state){
+            this.is_printable = state;
+            this.children.each(function(child){
+              child.printable(state);
+            });
         },
         
         animate: function(duration){
             duration = duration || 10000;
             this.stopAnimate();
             if(this.type == 'sliding'){
-                this.timer = setInterval($.proxy(this.slide, this), duration);        
+                    this.timer = setInterval($.proxy(this.slide, this), duration);        
             }
         },
         
@@ -38,31 +57,78 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             clearInterval(this.timer || 0);
         },
         
-        slide: function(){
-            var x = parseInt(this.$el.css('x')),
-                last = - (this.size.width * (this.collection.length - 2)),
-                next = x + this.size.width > last ? x - this.size.width : 0;
+        
+        resetSliding: function(){
+            this.$el.find('.graph').empty();
             
-            this.$el.transition({
-                x: next,
+            this.$el.css({
+                x: 0,
                 y: 0
-            }, 2000)
+            });
+        },
+        
+        next: function(){
+            if(this.type == 'sliding'){
+                this.slide('next');
+                
+            }
+        },
+        
+        previous: function(){
+            if(this.type == 'sliding'){
+                this.slide('previous');
+            }
+        },
+        
+        slide: function(direction){
+            
+            direction = direction || 'next';
+            
+            var $el = this.$el,
+                size = this.size,
+                children = this.children,
+                self = this,
+                x = parseInt($el.css('x')),
+                last = - (this.size.width * (this.collection.length - 2));
+                
+                
+            if(direction == 'next'){
+                pos = x + this.size.width > last ? x - this.size.width : 0;
+            }
+            else {
+                pos = x + this.size.width < 0 ? x + this.size.width : last; 
+            }
+                
+            this.previousAnim.done(function(){
+                
+                self.previousAnim = new $.Deferred();
+                            
+                $el.transition({ x: pos, y: 0 }, 2000, function(){
+                    //refesh the widget
+                    var index = Math.round(Math.abs(parseInt($el.css('x'))) / size.width),
+                        child = children.findByIndex(index);
+                    
+                    if(child){
+                        child.model.update().done(function(){
+                            self.previousAnim.resolve();
+                            child.$el.hide().show(0);
+                        });
+                    }
+                });    
+            });
+            
         },
         
         mode: function(type){
             this.type = type;
             
             this.$el.attr({
-                'class': type, 
                 style: ''
             });
-            
-            this.render();
             
             if(type == 'sliding'){
                 var size = this.size = {
                     width: this.$el.width(),
-                    height: this.$el.height()
                 };
                 
                 this.children.each(function(widget, index){
@@ -71,13 +137,11 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                         width: size.width,
                         left: size.width * index
                     });
+                    widget.$el.find('.display').css({
+                    });
                 });
                 
-                this.$el.css({
-                    height: $(window).outerHeight() - this.$el.offset().top,
-                    x: 0,
-                    y: 0
-                });
+                
             }
             else {
                 this.children.each(function(widget){
@@ -89,6 +153,22 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 this.$el.attr({
                     style: ''   
                 });
+            }
+            
+            
+            _.defer($.proxy(this.refresh, this));
+        },
+        
+        
+        refresh: function(){
+            this.children.each(function(child){
+                child.views.display.render();
+            });
+        },
+        
+        serializeData: function(){                      
+            return {
+              "name": this.model.get('name'),
             }
         }
         

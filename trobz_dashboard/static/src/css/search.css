@@ -52,6 +52,10 @@
     color:  #666;
 }
 
+#trobz_board .search span.search_action .search-type {
+    display: none;
+}
+
 #trobz_board .search span.search_action:hover {
     background: #fdfdfd;
     color:  rgb(48, 132, 199);
