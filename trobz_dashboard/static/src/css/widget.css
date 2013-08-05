@@ -28,6 +28,9 @@
 #trobz_board .widget.size10 { width: 100%; }
 
 
+#trobz_board .widget .remove_widget {
+    display: none;
+}
 
 #trobz_board .widget .pager {
     position: absolute;

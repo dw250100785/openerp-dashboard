@@ -24,11 +24,9 @@
                     <i class="icon-search"></i>
                 </span>
                 
-                <t t-if="removable">
                 <span class="button remove_widget">
                     <i class="icon-remove"></i>
                 </span>
-                </t>
             </div>
         
             <div class="body loading">
