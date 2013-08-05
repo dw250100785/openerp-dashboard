@@ -23,6 +23,9 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
         'menu/dashboard_menu.xml',
     
         'data/default_field_types.xml',
+        # Security
+        'security/res_groups_data.xml',
+        'security/ir.model.access.csv',
     ],
     
     'demo': [],
