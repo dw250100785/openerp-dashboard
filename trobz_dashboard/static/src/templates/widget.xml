@@ -60,7 +60,15 @@
     <t t-name="TrobzDashboard.widget.status">
         <span class="metrics">
         <t t-foreach="metrics" t-as="metric">
-            <a t-att-metric-id="metric.get('id')" class="metric"><t t-esc="metric.get('name')" /></a>
+            <t t-if="metric.get('model_details').id">
+            <a t-att-metric-id="metric.get('id')" class="metric">
+                <t t-esc="metric.get('name')" />
+            </a>
+            </t>
+            <t t-if="!metric.get('model_details').id">
+                <t t-esc="metric.get('name')" />
+            </t>
+            
         </t>
         </span>
         <span class="updated_at">

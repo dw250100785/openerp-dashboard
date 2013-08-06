@@ -40,7 +40,6 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                         item[ref_name] = result[ref_name];
                     }
                 });
-                
                 sorted.push(item);
             });    
                 

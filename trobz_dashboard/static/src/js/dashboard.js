@@ -287,15 +287,15 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                     return criterion.field.get('reference'); 
                 }),
                 period = this.board.period,
-                period_field = metric.fields.types('period').at(0),
-                period_path = period_field.get('domain_field_path'),
-                orm_domain = search.domain('domain_field_path');
-        	
-        	var show = this.$el.show;
-        	this.$el.show = function(){
-        		$('.search.outside').remove();
-        		show.apply(this, arguments);
-        	};
+                period_field = metric.fields.types('period').at(0);
+                
+            if(period_field){
+                var period_path = period_field.get('domain_field_path'),
+                    orm_domain = search.domain('domain_field_path');
+        	}
+        	else {
+        	    console.warn('no period field available for this metric');
+            }
         	
         	
         	// add period to the domain
@@ -305,6 +305,12 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
             else {
                 console.warn('period', period_field, 'does not have a', 'domain_field_path', 'attribute, the period will not be used in metric list view...');
             }
+            
+            var show = this.$el.show;
+            this.$el.show = function(){
+                $('.search.outside').remove();
+                show.apply(this, arguments);
+            };
             
         	
         	// We use this new ergonomy with a top bar instead of passing the domain in the context 
@@ -342,6 +348,8 @@ openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, B
                 views: [[false /*view id, false if none*/,'list'/*view type*/], [false, 'form']],
                 context: this.context.eval(),
             });
+            
+            
         },
         on_show: function(){
         	$('.search.outside').remove();

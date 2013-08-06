@@ -22,7 +22,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         serializeData: function(){
             
             var process_value = function(value, options){
-                return numeral(parseInt(value)).format(options.format);
+                return numeral(parseFloat(value)).format(options.format);
             };
             
             var process_thresholders = function(value, options){
