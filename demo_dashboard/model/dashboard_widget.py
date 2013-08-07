@@ -2,6 +2,7 @@
 
 from osv import osv
 from os import path
+import psutil
 
 class dashboard_widget(osv.osv):
 
@@ -53,6 +54,11 @@ class dashboard_widget(osv.osv):
         response = {}
         columns = [{'name': 'type'}, {'name': 'space'}]
         
+        results = [
+                { 'type': 'used (fake, please, install psutil)', 'space': 100000000},
+                { 'type': 'free (fake, please, install psutil)', 'space': 1000000000},
+            ]
+        
         try:
             import psutil
             partitions = psutil.disk_partitions()
@@ -64,11 +70,8 @@ class dashboard_widget(osv.osv):
                 ]
         
         except:
-            # fake result, because it's a demo... but it's cool to have the real value, please install psutil ;)
-            results = [
-                { 'type': 'used (fake, please, install psutil)', 'space': 100000000},
-                { 'type': 'free (fake, please, install psutil)', 'space': 1000000000},
-            ]
+            # We use the default result. fake result, because it's a demo... but it's cool to have the real value, please install psutil ;)
+            pass
             
         for widget in self.browse(cr, uid, ids, context=context):
             response[widget.id] = {}
