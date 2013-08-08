@@ -11,8 +11,9 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         model_name: 'dashboard.metric',
         
         model: Metric,
-        
+
         initialize: function(data, options){
+
             this.on('reset', this.setup);
             this.fields = new Fields();
         },
@@ -22,6 +23,11 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             this.each(function(metric){
                 fields.add(metric.fields.models);
             });
+        },
+
+        comparator: function (item) {
+            console.log(item.get('name'), item.get('position'))
+            return item.get('position');
         }
     });
 

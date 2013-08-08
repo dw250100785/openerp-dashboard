@@ -52,7 +52,8 @@ class dashboard_metric(osv.osv):
                 
         'widget_id': fields.many2one('dashboard.widget','Widget', ondelete='cascade', required=True),
         'field_ids': fields.many2many('dashboard.field', 'dashboard_metric_to_field_rel', id1='metric_id',id2='field_id', string='Fields', ondelete='cascade', required=True),
-        
+        'position': fields.integer('Sequence', help='Position in the widget, higher numbers are placed at the top.'),
+
         'options': fields.serialized('Options', help="""
 Options are defined according to the metric type:
 

@@ -15,6 +15,7 @@
                                 <field name="widget_id" />
                                 <field name="model" />
                                 <field name="query_name" />
+                                <field name="position" />
                                 <field name="options" widget="serialized" />
                                 <field name="values" widget="serialized" />
                             </group>
