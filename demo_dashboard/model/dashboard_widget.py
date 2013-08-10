@@ -60,7 +60,6 @@ class dashboard_widget(osv.osv):
             ]
         
         try:
-            import psutil
             partitions = psutil.disk_partitions()
             if len(partitions) > 0:
                 usage = psutil.disk_usage(psutil.disk_partitions()[0][1])
