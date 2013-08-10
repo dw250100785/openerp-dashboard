@@ -7,7 +7,7 @@ class sale_order_line(osv.osv, metric_support):
     
     graph_total_sales = {
        'query': """
-            SELECT {group_sql} AS "{group_ref}", sum(price_unit * product_uom_qty) as total_sales_amount
+            SELECT {group_sql} AS "{group_ref}", SUM(price_unit * product_uom_qty) AS total_sales_amount
             FROM sale_order_line sol
             JOIN sale_order sor ON sor.id = sol.order_id
             JOIN res_company rco ON rco.id=sor.company_id
@@ -19,7 +19,7 @@ class sale_order_line(osv.osv, metric_support):
             JOIN product_product ppr ON ppr.id = sol.product_id
             JOIN product_template pte ON pte.id = ppr.product_tmpl_id
             JOIN REQUIRED product_category pca ON pca.id = pte.categ_id
-            where TRUE {generated}
+            WHERE TRUE {generated}
             """,
        'security': {
             'base.res_company_rule': 'rco.id in (%user.company_id.child%)',
