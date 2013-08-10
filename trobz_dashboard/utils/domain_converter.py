@@ -3,7 +3,7 @@
 
 import logging
 
-import tools as tools
+from openerp.tools import misc
 
 #.apidoc title: Domain Expressions
 
@@ -458,6 +458,6 @@ class expression(object):
         query = stack[0]
         query = ' AND %s' % (query,) 
         
-        return query, tools.flatten(params)
+        return query, misc.flatten(params)
 
 # vim:expandtab:smartindent:tabstop=4:softtabstop=4:shiftwidth=4:
