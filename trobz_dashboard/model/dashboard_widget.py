@@ -1,9 +1,8 @@
 # -*- encoding: utf-8 -*-
 ##############################################################################
 
-from osv import osv, fields
-from trobz_dashboard.utils.model import metric_support 
-
+from openerp.osv import osv, fields
+from openerp.addons.trobz_dashboard.utils.model import metric_support #@UnresolvedImport 
 
 class dashboard_widget(osv.osv, metric_support):
 
