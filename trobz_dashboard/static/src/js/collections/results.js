@@ -26,20 +26,21 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             _(results).each(function(result, index){
                 var item = {};
         
-                _(desc).each(function(column){
-                    var ref_name = column.name;
-                
+                output_fields.each(function(field){
+                    var ref_name = field.get('reference');            
+                    
                     if(ref_name in result){
-                        if(index == 0){
-                            field = output_fields.oneByRef(ref_name);
-                            if(!field){
-                                throw new Error('output field "' + ref_name + '" can not be found in metric.fields, please define a field with the correct reference name and "output" type');    
-                            }
-                            columns.push(field);
+                        var desc_index = _(desc).findIndexWhere({name: ref_name});    
+                        
+                        if(!desc_index){
+                            throw new Error('output field "' + ref_name + '" can not be found in metric.fields, please define a field with the correct reference name and "output" type');    
                         }
+                        
+                        columns.push(field);
                         item[ref_name] = result[ref_name];
                     }
                 });
+        
                 sorted.push(item);
             });    
                 
