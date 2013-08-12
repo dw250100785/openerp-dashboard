@@ -219,8 +219,8 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
                 y = _.isNaN(y) ? null : y;
                 
-                if(('nb_limit' in serie_options && index > serie_options.nb_limit) 
-                || ('val_limit' in serie_options && serie_options.val_limit > y)){
+                if(('nb_limit' in serie_options['pie'] && index > serie_options['pie'].nb_limit) 
+                || ('val_limit' in serie_options['pie'] && serie_options['pie'].val_limit > y)){
                     remains += y;
                 }
                 else {
@@ -289,13 +289,21 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             var type = 'type' in options ? options.type : 'bar',
                 def = getDefaults(),
                 flotr_type =def[type].fid,
+                serie_options = {},
                 // dirty trick to clone sub object but it's work...
                 base_options = JSON.parse(JSON.stringify(options));
             
             this.options = _.deepExtend(def[type], base_options.general, this.options);
             
+            
             delete base_options.general;
-            return _.deepExtend(this.options[flotr_type], base_options);
+            
+            serie_options[flotr_type] = _.deepExtend(this.options[flotr_type], base_options);
+            
+            if(flotr_type in this.options)
+                delete this.options[flotr_type];
+            
+            return serie_options;
         },
         
         getTickIndex: function(name, x_axis){
