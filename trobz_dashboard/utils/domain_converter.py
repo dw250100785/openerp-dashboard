@@ -346,7 +346,7 @@ class expression(object):
     def __leaf_to_sql(self, eleaf):
         leaf = eleaf.leaf
         left, operator, right = leaf
-        format = "%s" 
+        query_format = "%s" 
         
         # final sanity checks - should never fail
         assert operator in (TERM_OPERATORS + ('inselect',)), \
@@ -417,12 +417,12 @@ class expression(object):
                 params = '%%%s%%' % str_utf8
                 add_null = not str_utf8
                 left = 'unaccent(%s)' % left
-                format = 'unaccent(%s)' % format
+                query_format = 'unaccent(%s)' % query_format
                 
             else:
                 params = right
             
-            query = '(%s %s %s)' % (left, sql_operator, format)
+            query = '(%s %s %s)' % (left, sql_operator, query_format)
             
             if add_null:
                 query = '(%s OR %s IS NULL)' % (query, left)

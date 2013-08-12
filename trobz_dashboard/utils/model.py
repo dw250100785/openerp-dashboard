@@ -90,8 +90,8 @@ class metrics():
             
             # for other graph, the full query has to be executed, not very nice for the perf...
             elif is_graph_metrics: 
-                res, debug = self.exec_metrics(cr, uid, ids, metric_ids, period, domain, group_by, order_by, debug=False, security_test=False, context=context)
-                for i,r in res.items():
+                res, debug = self.exec_metrics(cr, uid, ids, metric_ids, period, domain, group_by, order_by, debug=False, security_test=False, context=context) #@UnusedVariable
+                for i,r in res.items(): #@UnusedVariable
                     count = len(r['results'])
                 
             # for list, execute with select count(id) on the first metric (list widgets should never have more than 1 metric)
@@ -100,7 +100,7 @@ class metrics():
                 stack = stacks[metric.id]
                 query = stack['query'] 
                 if uid != SUPERUSER_ID:
-                    query, warning, security_info = self.add_security_rule(cr, uid, stack, metric)
+                    query, warning, security_info = self.add_security_rule(cr, uid, stack, metric) #@UnusedVariable
                     query = self.clean_query(query)
                 
                 
@@ -803,12 +803,12 @@ class metrics():
         # user children companies
         company_model = self.pool.get('res.company')
         ids = company_model.search(cr, uid, [('id', 'child_of', user.company_id.id)]) 
-        params['user.company_id.child'] = ', '.join(str(id) for id in ids)
+        params['user.company_id.child'] = ', '.join(str(company_id) for company_id in ids)
         
         # user groups
         group_model = self.pool.get('res.groups')
         ids = group_model.search(cr, uid, [('users', '=', user.id)])
-        params['user.groups_id'] = ', '.join(str(id) for id in ids)
+        params['user.groups_id'] = ', '.join(str(user_id) for user_id in ids)
         
         # user partners  
         params['user.partner_id.id'] = str(user.partner_id.id) 

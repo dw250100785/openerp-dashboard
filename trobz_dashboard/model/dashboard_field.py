@@ -3,7 +3,6 @@
 
 from openerp.osv import osv, fields
 import re
-import logging
 
 class dashboard_field(osv.osv):
 
