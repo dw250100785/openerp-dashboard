@@ -1,1 +1,0 @@
-import post_object_security_hotel
