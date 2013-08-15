@@ -30,6 +30,16 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         initialize: function(options){
             this.is_printable = options.printable;
             this.search = options.search;
+            
+            if(options.type == 'graph'){
+                // refresh the display at window resize (card #47)
+                var children = this.children, self = this;
+                $(window).resize(_.debounce(function(){
+                    children.each(function(child){
+                        child.render();
+                    });
+                }, 200));
+            }
         },
         
         printable: function(state){
