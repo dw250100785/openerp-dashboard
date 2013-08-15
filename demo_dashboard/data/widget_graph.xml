@@ -80,7 +80,7 @@
             <field name="model" ref="hr.model_hr_employee" />
             <field name="widget_id" ref="graph_widget_1" />
        
-            <field name="options" eval="{'type': 'bar', 'format': '0,0.[00]' }" />
+            <field name="options" eval="{'type': 'line', 'format': '0,0.[00]' }" />
             <field name="values" eval="{}"/>
         </record>
     
@@ -112,7 +112,7 @@
             <field name="model" ref="sale.model_sale_order_line" />
             <field name="widget_id" ref="graph_widget_3" />
        
-            <field name="options" eval="{'type':'pie','format':'$ 0,0 a', 'val_limit': 10000000000 }" />
+            <field name="options" eval="{'type':'pie','format':'$ 0,0 a', 'val_limit': 10000000000 ,'nb_limit':10}" />
             <field name="values" eval="{}"/>
         </record>
     
