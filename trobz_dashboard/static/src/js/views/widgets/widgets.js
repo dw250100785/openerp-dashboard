@@ -32,20 +32,14 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             this.previousAnim.resolve();
         },
         
-        render: function(){
-            var dom = _super.render.apply(this, arguments);
-            
-            // inject a float:clear div to stop the flow between each widgets lines (fix card #47)
-            var width = 0, $clear = $('<div class="clear">');
+        onShow: function() {
             this.children.each(function(child){
-                width += child.model.get('width');
-                if(width >= 10){
-                    child.$el.after($clear.clone());
-                    width = 0;
+                // inject a float:clear div to stop the flow and force widgets wrapping (fix card #47)
+                var $clear = $('<div class="clear">');
+                if(child.$el.position().left == 0){
+                    child.$el.before($clear.clone());
                 }
             });
-            
-            return dom;
         },
         
         removable: function(state){
