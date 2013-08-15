@@ -398,6 +398,7 @@ class metrics():
     
     
     def clean_query(self, sql):
+        
         """
         clean up a SQL query from useless joins, keep join dependencies
         """
@@ -407,23 +408,54 @@ class metrics():
             add joins and their join dependencies    
             """
             aliases.append(add_join[3])    
-            dependency_pattern = re.compile('(?ui)ON.*?[ =]+((?![ ]*' + add_join[3] + ').*?)\.')
-            dep = dependency_pattern.findall(add_join[0])
-    
-            if len(dep) > 0:
-                for join in joins:
-                    if join[3] == dep[0]:
-                        aliases = add_joins(join, joins, aliases)    
+            condition_pattern = re.compile(r"""(?uis)
+                    (?:[ ]+)?
+                    (?:[a-z0-9'"_\-\.]+)
+                    (?:[ =]+)
+                    (?:[a-z0-9'"_\-\.]+)
+                    (?:[ ]+)?
+                    (?:and|or)?
+                """, re.X|re.U)
+            conditions = condition_pattern.findall(add_join[4])
+            
+            for condition in conditions:
+                dependency_pattern = re.compile('(?ui)[ =]+((?![ ]*' + add_join[3] + ').*?)\.')
+                dep = dependency_pattern.findall(condition)
+                if len(dep) > 0:
+                    for join in joins:
+                        if join[3] == dep[0]:
+                            aliases = add_joins(join, joins, aliases)    
             return list(set(aliases))
     
     
         detail_pattern = re.compile(r"""(?uis)
         (?P<join>
-            (?:natural[ ]+)?(?:inner[ ]+)?(?:left|right|full)?(?:[ ]+outer)?[ ]*
-            (?:join)[\ ]*(?P<except>required)?[\ ]+
-            (?P<table>[a-z0-9'"_\-\.]+)(?:[\ ]+as)?[\ ]+
-            (?P<alias>[a-z0-9'"_\-\.]+)[\ ]+on[\ ]+
-            (?:[a-z0-9'"_\-\.]+)(?:[\ =]+)(?:[a-z0-9'"_\-\.]+)
+            (?:natural[ ]+)?
+            (?:inner[ ]+)?
+            (?:left|right|full)?
+            (?:[ ]+outer)?
+            [ ]* (?:join) [ ]*
+            (?P<except>
+                required
+            )?[ ]+
+            (?P<table>
+                [a-z0-9'"_\-\.]+
+            )
+            (?:[ ]+as)? [ ]+
+            (?P<alias>
+                [a-z0-9'"_\-\.]+
+            )
+            [ ]+on
+            (?P<condition>
+                (?:
+                    (?:[ ]+)?
+                    (?:[a-z0-9'"_\-\.]+)
+                    (?:[ =]+)
+                    (?:[a-z0-9'"_\-\.]+)
+                    (?:[ ]+)?
+                    (?:and|or)?
+                )+
+            )
             (?:\n)?
         )""", re.X|re.U)            
         joins_pattern = re.compile(r"""(?uis)
@@ -433,13 +465,14 @@ class metrics():
             (?:natural[ ]+)?(?:inner[ ]+)?(?:left|right|full)?(?:[ ]+outer)?[ ]*
             (?:join).*?
          )
-         (?P<end>where.*?)
+         (?P<end>(where|group|order|$).*)
         $
         """, re.X|re.U)
-
+        
+        
         extract_joins = joins_pattern.search(sql)
+        
         if extract_joins:
-            
             parts = extract_joins.groups()
             query_start = parts[0]
             query_end = parts[2]
@@ -447,6 +480,7 @@ class metrics():
         
             joins = detail_pattern.findall(sql)
             required_aliases = []
+        
         
             for join in joins:
                 alias_pattern = re.compile(join[3] + '\.')
