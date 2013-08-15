@@ -12,6 +12,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         template: 'TrobzDashboard.widgets',
         
         itemViewContainer: '.widgets',
+        
         itemView: Widget,
         itemViewOptions: function(model, index) {
             return {
@@ -29,6 +30,22 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             this.debug = options.debug;
             this.previousAnim = $.Deferred();
             this.previousAnim.resolve();
+        },
+        
+        render: function(){
+            var dom = _super.render.apply(this, arguments);
+            
+            // inject a float:clear div to stop the flow between each widgets lines (fix card #47)
+            var width = 0, $clear = $('<div class="clear">');
+            this.children.each(function(child){
+                width += child.model.get('width');
+                if(width >= 10){
+                    child.$el.after($clear.clone());
+                    width = 0;
+                }
+            });
+            
+            return dom;
         },
         
         removable: function(state){

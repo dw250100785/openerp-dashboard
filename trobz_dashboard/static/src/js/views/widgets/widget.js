@@ -109,6 +109,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         resize: function(){
             this.$el.addClass('size' + this.model.get('width'));
+            this.$el.attr('id', 'widget_' + this.model.get('id'));
         },
         
         doSearch: function(){
