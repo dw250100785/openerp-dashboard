@@ -33,6 +33,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             'click .cancel': 'render',
             'change .operator': 'changeOperator',
             'change .field': 'renderFieldForm',
+            'keypress .condition input[type=text]': 'onKeyboard'
         },
         
         initialize: function(options){
@@ -127,7 +128,6 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         addDomain: function(e){
             e.preventDefault();
-            
             var field = this.collection.get(this.$el.find('.field').val()),
                 operator = this.$el.find('.operator').val() || 'e',
                 value = this.$el.find('.value').val() || this.$el.find('select.value').val() || this.$el.find('[name="' + field.get('reference') + '"]').val();
@@ -168,9 +168,13 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
               "has_domain": domain.length > 0,
               "has_condition": this.collection.length > 0
             }
+        },
+
+        onKeyboard : function(e){
+            if (e.keyCode == 13){
+                this.addDomain(e)
+            }
         }
-        
-        
     });
 
     dashboard.views('SearchDomain', SearchDomain);
