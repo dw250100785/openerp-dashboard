@@ -33,15 +33,15 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             'click .cancel': 'render',
             'change .operator': 'changeOperator',
             'change .field': 'renderFieldForm',
-            'keypress .condition input[type=text]': 'onKeyboard'
+            'keypress .condition': 'onKeyboard'
         },
-        
+
         initialize: function(options){
             this.search = options.search;
             this.listenTo(this.search, 'change:domain', this.render);
 
             this.current_widget = null;
-            
+
             var DomainWidgets = dashboard.utils('DomainWidgets');
             this.widgets = {
                 'date': DomainWidgets.DateWidget,
@@ -53,10 +53,10 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 'day': DomainWidgets.DayWidget,
             };
         },
-        
+
         renderForm: function(e){
             e.preventDefault();
-            
+
             if(this.$el.hasClass('edition')){
                 this.render();
             }
@@ -65,28 +65,28 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                     var fields = Renderer.render(this.templates.form, {
                         fields: this.collection.toArray()
                     });
-                    
+
                     this.$el.empty();
-                    this.$el.html(fields);    
-                
+                    this.$el.html(fields);
+
                     this.renderCondition(this.collection.at(0));
                     this.$el.addClass('edition');
-                }    
+                }
             }
         },
-        
+
         render: function(){
             _super.render.apply(this, arguments);
             this.$el.removeClass('edition');
         },
-        
+
         renderFieldForm: function(e){
             e.preventDefault();
-            
+
             var $select = $(e.currentTarget);
             this.renderCondition(this.collection.get($select.val()));
         },
-        
+
         renderCondition: function(field){
             var $condition = this.$el.find('.condition'),
                 description = field.get('field_description'),
@@ -95,16 +95,16 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 description: description,
                 operators: this.search.operators
             });
-            
+
             $condition.empty();
             $condition.html(condition);
-            
-            var $first_option = this.$el.find('select.operator option:first-child'), 
+
+            var $first_option = this.$el.find('select.operator option:first-child'),
                 $target = this.$el.find('span.value');
-                
+
             this.renderWidget(field, $target, $first_option.attr('widget'));
         },
-        
+
         renderWidget: function(field, $target, widget_name){
             var Widget = widget_name in this.widgets ? this.widgets[widget_name] : null;
             if(this.current_widget != widget_name && Widget && $target.length > 0){
@@ -116,22 +116,31 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             }
             this.current_widget = widget_name in this.widgets ? widget_name : null;
         },
-        
+
         changeOperator: function(e){
             var $select = $(e.currentTarget),
                 widget_name = $select.find('option:selected').attr('widget'),
                 field = this.collection.get(this.$el.find('select.field').val()),
                 $target = $select.parent().find('span.value');
-        
+            var $value =  this.$el.find('.value')
+            switch ($(e.target).val()) {
+                case 'is':
+                case 'ins':
+                    $value.hide();
+                    break;
+                default:
+                    $value.show();
+            }
             this.renderWidget(field, $target, widget_name);
         },
-        
+
         addDomain: function(e){
             e.preventDefault();
             var field = this.collection.get(this.$el.find('.field').val()),
                 operator = this.$el.find('.operator').val() || 'e',
-                value = this.$el.find('.value').val() || this.$el.find('select.value').val() || this.$el.find('[name="' + field.get('reference') + '"]').val();
-          
+                value = this.$el.find('.value').val() || this.$el.find('select.value').val()
+                    || this.$el.find('[name="' + field.get('reference') + '"]').val() || "";
+
             this.trigger('search:add', field, operator, value);
             
             this.render();

@@ -37,14 +37,18 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 new Operator('gte', _t('is higher or equal to'), '>=' ),
                 new Operator('lt', _t('is lower than'), '<' ),
                 new Operator('lte', _t('is lower or equal to'), '<=' ),
-                
+
                 // string
                 new Operator('contains', _t('contains'), 'ilike', {
                 }),
-                new Operator('n_contains', _t('doesn\'t contains'), 'ilike', { 
-                    not: true 
+                new Operator('n_contains', _t('doesn\'t contains'), 'ilike', {
+                    not: true
                 }),
-                
+
+                // set operator
+                new Operator('is', _t('is set'), 'is'),
+                new Operator('ins', _t('is not set'), 'ins'),
+
                 // date
                 new Operator('day', _t('of day'), '=', {
                     string: function(val){ return moment().lang()._weekdays[val] },

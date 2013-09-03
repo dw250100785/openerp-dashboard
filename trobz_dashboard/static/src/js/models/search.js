@@ -29,7 +29,6 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
          */
         
         addDomain: function(field, operator, value, options){
-            
             if(this.getCriterion(field, operator, value) == null && (value || _(['true', 'false']).contains(operator))){
                 var domain = this.get('domain').slice(0);    
                 domain.push({
@@ -37,6 +36,17 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                     operator: operator, 
                     value: value,
                     options: options || {} 
+                });
+                this.set('domain', domain);
+                this.trigger('set:domain', field, operator, value);
+            }
+            else if (['is', 'ins'].indexOf(operator)>-1){
+                var domain = this.get('domain').slice(0);
+                domain.push({
+                    field: field,
+                    operator: operator,
+                    value: value,
+                    options: options || {}
                 });
                 this.set('domain', domain);
                 this.trigger('set:domain', field, operator, value);
@@ -106,7 +116,6 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 }, this);
                 
             }, this);
-        
             return object;
         },
         

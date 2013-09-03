@@ -133,7 +133,7 @@
     <t t-name="TrobzDashboard.search.domain.char">
        
         <t t-call="TrobzDashboard.search.domain.operator">
-            <t t-set="conditions" t-value="['contains','n_contains']" />
+            <t t-set="conditions" t-value="['contains','n_contains', 'e','ne', 'is', 'ins']" />
             <t t-set="operators" t-value="operators" />
         </t>
        
