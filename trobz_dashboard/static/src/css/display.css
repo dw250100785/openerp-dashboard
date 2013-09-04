@@ -172,3 +172,7 @@
     font-style: italic;
     margin: 0 0 0 1em;
 }
+
+#trobz_board .daterangepicker.dropdown-menu.opensright {
+	height: 180px;
+}
