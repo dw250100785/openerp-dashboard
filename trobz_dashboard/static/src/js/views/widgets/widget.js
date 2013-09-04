@@ -53,7 +53,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             this.models = {
                 period: options.period 
             };
-            
+
             this.views = {
                 pager: new Pager({
                     model: this.model
@@ -145,9 +145,13 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         
         onRender: function(){
+            if(this.views.search.fields.domain.length == 0){
+                this.$el.find('.toggle_search').hide()
+            }
             this.status.show(this.views.status);
             this.search.show(this.views.search);
             this.display.show(this.views.display);
+
             
             if(this.model.hasPager()){
                 this.pager.show(this.views.pager);
