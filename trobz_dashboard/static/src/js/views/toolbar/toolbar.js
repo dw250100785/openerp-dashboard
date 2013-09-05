@@ -50,6 +50,11 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             
             this.views.searchbar.hide();
             this.searchbar.show(this.views.searchbar);
+            if (this.views.searchbar.fields.domain.length == 0) {
+                this.$el.find('.search_action').closest('.section.board_action.right').hide()
+                this.$el.find('.section.board_action.right').css({float : 'left'})
+            }
+
         },
         
         print: function(e){
