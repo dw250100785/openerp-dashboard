@@ -53,11 +53,6 @@
 
 
 <t t-name="TrobzDashboard.timebar">
-    <div class="section period_type">
-        <span class="button rolling" data-type="rolling"><i class="icon-spinner"></i>Rolling</span>
-        <span class="button calendar" data-type="calendar"><i class="icon-calendar"></i>Calendar</span>
-    </div>
-    
     <div class="section period_name">
         <select>
             <option value="custom">Custom</option>
@@ -67,9 +62,16 @@
             <option value="quarter">Quarter</option>
             <option value="semester">Semester</option>
             <option value="year">Year</option>
+            <option value="year_to_date">Year to date</option>
         </select>
     </div>
-    
+    <div class="section period_type">
+        <span class="button rolling" title="Rolling" data-type="rolling"><i class="icon-play"></i></span>
+        <span class="button last_period" title="Last full period" data-type="last_period"><i class="icon-step-backward"></i></span>
+        <span class="button calendar" title="Period in progress" data-type="calendar"><i class="icon-step-forward"></i></span>
+    </div>
+
+
     <div class="section period_selector">
         <div class="period_dates">
             <span class="daterange"><t t-esc="start + ' - ' + end" /></span>

@@ -47,9 +47,52 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
             var start = moment(current.format('YYYY'));
             var end = moment(start).add(1, 'year');
             return { start: start, end: end };
+        },
+
+        year_to_date: function(current){
+            var start = moment(current).month(0).date(1)
+            var end = current
+            return { start: start, end: end };
         }
     };   
-       
+    var last_period = {
+        day: function(current){
+            return { start: moment(current).subtract('days',1), end: moment(current).subtract('days',1) };
+        },
+
+        week: function(current){
+            var end = moment(current).subtract(((current.day() == 0 ? 6 : current.day() -1 )),'days');
+            var start = moment(end).subtract('weeks', 1);
+            return { start: start, end: end };
+        },
+
+        month: function(current){
+            var end = moment(current.format('YYYY-MM'));
+            var start = moment(end).subtract(1, 'months');
+            return { start: start, end: end };
+        },
+
+        quarter: function(current){
+            var quarter = Math.floor(current.month() / 3);
+            var end = moment(current.format('YYYY') + '-' + ((quarter * 3) + 1));
+            var start = moment(end).subtract(3, 'months');
+            return { start: start, end: end };
+        },
+
+        semester: function(current){
+            var semester = Math.floor(current.month() / 4);
+            var end = moment(current.format('YYYY') + '-' + ((semester * 4) + 1));
+            var start = moment(end).subtract(4, 'months');
+            return { start: start, end: end };
+        },
+
+        year: function(current){
+            var end = moment(current.format('YYYY'));
+            var start = moment(end).subtract(1, 'year');
+            return { start: start, end: end };
+        }
+    };
+
     var current = moment(),
         Period = base.models('Period'),
         _super = Period.prototype;
@@ -101,13 +144,18 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
                 start: null,
                 end: null
             };
-            
             if(type == 'calendar'){
                  period = calendar[name].apply(this, [current]);
             }
-            else if (type == 'rolling'){
+            else if(type == 'last_period' && name != 'year_to_date'){
+                 period = last_period[name].apply(this, [current]);
+            }
+            else if (type == 'rolling' && name != 'year_to_date'){
                 period.start = moment(current).subtract(rolling[name], 'days');                
                 period.end = moment(current);                
+            }
+            else{
+                period = calendar[name].apply(this, [current]);
             }
         
             return period;

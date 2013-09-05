@@ -39,8 +39,15 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         changeName: function(e){
             e.preventDefault();
-            var $name = $(e.currentTarget);
-            this.model.set('name', $name.find('option:selected').val());
+            var name = $(e.currentTarget).find('option:selected').val();
+            this.model.set('name', name);
+            if(name == 'custom' || name == 'year_to_date' ){
+                this.$el.find('.section.period_type').hide()
+                this.model.set('type', 'calendar');
+            }
+            else{
+                this.$el.find('.section.period_type').show()
+            }
         },
         
         openRangePicker: function(e){
@@ -66,7 +73,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                         period.set({
                             start: start,
                             end: end
-                        });    
+                        });
                     }
                 }
             );

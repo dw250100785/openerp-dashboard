@@ -33,7 +33,12 @@
 }
 
 #toolbar .button.calendar {
-    margin: 0 0 0 -5px;
+    /*margin: 0 0 0 -5px;*/
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+#toolbar .button.last_period {
+    /*margin: 0 0 0 -5px;*/
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
 }
