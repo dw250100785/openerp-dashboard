@@ -4,9 +4,26 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
     var RowView = Backbone.Marionette.ItemView.extend({
         tagName : "tr",
         template : "TrobzDashboard.widget.display.list.body",
+        initialize: function(options){
+            this.options = $.extend({
+                format: '0,0',
+                thresholders: {}
+            }, options);
+        },
+
         serializeData : function() {
+            var process_value = function (value, options) {
+                return numeral(parseFloat(value)).format(options.format);
+                },
+                row_data = this.model.toJSON();
+
+            for (var key in row_data) {
+                if(typeof row_data[key] == 'number'){
+                    row_data[key] = process_value(row_data[key], this.options)
+                }
+            }
             return {
-                row : this.model.toJSON()
+                row : row_data
             };
         }
     });
@@ -80,11 +97,10 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
         appendHtml: function(collectionView, itemView, index){
             var $el = this.$('tbody'), item = itemView.model;
-            
             if('field' in this.group_by){
                 var reference = this.group_by.field.get('reference');
                 $el = this.$('tbody.group[group-name="' + (item.get(reference) || 'undefined') + '"]');
-            } 
+            }
             $el.append(itemView.el);
         },
 
@@ -124,10 +140,9 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 var type = order.type == 'ASC' ? 'DESC' : (order.type == 'DESC' ? 'ASC' : '');
                 reorder[order.field.get('reference')] = (type).toLowerCase();
             });
-            
-            
+
             return {
-                'groups': 'groups' in this.group_by ? this.group_by.groups : [], 
+                'groups': 'groups' in this.group_by ? this.group_by.groups : [],
                 'columns': this.model.fields.types('output').toArray(),
                 'reorder': reorder
             };
