@@ -12,19 +12,25 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         },
 
         serializeData : function() {
-            var process_value = function (value, options) {
-                return numeral(parseFloat(value)).format(options.format);
-                },
-                row_data = this.model.toJSON();
+            var row_data = this.model.toJSON(),
+                data = [],
+                process_value = function (value, options) {
+                    return numeral(parseFloat(value)).format(options.format);
+                }
 
             for (var key in row_data) {
-                if(typeof row_data[key] == 'number'){
+                var className = 'oe_list_field_cell oe_list_field_char oe_readonly'
+                if (typeof row_data[key] == 'number') {
                     row_data[key] = process_value(row_data[key], this.options)
+                    className = 'oe_list_field_cell oe_list_field_float oe_number oe_readonly'
                 }
+                data.push({
+                    'name': key,
+                    'value': row_data[key],
+                    'className': className
+                })
             }
-            return {
-                row : row_data
-            };
+            return { 'data': data}
         }
     });
 

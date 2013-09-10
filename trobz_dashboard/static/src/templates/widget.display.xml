@@ -63,8 +63,8 @@
     </t>
     
     <t t-name="TrobzDashboard.widget.display.list.body">
-        <t t-foreach="row" t-as="item">
-        <td class="oe_list_field_cell oe_list_field_char" t-att-data-field="item"><t t-esc="item_value" /></td>
+        <t t-foreach="data" t-as="item">
+            <td t-att-class="className" t-att-data-field="name"><t t-esc="value"/></td>
         </t>
     </t>
     
