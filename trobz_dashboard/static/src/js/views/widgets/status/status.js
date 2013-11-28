@@ -1,4 +1,4 @@
-openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
+openerp.unleashed.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
 
     var Renderer = Marionette.Renderer,
@@ -25,7 +25,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             var updated_at = this.model.get('updated_at');
             var html = Renderer.render(this.template, {
                 metrics: this.collection.toArray(),
-                updated_at: updated_at ? updated_at.format('LT') : dashboard.web()._t('not updated yet')
+                updated_at: updated_at ? updated_at.format('LT') : base._t('not updated yet')
             });
             
             this.$el.empty();

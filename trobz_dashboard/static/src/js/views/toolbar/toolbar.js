@@ -1,4 +1,4 @@
-openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
+openerp.unleashed.module('trobz_dashboard',function(dashboard, _, Backbone, base){
  
     var TimeBar = dashboard.views('TimeBar'),
         SearchView = dashboard.views('Search');

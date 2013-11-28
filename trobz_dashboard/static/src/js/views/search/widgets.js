@@ -1,4 +1,4 @@
-openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, Backbone, base){
+openerp.unleashed.module('trobz_dashboard').ready(function(instance, dashboard, _, Backbone, base){
 
     var dateWidgets = {
          on_picker_select: function(text, instance_) {

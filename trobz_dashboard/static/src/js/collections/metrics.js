@@ -1,4 +1,4 @@
-openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
+openerp.unleashed.module('trobz_dashboard', function(dashboard, _, Backbone, base){
     
     var Fields = dashboard.collections('Fields'),
         Metric = dashboard.models('Metric');

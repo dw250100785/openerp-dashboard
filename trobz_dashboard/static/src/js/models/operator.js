@@ -1,4 +1,4 @@
-openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
+openerp.unleashed.module('trobz_dashboard', function(dashboard, _, Backbone, base){
     
     var Model = Backbone.Model,
         _super = Model.prototype;

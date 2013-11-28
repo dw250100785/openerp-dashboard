@@ -2,7 +2,8 @@
 <openerp>
     <data>
     
-        <menuitem id="menu_dashboard_root" name="Dashboard" sequence="10" parent="base.menu_custom" />
+        <!-- <menuitem id="menu_dashboard_root" name="Dashboard" sequence="10" parent="base.menu_custom" /> -->
+        <menuitem id="menu_dashboard_root" name="Dashboard" sequence="90" />
         
         <menuitem id="menu_dashboard_board" parent="menu_dashboard_root" name="Dashboard" sequence="1"/>      
         

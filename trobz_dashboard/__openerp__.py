@@ -11,7 +11,7 @@ Creates Interactive and customizable Dashboard, with widgets: Metric, List, Grap
     'depends': [
         'base',
         'web',
-        'trobz_base_web'
+        'web_unleashed_extra'
     ],
     
     'update_xml': [

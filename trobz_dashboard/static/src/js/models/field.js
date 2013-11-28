@@ -1,4 +1,4 @@
-openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
+openerp.unleashed.module('trobz_dashboard', function(dashboard, _, Backbone, base){
     
     var BaseModel = base.models('BaseModel'),
         _super = BaseModel.prototype;
@@ -14,7 +14,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         },
         
         format: function(name){
-            var _t = dashboard.web()._t;
+            var _t = base._t;
             var formatted = name, date = moment(name);
             if(date.isValid()){
                 switch(this.get('period')){

@@ -1,4 +1,4 @@
-openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
+openerp.unleashed.module('trobz_dashboard', function(dashboard, _, Backbone, base){
     
     var SearchModel = dashboard.models('Search');
 
@@ -7,7 +7,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
     var BaseModel = base.models('BaseModel'),
         _super = BaseModel.prototype;
     
-    var PagerController = base.utils('Pager'),
+    var PagerController = base.collections('Pager'),
         _superPager = PagerController.prototype;
     
     var PagerModel = PagerController.extend(_super);

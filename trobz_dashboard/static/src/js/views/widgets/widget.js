@@ -1,4 +1,4 @@
-openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
+openerp.unleashed.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
     var SearchView = dashboard.views('Search'),
         Status = dashboard.views('WidgetStatus'),
@@ -133,7 +133,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 $loader.attr('class', 'loader invisible icon-refresh');
             });
             promise.fail(function(){
-                var _t = dashboard.web()._t;
+                var _t = base._t;
                 $loader.attr({
                     'class': 'loader icon-warning-sign',
                     'title':  _t('Oops, error during widget loading, please check your search parameters again...')

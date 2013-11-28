@@ -1,4 +1,4 @@
-openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
+openerp.unleashed.module('trobz_dashboard',function(dashboard, _, Backbone, base){
 
     var Renderer = Marionette.Renderer;
 
@@ -216,7 +216,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
         
             
             metric.results.each(function(result, index){
-                var name = result.get(x_axis.get('reference')) || dashboard.web()._t('undefined'),
+                var name = result.get(x_axis.get('reference')) || base._t('undefined'),
                     y = parseInt(result.get(y_axis.get('reference')));
         
                 y = _.isNaN(y) ? null : y;
@@ -239,7 +239,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
                 this.data.push(
                     _.extend({
                         data: [[0, remains]], 
-                        label: dashboard.web()._t('Remaining values'), 
+                        label: base._t('Remaining values'), 
                    }, serie_options)
                 );    
             }
@@ -252,7 +252,7 @@ openerp.trobz.module('trobz_dashboard',function(dashboard, _, Backbone, base){
             this.series.push({ x_axis: x_axis, y_axis: y_axis });
         
             metric.results.each(function(result, index){
-                var name = result.get(x_axis.get('reference')) || dashboard.web()._t('undefined'),
+                var name = result.get(x_axis.get('reference')) || base._t('undefined'),
                     x = this.getTickIndex(name, x_axis),
                     y = result.get(y_axis.get('reference'));
                 

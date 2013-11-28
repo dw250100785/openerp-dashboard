@@ -1,4 +1,4 @@
-openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
+openerp.unleashed.module('trobz_dashboard', function(dashboard, _, Backbone, base){
     
     var Operator = dashboard.models('Operator'),
         _super = Backbone.Collection.prototype;
@@ -12,7 +12,7 @@ openerp.trobz.module('trobz_dashboard', function(dashboard, _, Backbone, base){
         },
     
         initialize: function(){
-            var _t = dashboard.web()._t;
+            var _t = base._t;
     
             this.add([
                  // general

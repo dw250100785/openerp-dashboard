@@ -1,6 +1,5 @@
-var debug;
-
-openerp.trobz.module('trobz_dashboard').ready(function(instance, dashboard, _, Backbone, base){
+var debug = null;
+openerp.unleashed.module('trobz_dashboard').ready(function(instance, dashboard, _, Backbone, base){
     
     var _t = instance.web._t,
         _lt = instance.web._lt;
