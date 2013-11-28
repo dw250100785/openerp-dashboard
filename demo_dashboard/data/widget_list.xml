@@ -14,7 +14,7 @@
             <field name="board_id" ref="demo_dashboard_board" />
             <field name="widget_id" ref="list_widget" />
             <field name="sequence">20</field>
-            <field name="width">10</field>
+            <field name="width">12</field>
             <field name="height">10</field>
         </record>
     

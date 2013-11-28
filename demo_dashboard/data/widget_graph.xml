@@ -15,7 +15,7 @@
             <field name="board_id" ref="demo_dashboard_board" />
             <field name="widget_id" ref="graph_widget_1" />
             <field name="sequence">11</field>
-            <field name="width">10</field>
+            <field name="width">12</field>
             <field name="height">10</field>
         </record>
     
@@ -32,7 +32,7 @@
             <field name="board_id" ref="demo_dashboard_board" />
             <field name="widget_id" ref="graph_widget_2" />
             <field name="sequence">1</field>
-            <field name="width">7</field>
+            <field name="width">8</field>
             <field name="height">10</field>
         </record>
     
@@ -50,7 +50,7 @@
             <field name="board_id" ref="demo_dashboard_board" />
             <field name="widget_id" ref="graph_widget_3" />
             <field name="sequence">18</field>
-            <field name="width">5</field>
+            <field name="width">6</field>
             <field name="height">10</field>
         </record>
     

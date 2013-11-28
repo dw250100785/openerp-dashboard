@@ -14,7 +14,7 @@
             <field name="board_id" ref="demo_dashboard_board" />
             <field name="widget_id" ref="custom_widget_1" />
             <field name="sequence">19</field>
-            <field name="width">5</field>
+            <field name="width">6</field>
             <field name="height">10</field>
         </record>
     
@@ -58,7 +58,7 @@
             <field name="board_id" ref="demo_dashboard_board" />
             <field name="widget_id" ref="custom_widget_2" />
             <field name="sequence">10</field>
-            <field name="width">3</field>
+            <field name="width">4</field>
             <field name="height">10</field>
         </record>
         
