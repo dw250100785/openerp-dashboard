@@ -2,14 +2,14 @@
 {
     'name': 'Demo Dashboard',
     'version': '1.0',
-    'category': 'Dashboard',
+    'category': 'Demo',
     'description': """
-Demo data for Trobz Dashboard module
+Demo data for Dashboard module
     """,
     'author': 'trobz',
     'website': 'http://trobz.com',
     'depends': [
-        'trobz_dashboard',
+        'dashboard',
         'hr',
         'hr_contract',
         'sale'

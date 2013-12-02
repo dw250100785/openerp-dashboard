@@ -2,7 +2,7 @@
 
 from openerp.osv import osv, fields
 
-from trobz_dashboard.utils.model import metric_support 
+from dashboard.utils.model import metric_support 
 
 # to support metric, the model has to inherit from osv and metric_support
 class hr_employee(osv.osv, metric_support):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from openerp.osv import osv
-from trobz_dashboard.utils.model import metric_support 
+from dashboard.utils.model import metric_support 
 
 class sale_order_line(osv.osv, metric_support):
     

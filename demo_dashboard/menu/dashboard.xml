@@ -9,7 +9,7 @@
             <field name="target">inline</field>
         </record>
         
-        <menuitem action="action_view_dashboard_demo_my" id="menu_dashboard_my" sequence="1" parent="trobz_dashboard.menu_dashboard_board" />
+        <menuitem action="action_view_dashboard_demo_my" id="menu_dashboard_my" sequence="1" parent="dashboard.menu_dashboard_board" />
         
         <record id="action_view_dashboard_sales" model="ir.actions.act_window">
             <field name="name">Sales Board</field>
@@ -19,7 +19,7 @@
             <field name="target">inline</field>
         </record>
         
-        <menuitem action="action_view_dashboard_sales" id="menu_dashboard_sales" sequence="2" parent="trobz_dashboard.menu_dashboard_board" />
+        <menuitem action="action_view_dashboard_sales" id="menu_dashboard_sales" sequence="2" parent="dashboard.menu_dashboard_board" />
         
         
     </data>
