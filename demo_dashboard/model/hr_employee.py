@@ -26,37 +26,7 @@ class hr_employee(osv.osv, metric_support):
              LEFT JOIN res_country rc ON rc.id = he.country_id 
              WHERE TRUE {generated}
              """,
-        
-         'graph_attendance': {
-            'query': """
-                 SELECT {group_sql} AS "{group_ref}", count(ha.id) AS count 
-                 FROM hr_employee AS he
-                 INNER JOIN hr_attendance ha ON ha.employee_id = he.id
-                 LEFT JOIN res_country rc ON rc.id = he.country_id 
-                 WHERE TRUE {generated}
-                 """,
-            'defaults': {
-                 'group_by': ['name_related'],
-                 'limit': 10
-            }
-         },
-                    
-         'graph_booking': {
-            'query': """
-                SELECT {group_sql} AS "{group_ref}", count(br.id) AS booking_count 
-                FROM hr_employee AS he
-                LEFT JOIN booking_resource br ON he.id =  br.origin_id
-                LEFT JOIN ir_model ir ON ir.id =  br.origin_model
-                LEFT JOIN res_country rc ON rc.id = he.country_id 
-                WHERE ir.model = %s
-                {generated}
-                """,
-            'params': ['hr.employee'],
-            'defaults': {
-                 'group_by': ['name_related'],
-                 'limit': 10
-            }
-        }
+         
     }
     
     _columns = {
